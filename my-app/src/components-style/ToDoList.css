@@ -1,105 +1,240 @@
 .main-todo-container {
-    margin-top: 10.9vh;
-    overflow-y: scroll; 
-    max-height: 90vh;
-    background-color: #EEEEEE;
-    display: flex;
-    flex-direction: column;
+  margin-top: 10.9vh;
+  overflow-y: scroll;
+  max-height: 90vh;
+  background-color: #eeeeee;
+  display: flex;
+  flex-direction: column;
 }
 
-#addBtn{
-    width: 15vw;
+.main-todo-container h2 {
+  font-family: "Bacasime Antique", serif;
+  font-weight: 600;
+  font-style: normal;
+  color: #422020;
+  margin-left: 1vw;
+  font-size: 2.2em;
 }
 
-#add-to-do-form {
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 45vw;
-    margin-left: 1vw;
-    background: white;
-  }
-  
-  #add-to-do-form.active {
-    opacity: 1;
-  }
-
-  .add-form-content {
-    display: flex;
-    flex-direction: column;
-    margin-left: 3vw;
-    margin-right:3vw;
-    color: #422020;
-  }
-
-.add-form-content input {
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#todoContentInput{
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-
-}
-
-.add-form-content select {
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.add-to-do-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.add-form-content button{
-    width:16vw;
-    margin:auto;
+.main-todo-container h3 {
+  font-family: "Bacasime Antique", serif;
+  font-weight: 600;
+  font-style: normal;
+  color: #422020;
+  margin: 5px;
+  font-size: 2em;
+  padding-top: 10px;
 }
 
 .to-do-item {
-    box-shadow: 4px 2px 10px rgb(0,0,0, 0.2);
-    width: 30vw;
-    margin-left: 1vw;
-    background: white;
-    color: #422020;
+  border-radius: 7px;
 }
 
 .to-do-item-content {
-    margin-left: 10px;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+
+.to-do-item-content-text {
+  overflow-y: scroll;
+  height: 13vh;
+  max-height: 25vh;
+  border: 1px solid #ccc;
+  margin-right: 1vw;
+  border-radius: 5px;
+}
+
+.flag-container {
+  font-family: "Bacasime Antique", serif;
+  font-weight: 600;
+  font-style: normal;
+  color: #422020;
+  margin-left: 1vw;
+  font-size: 1.2em;
+}
+
+.to-do-item-dates {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 1vw;
+}
+
+.main-todo-container p {
+  font-family: "Bacasime Antique", serif;
+  font-weight: 600;
+  font-style: normal;
+  color: #422020;
+  margin-left: 1vw;
+  font-size: 1.2em;
+}
+
+#addBtn {
+  width: 15vw;
+  margin-left: 1vw;
+}
+
+#add-to-do-form {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 45vw;
+  margin-left: 1vw;
+  background: white;
+}
+
+#add-to-do-form.active {
+  opacity: 1;
+  margin-top: 2vh;
+  width: 40vw;
+}
+
+.add-form-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 3vw;
+  margin-right: 3vw;
+  color: #422020;
+}
+
+.add-form-content input {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#todoContentInput {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 5vh;
+}
+
+.add-form-content select {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.add-to-do-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.add-form-content button {
+  width: 16vw;
+  margin: auto;
+}
+
+.to-do-item {
+  box-shadow: 4px 2px 10px rgb(0, 0, 0, 0.2);
+  width: 30vw;
+  margin-left: 1vw;
+  background: white;
+  color: #422020;
+  /* height: 40vh; */
+  /* max-height: 40vh; */
+  /* overflow-y: scroll; */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.to-do-list ::-webkit-scrollbar {
+  width: 5px;
+  background-color: transparent;
+}
+
+.to-do-list ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.to-do-item-content {
+  margin-left: 10px;
 }
 
 ::-webkit-scrollbar {
-    width: 12px;
-  }
- 
-  ::-webkit-scrollbar-track {
-    background: #EEEEEE; 
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #a3c9aa; 
-    border-radius: 10px;
-  }
-  
-  ::-webkit-scrollbar-thumb:active {
-    background: #759977; 
-  }
-  
+  width: 12px;
+}
 
-  ::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 5px rgb(176, 176, 176);
+::-webkit-scrollbar-track {
+  background: #eeeeee;
+}
 
-  }
+::-webkit-scrollbar-thumb {
+  background: #a3c9aa;
+  border-radius: 10px;
+}
 
-  
+::-webkit-scrollbar-thumb:active {
+  background: #759977;
+}
+
+::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 5px rgb(176, 176, 176);
+}
+
+.calendar-container h2 {
+  font-family: "Bacasime Antique", serif;
+  font-weight: 600;
+  font-style: normal;
+  color: #422020;
+  font-size: 2.2em;
+}
+
+.to-do-header-sort {
+  width: 80%;
+  justify-self: center;
+}
+
+#sortHeader {
+  font-family: "Bacasime Antique", serif;
+  font-weight: 600;
+  font-style: normal;
+  color: #422020;
+  margin-left: 1vw;
+  font-size: 2.2em;
+  margin-top: 2.7vh;
+}
+
+#sortByFlag {
+  border-radius: 5px;
+  width: 13.4vw;
+  border: 1px solid #ccc;
+}
+
+.sortByContent,
+.sortByFlag,
+.sortByStartDate,
+.sortByEndDate,
+.sortByTitle {
+  display: flex;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #f5f5f5;
+  justify-content: space-between;
+  margin: 5px;
+  border-bottom: 2px solid #e8e2e2;
+  box-shadow: 0px 4px 9px hsla(330, 2%, 82%, 0.44);
+}
+
+input[type="date"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 12vw;
+  height: 3vh;
+}
+
+#sortByTitle,
+#sortByContent {
+  border-radius: 5px;
+  width: 13vw;
+  border: 1px solid #ccc;
+  height: 7.1vh;
+}

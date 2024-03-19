@@ -57,9 +57,7 @@ function ToDoList() {
       });
   };
 
-
   function getToDoDataInputs() {
-
     const titleElement = document.getElementById("todoTitleInput");
     const contentElement = document.getElementById("todoContentInput");
     const flagElement = document.getElementById("todoFlagInput");
@@ -104,9 +102,9 @@ function ToDoList() {
         console.log("ERROR ADD TODO FRONTEND!");
       });
 
-      const addBtn = document.getElementById("addBtn");
-      addBtn.style.display = "block";
-      setAreAddingToDo(false);
+    const addBtn = document.getElementById("addBtn");
+    addBtn.style.display = "block";
+    setAreAddingToDo(false);
   };
 
   const handleToDoEdit = (toDoId) => {
@@ -127,12 +125,12 @@ function ToDoList() {
 
   const handleCancelAdd = (e) => {
     e.preventDefault();
-       const form = document.getElementById("add-to-do-form");
-       form.reset();
-   setAreAddingToDo(false);
-       const addBtn = document.getElementById("addBtn");
-       addBtn.style.display = "block";
-   };
+    const form = document.getElementById("add-to-do-form");
+    form.reset();
+    setAreAddingToDo(false);
+    const addBtn = document.getElementById("addBtn");
+    addBtn.style.display = "block";
+  };
 
   const handleSaveToDo = () => {
     const { id, title, content, flagID, start_date, end_date } = updatedToDo;
@@ -189,122 +187,175 @@ function ToDoList() {
   return (
     <div>
       <NavBar />
-      <div className="main-container-todo-calendar" style= {{display: 'grid', gridTemplateColumns:'2.1fr 2fr', background:'#EEEEEE'}}>
-      <div className="main-todo-container"
-        style={{ overflowY: "scroll", height: "100vh" }}
+      <div
+        className="main-container-todo-calendar"
       >
-        <h2>Add to your to do list!</h2>
-        <button onClick={setFormVisibility} id="addBtn">
-          Add a new to-do!
-        </button>
-        <div className="add-to-do-container">
-          {areAddingToDo && (
-            <form id="add-to-do-form" className="active">
-             <div className="add-form-content">
-            <input type="text" placeholder="Title" id="todoTitleInput" />
-            <textarea placeholder="Content" id="todoContentInput" rows="4"></textarea>
-            <input type="text" placeholder="End Date" id="todoEndDateInput" />
-            <select id="todoFlagInput">
-              {flags.map((flag, index) => (
-                <option key={index} value={flag.id}>
-                  {flag.name}
-                </option>
-              ))}
-            </select>
-            <div className="add-to-do-buttons">
-            <button onClick={handleCancelAdd} id="cancelAddBtn"> Cancel </button>
-          <button onClick={handleAddNewToDo} id="saveToDo" > Save To Do </button>
-          </div>
-          </div>
-
-            </form>
-          )}
-        </div>
-
-        <div id="to-do-list-container">
-          <div className="to-do-list">
-            {toDoListItems.map((item, index) => (
-              <div key={index} className="to-do-item" id={item.id}>
-                {updatedToDo && updatedToDo.id === item.id ? (
-                  <div className="to-do-item-content">
-                    <input
-                      type="text"
-                      value={updatedToDo.title}
-                      onChange={(e) =>
-                        setUpdatedToDo({
-                          ...updatedToDo,
-                          title: e.target.value,
-                        })
-                      }
-                    />
-                    <textarea
-                      value={updatedToDo.content}
-                      onChange={(e) =>
-                        setUpdatedToDo({
-                          ...updatedToDo,
-                          content: e.target.value,
-                        })
-                      }
-                      rows="4"
-                    ></textarea>
-                    <select
-                      value={updatedToDo.flagID}
-                      onChange={(e) =>
-                        setUpdatedToDo({
-                          ...updatedToDo,
-                          flagID: e.target.value,
-                        })
-                      }
-                    >
-                      {flags.map((flag, index) => (
-                        <option key={index} value={flag.id}>
-                          {flag.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="to-do-buttons">
-                      <button onClick={handleSaveToDo}>Save</button>
-                      <button onClick={handleCancelEdit}>Cancel</button>
-                    </div>
+        <div
+          className="main-todo-container"
+          style={{ overflowY: "scroll", height: "100vh" }}
+        >
+          <div
+            className="main-todo-header"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 2fr",
+              marginRight: "5px",
+            }}
+          >
+            <div className="to-do-add-header">
+              <h2>Add to your to do list!</h2>
+              <button onClick={setFormVisibility} id="addBtn">
+            Add a new to-do!
+          </button>
+          <div className="add-to-do-container">
+            {areAddingToDo && (
+              <form id="add-to-do-form" className="active">
+                <div className="add-form-content">
+                  <input type="text" placeholder="Title" id="todoTitleInput" />
+                  <textarea
+                    placeholder="Content"
+                    id="todoContentInput"
+                    rows="4"
+                  ></textarea>
+                  <input
+                    type="date"
+                    placeholder="End Date"
+                    id="todoEndDateInput"
+                    style={{ width: "93%" }}
+                  />
+                  <select id="todoFlagInput">
+                    {flags.map((flag, index) => (
+                      <option key={index} value={flag.id}>
+                        {flag.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="add-to-do-buttons">
+                    <button onClick={handleCancelAdd} id="cancelAddBtn">
+                      {" "}
+                      Cancel{" "}
+                    </button>
+                    <button onClick={handleAddNewToDo} id="saveToDo">
+                      {" "}
+                      Save To Do{" "}
+                    </button>
                   </div>
-                ) : (
-                  <div className="to-do-item-content">
-                    <h3>{item.title}</h3>
-                    <p>{item.content}</p>
-                    <div className="to-do-item-dates">
-                      <p>Start date: {item.start_date.slice(0, -14)}</p>
-                      <p>End date: {item.end_date.slice(0, -14)}</p>
-                    </div>
-                    <div className="flag-container">
-                      Flag: {flags[item.flagID - 1]?.name}
-                    </div>
-                    <div className="to-do-buttons">
-                      <button onClick={() => handleToDoEdit(item.id)}>
-                        Edit
-                      </button>
-                      <button onClick={() => handleToDoDelete(item.id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                )}
+                </div>
+              </form>
+            )}
+          </div>
+            </div>
+            <div classname="to-do-header-sort">
+              <h3 id="sortHeader">Sort by:</h3>
+              <div className="sortByTitle">
+              <p>Title:</p>
+              <input type="text" id="sortByTitle" />
               </div>
-            ))}
+              <div className="sortByStartDate">
+              <p>Start Date:</p>
+              <input type="date" id="sortByStartDate" />
+              </div>
+              <div className="sortByEndDate">
+              <p>End Date:</p>
+              <input type="date" id="sortByEndDate" />
+              </div>
+              <div className="sortByContent">
+              <p>Content:</p>
+              <input type="text" id="sortByContent" />
+              </div>
+              <div className="sortByFlag">
+              <p>Flag:</p>
+              <select id="sortByFlag">
+                {flags.map((flag, index) => (
+                  <option key={index} value={flag.id}>
+                    {flag.name}
+                  </option>
+                ))}
+              </select>
+              </div>
+
+            </div>
+          </div>
+
+         
+
+          <div id="to-do-list-container">
+            <div className="to-do-list" style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr'}}>
+              {toDoListItems.map((item, index) => (
+                <div key={index} className="to-do-item" id={item.id}>
+                  {updatedToDo && updatedToDo.id === item.id ? (
+                    <div className="to-do-item-content">
+                      <input
+                        type="text"
+                        value={updatedToDo.title}
+                        onChange={(e) =>
+                          setUpdatedToDo({
+                            ...updatedToDo,
+                            title: e.target.value,
+                          })
+                        }
+                      />
+                      <textarea
+                        value={updatedToDo.content}
+                        onChange={(e) =>
+                          setUpdatedToDo({
+                            ...updatedToDo,
+                            content: e.target.value,
+                          })
+                        }
+                        rows="4"
+                      ></textarea>
+                      <select
+                        value={updatedToDo.flagID}
+                        onChange={(e) =>
+                          setUpdatedToDo({
+                            ...updatedToDo,
+                            flagID: e.target.value,
+                          })
+                        }
+                      >
+                        {flags.map((flag, index) => (
+                          <option key={index} value={flag.id}>
+                            {flag.name}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="to-do-buttons">
+                        <button onClick={handleSaveToDo}>Save</button>
+                        <button onClick={handleCancelEdit}>Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="to-do-item-content">
+                      <h3>{item.title}</h3>
+                      <div className="to-do-item-content-text">
+                        <p>{item.content}</p>
+                      </div>
+                      <div className="to-do-item-dates">
+                        <p>Start date: {item.start_date.slice(0, -14)}</p>
+                        <p>End date: {item.end_date.slice(0, -14)}</p>
+                      </div>
+                      <div className="flag-container">
+                        Flag: {flags[item.flagID - 1]?.name}
+                      </div>
+                      <div className="to-do-buttons">
+                        <button onClick={() => handleToDoEdit(item.id)}>
+                          Edit
+                        </button>
+                        <button onClick={() => handleToDoDelete(item.id)}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-
-
-      <div className="calendar-container" style= {{ display: 'flex', justifyContent: 'center'}}>
-      <div className="calendar-Header" style={{display: 'flex',flexDirection: 'row', marginTop: '10vh', color:'#422020'}}> <h2>{username} </h2> <h2>'s Personal Calendar</h2></div>
-      
-      </div>
-
-    </div>
-
     </div>
   );
 }
 
 export default ToDoList;
-
