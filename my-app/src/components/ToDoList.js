@@ -3,6 +3,8 @@ import NavBar from "./NavBar";
 import "../components-style/ToDoList.css";
 import axios from "axios";
 import { useState } from "react";
+import { parse } from "@fortawesome/fontawesome-svg-core";
+
 
 function ToDoList() {
   const [toDoListItems, setToDoListItems] = useState([]);
@@ -57,6 +59,7 @@ function ToDoList() {
       });
   };
 
+  
   function getToDoDataInputs() {
     const titleElement = document.getElementById("todoTitleInput");
     const contentElement = document.getElementById("todoContentInput");
@@ -184,6 +187,67 @@ function ToDoList() {
       });
   };
 
+  const includesInOrder = (str, substr) => {
+    let i = 0;
+    let j = 0;
+    while (i < str.length && j < substr.length) {
+      if (str[i] === substr[j]) {
+        j++;
+      }
+      i++;
+    }
+    return j === substr.length;
+  };
+
+  const handleSort = (e) => {
+    e.preventDefault();
+    
+   const titleElement = document.getElementById("sortByTitle");
+    const startDateElement = document.getElementById("sortByStartDate");
+    const endDateElement = document.getElementById("sortByEndDate");
+    const contentElement = document.getElementById("sortByContent");
+    const flagElement = document.getElementById("sortByFlag");
+
+    const title = titleElement.value ? titleElement.value : null;
+    const startDate = startDateElement.value ? startDateElement.value : null;
+    const endDate = endDateElement.value ? endDateElement.value : null;
+    const content = contentElement.value ? contentElement.value : null;
+    const flag = flagElement.value ? flagElement.value : null;
+    
+
+
+    let sortedItems = [];
+
+    console.log(toDoListItems)
+    console.log(new Date(startDate));
+    console.log('END',new Date(toDoListItems[1].end_date));
+
+for (let i = 0; i < toDoListItems.length; i++) {
+    let item = toDoListItems[i];
+    
+    if ((!title || includesInOrder(item.title.toLowerCase(), title.toLowerCase())) &&
+    (!startDate || item.start_date.slice(0, 10) === startDate) &&
+    (!endDate || item.end_date.slice(0, 10) === endDate) &&
+    (!content || includesInOrder(item.content.toLowerCase(), content.toLowerCase())) &&
+    (!flag || item.flagID === parseInt(flag))) {
+
+    sortedItems.push(item);
+}
+  }
+
+    console.log(sortedItems);
+
+    if(sortedItems.length === 0){
+      alert('No items found!');
+    }
+    else{
+      setToDoListItems(sortedItems);
+    }
+    
+    //MAJOR TO DO- SOMEHOW UPDATE THE UI 
+
+  }
+
   return (
     <div>
       <NavBar />
@@ -245,7 +309,7 @@ function ToDoList() {
             )}
           </div>
             </div>
-            <div classname="to-do-header-sort">
+            <div className="to-do-header-sort">
               <h3 id="sortHeader">Sort by:</h3>
               <div className="sortByTitle">
               <p>Title:</p>
@@ -273,6 +337,7 @@ function ToDoList() {
                 ))}
               </select>
               </div>
+              <button id="sortBtn" onClick={handleSort} style={{width:'12vw'}}>Sort</button>
 
             </div>
           </div>
