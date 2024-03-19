@@ -1,0 +1,50 @@
+.private-container {
+    background-color: #EEEEEE;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
+
+.privateChatHeader {
+    margin-bottom: 20px;
+}
+
+#privateTitle {
+    color: #333;
+    font-size: 24px;
+}
+
+.privateChatBody {
+    overflow-y: scroll;
+    max-height: calc(67vh - 80px); /* Adjust as needed */
+}
+
+.message {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#messageInput {
+    width: calc(100% - 70px);
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #A3C9AA;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #86aa8d;
+    transition: 0.5s;
+}

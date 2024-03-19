@@ -1,0 +1,81 @@
+.chatNavBar-container {
+    background-color: #C68484;
+    margin-top: 10vh;
+    height: 100vh;
+    width: 20%;
+    position: fixed;
+    left: 0;
+}
+
+.chatNavBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    padding-top: 20px;
+}
+
+#searchBar {
+    width: 80%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 2px solid #fff;
+    border-radius: 3px;
+    background-color: #f9f9f9;
+    color: #fff;
+}
+
+#searchBar:focus {
+    outline: none;
+    border-color: #C68484;
+}
+
+#chatOptions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#groupChat, #privateChat {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#groupChat:hover, #privateChat:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#groupChat.active, #privateChat.active {
+    background-color: #A3C9AA;
+    color: #fff;
+    font-weight: bold;
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdownContent {
+    display: block;
+}
+
+.dropdownContent {
+    transition: opacity 0.3s;
+    opacity: 0;
+}
+
+.dropdown:hover .dropdownContent {
+    opacity: 1;
+}

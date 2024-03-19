@@ -1,0 +1,82 @@
+.main-todo-container {
+    margin-top: 10.9vh;
+    overflow-y: scroll; 
+    max-height: 90vh;
+    background-color: #EEEEEE;
+    display: flex;
+    flex-direction: column;
+}
+
+#addBtn{
+    width: 15vw;
+}
+
+#add-to-do-form {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 45vw;
+    margin-left: 1vw;
+    background: white;
+  }
+  
+  #add-to-do-form.active {
+    opacity: 1;
+  }
+
+  .add-form-content {
+    display: flex;
+    flex-direction: column;
+    margin-left: 3vw;
+    margin-right:3vw;
+  }
+
+.add-form-content input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#todoContentInput{
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+}
+
+.add-form-content select {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-to-do-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.add-form-content button{
+    width:16vw;
+    margin:auto;
+}
+
+.to-do-item {
+    box-shadow: 4px 2px 10px rgb(0,0,0, 0.2);
+    width: 30vw;
+    margin-left: 1vw;
+    background: white;
+}
+
+.to-do-item-content {
+    margin-left: 10px;
+}
+
+
+
+  
+  

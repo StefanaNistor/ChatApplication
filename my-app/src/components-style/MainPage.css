@@ -1,0 +1,12 @@
+.main-container {
+    display: flex;
+  }
+  
+  .ChatNavBar {
+    height: 100vh;
+  }
+  
+  .GroupChat {
+    flex: 1; 
+    overflow-y: auto; 
+  }
