@@ -30,6 +30,7 @@
     flex-direction: column;
     margin-left: 3vw;
     margin-right:3vw;
+    color: #422020;
   }
 
 .add-form-content input {
@@ -70,13 +71,35 @@
     width: 30vw;
     margin-left: 1vw;
     background: white;
+    color: #422020;
 }
 
 .to-do-item-content {
     margin-left: 10px;
 }
 
-
-
+::-webkit-scrollbar {
+    width: 12px;
+  }
+ 
+  ::-webkit-scrollbar-track {
+    background: #EEEEEE; 
+  }
   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #a3c9aa; 
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:active {
+    background: #759977; 
+  }
+  
+
+  ::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 5px rgb(176, 176, 176);
+
+  }
+
   

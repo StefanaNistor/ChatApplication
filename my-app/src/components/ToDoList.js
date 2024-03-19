@@ -10,10 +10,12 @@ function ToDoList() {
   const [updatedToDo, setUpdatedToDo] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
   const [areAddingToDo, setAreAddingToDo] = useState(false);
+  const [username, setUsername] = useState(user.username);
 
   useEffect(() => {
     getToDoListItems();
     getFlags();
+    setUsername(user.username);
   }, []);
 
   const getFlags = () => {
@@ -187,8 +189,8 @@ function ToDoList() {
   return (
     <div>
       <NavBar />
-      <div
-        className="main-todo-container"
+      <div className="main-container-todo-calendar" style= {{display: 'grid', gridTemplateColumns:'2.1fr 2fr', background:'#EEEEEE'}}>
+      <div className="main-todo-container"
         style={{ overflowY: "scroll", height: "100vh" }}
       >
         <h2>Add to your to do list!</h2>
@@ -291,6 +293,15 @@ function ToDoList() {
           </div>
         </div>
       </div>
+
+
+      <div className="calendar-container" style= {{ display: 'flex', justifyContent: 'center'}}>
+      <div className="calendar-Header" style={{display: 'flex',flexDirection: 'row', marginTop: '10vh', color:'#422020'}}> <h2>{username} </h2> <h2>'s Personal Calendar</h2></div>
+      
+      </div>
+
+    </div>
+
     </div>
   );
 }
