@@ -7,9 +7,9 @@ import { useState } from "react";
 function ToDoList() {
   const [toDoListItems, setToDoListItems] = useState([]);
   const [flags, setFlags] = useState([]);
-  const [updatedToDoId, setUpdatedToDoId] = useState(-1);
+  const [updatedToDo, setUpdatedToDo] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
-  const [areAddingToDo, setAreAddingToDo] = useState(false);  
+  const [areAddingToDo, setAreAddingToDo] = useState(false);
 
   useEffect(() => {
     getToDoListItems();
@@ -32,7 +32,6 @@ function ToDoList() {
   };
 
   const getToDoListItems = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
     const userID = user.id;
     axios
       .get(`http://localhost:7979/toDoList/${userID}`, {
@@ -46,6 +45,8 @@ function ToDoList() {
           title: item.title,
           content: item.content,
           flagID: item.flag_id,
+          start_date: item.start_date,
+          end_date: item.end_date,
         }));
         setToDoListItems(items);
       })
@@ -54,23 +55,28 @@ function ToDoList() {
       });
   };
 
+
   function getToDoDataInputs() {
+
     const titleElement = document.getElementById("todoTitleInput");
     const contentElement = document.getElementById("todoContentInput");
-    const flagElement = document.querySelector("#add-to-do-form select");
+    const flagElement = document.getElementById("todoFlagInput");
+    const endDateElement = document.getElementById("todoEndDateInput");
 
-    const title = titleElement.value !== null ? titleElement.value : "";
-    const content = contentElement.value !== null ? contentElement.value : "";
-    const flagID = flagElement.value !== null ? flagElement.value : "";
+    const title = titleElement.value ? titleElement.value : null;
+    const content = contentElement.value ? contentElement.value : null;
+    const flagID = flagElement.value ? flagElement.value : null;
+    const endDate = endDateElement.value ? endDateElement.value : null;
 
-    return { title, content, flagID };
+    return { title, content, flagID, endDate };
   }
 
   const handleAddNewToDo = (e) => {
     e.preventDefault();
-    const { title, content, flagID } = getToDoDataInputs();
+    const { title, content, flagID, endDate } = getToDoDataInputs();
     const userID = user.id;
 
+    const stardDate = new Date();
     axios
       .post(
         "http://localhost:7979/toDoList/addToDo",
@@ -79,6 +85,8 @@ function ToDoList() {
           content: content,
           flag_id: flagID,
           user_id: userID,
+          start_date: stardDate,
+          end_date: endDate,
         },
         {
           headers: {
@@ -99,6 +107,66 @@ function ToDoList() {
       setAreAddingToDo(false);
   };
 
+  const handleToDoEdit = (toDoId) => {
+    const todoItem = toDoListItems.find((item) => item.id === toDoId);
+    setUpdatedToDo({
+      id: toDoId,
+      title: todoItem.title,
+      content: todoItem.content,
+      flagID: todoItem.flagID,
+      start_date: todoItem.start_date,
+      end_date: todoItem.end_date,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setUpdatedToDo(null);
+  };
+
+  const handleCancelAdd = (e) => {
+    e.preventDefault();
+       const form = document.getElementById("add-to-do-form");
+       form.reset();
+   setAreAddingToDo(false);
+       const addBtn = document.getElementById("addBtn");
+       addBtn.style.display = "block";
+   };
+
+  const handleSaveToDo = () => {
+    const { id, title, content, flagID, start_date, end_date } = updatedToDo;
+    const userID = user.id;
+    axios
+      .put(
+        "http://localhost:7979/toDoList/updateToDo",
+        {
+          id,
+          title,
+          content,
+          flag_id: flagID,
+          user_id: userID,
+          start_date,
+          end_date,
+        },
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((res) => {
+        console.log("To Do updated successfully!");
+        getToDoListItems();
+        setUpdatedToDo(null);
+      })
+      .catch((err) => {
+        console.log("ERROR UPDATE TODO FRONTEND!");
+      });
+  };
+
+  const setFormVisibility = () => {
+    setAreAddingToDo(true);
+  };
+
   const handleToDoDelete = (toDoId) => {
     console.log("To Do ID:", toDoId);
     axios
@@ -116,95 +184,6 @@ function ToDoList() {
       });
   };
 
-  function getToDoFromUI(toDoId) {
-    let todoItem = toDoListItems.find((item) => item.id === toDoId);
-    return {
-      title: todoItem.title,
-      content: todoItem.content,
-      flagID: todoItem.flagID,
-    };
-  }
-
-  function updateButtons(isEditing) {
-    const editBtn = document.getElementById("editBtn");
-    const delBtn = document.getElementById("delBtn");
-    const updateBtn = document.getElementById("updateBtn");
-    const cancelBtn = document.getElementById("cancelBtn");
-
-    if (isEditing) {
-      editBtn.style.display = "none";
-      delBtn.style.display = "none";
-      updateBtn.style.display = "block";
-      cancelBtn.style.display = "block";
-    } else {
-      editBtn.style.display = "block";
-      delBtn.style.display = "block";
-      updateBtn.style.display = "none";
-      cancelBtn.style.display = "none";
-    }
-  }
-
-  function updateToDo() {
-    const toDoId = updatedToDoId;
-    const { title, content, flagID } = getToDoDataInputs();
-    const userID = user.id;
-    axios
-      .put(
-        "http://localhost:7979/toDoList/updateToDo",
-        {
-          title: title,
-          content: content,
-          flag_id: flagID,
-          user_id: userID,
-          id: toDoId,
-        },
-        {
-          headers: {
-            "x-access-token": localStorage.getItem("token"),
-          },
-        }
-      )
-      .then((res) => {
-        console.log("To Do updated successfully!");
-        getToDoListItems();
-
-        const form = document.getElementById("add-to-do-form");
-        form.reset();
-
-        updateButtons(false);
-      })
-      .catch((err) => {
-        console.log("ERROR UPDATE TODO FRONTEND!");
-      });
-  }
-
-  const handleToDoEdit = (toDoId) => {
-    setUpdatedToDoId(toDoId);
-    updateButtons(true);
-    const { title, content, flagID } = getToDoFromUI(toDoId);
-    document.getElementById("todoTitleInput").value = title;
-    document.getElementById("todoContentInput").value = content;
-    document.querySelector("#add-to-do-form select").value = flagID;
-
-
-  };
-
-  const handleCancelEdit = (e) => {
-    e.preventDefault();
-    const form = document.getElementById("add-to-do-form");
-    form.reset();
-    updateButtons(false);
-    setAreAddingToDo(false);
-    const addBtn = document.getElementById("addBtn");
-    addBtn.style.display = "block";
-  };
-
-  const setFormVisibility = () => {
-     setAreAddingToDo(true);
-     const addBtn = document.getElementById("addBtn");
-     addBtn.style.display = "none";
-  };
-
   return (
     <div>
       <NavBar />
@@ -213,16 +192,17 @@ function ToDoList() {
         style={{ overflowY: "scroll", height: "100vh" }}
       >
         <h2>Add to your to do list!</h2>
-          <button onClick={setFormVisibility} id="addBtn">
-              Add a new to-do!
-          </button>
-          <div className="add-to-do-container">
-          
-          { areAddingToDo && (<form id="add-to-do-form" className ='active'>
-            <div className="add-form-content">
+        <button onClick={setFormVisibility} id="addBtn">
+          Add a new to-do!
+        </button>
+        <div className="add-to-do-container">
+          {areAddingToDo && (
+            <form id="add-to-do-form" className="active">
+             <div className="add-form-content">
             <input type="text" placeholder="Title" id="todoTitleInput" />
             <textarea placeholder="Content" id="todoContentInput" rows="4"></textarea>
-            <select>
+            <input type="text" placeholder="End Date" id="todoEndDateInput" />
+            <select id="todoFlagInput">
               {flags.map((flag, index) => (
                 <option key={index} value={flag.id}>
                   {flag.name}
@@ -230,53 +210,90 @@ function ToDoList() {
               ))}
             </select>
             <div className="add-to-do-buttons">
-            <button onClick={handleCancelEdit} id="cancelAddBtn"> Cancel </button>
+            <button onClick={handleCancelAdd} id="cancelAddBtn"> Cancel </button>
           <button onClick={handleAddNewToDo} id="saveToDo" > Save To Do </button>
           </div>
           </div>
-          </form>)}
+
+            </form>
+          )}
         </div>
 
-        <div id="to-do-list-container" >
+        <div id="to-do-list-container">
           <div className="to-do-list">
-           
             {toDoListItems.map((item, index) => (
               <div key={index} className="to-do-item" id={item.id}>
-                <div className="to-do-item-content"> 
-                <h3>{item.title}</h3>
-                <p>{item.content}</p>
-                <div className="flag-container">
-                  Flag: {flags[item.flagID - 1]?.name}
-                </div>
-                <div className="to-do-buttons">
-                  <button id = 'editBtn' onClick={() => handleToDoEdit(item.id) }>Edit</button>
-                  <button id='delBtn'onClick={() => handleToDoDelete(item.id)}>Delete</button>
-                  <button
-              onClick={updateToDo}
-              id="updateBtn"
-              style={{ display: "none" }}
-            >
-              Update
-            </button>
-            <button
-              onClick={handleCancelEdit}
-              id="cancelBtn"
-              style={{ display: "none" }}
-            >
-              Cancel
-            </button>
-                </div>
+                {updatedToDo && updatedToDo.id === item.id ? (
+                  <div className="to-do-item-content">
+                    <input
+                      type="text"
+                      value={updatedToDo.title}
+                      onChange={(e) =>
+                        setUpdatedToDo({
+                          ...updatedToDo,
+                          title: e.target.value,
+                        })
+                      }
+                    />
+                    <textarea
+                      value={updatedToDo.content}
+                      onChange={(e) =>
+                        setUpdatedToDo({
+                          ...updatedToDo,
+                          content: e.target.value,
+                        })
+                      }
+                      rows="4"
+                    ></textarea>
+                    <select
+                      value={updatedToDo.flagID}
+                      onChange={(e) =>
+                        setUpdatedToDo({
+                          ...updatedToDo,
+                          flagID: e.target.value,
+                        })
+                      }
+                    >
+                      {flags.map((flag, index) => (
+                        <option key={index} value={flag.id}>
+                          {flag.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="to-do-buttons">
+                      <button onClick={handleSaveToDo}>Save</button>
+                      <button onClick={handleCancelEdit}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="to-do-item-content">
+                    <h3>{item.title}</h3>
+                    <p>{item.content}</p>
+                    <div className="to-do-item-dates">
+                      <p>Start date: {item.start_date.slice(0, -14)}</p>
+                      <p>End date: {item.end_date.slice(0, -14)}</p>
+                    </div>
+                    <div className="flag-container">
+                      Flag: {flags[item.flagID - 1]?.name}
+                    </div>
+                    <div className="to-do-buttons">
+                      <button onClick={() => handleToDoEdit(item.id)}>
+                        Edit
+                      </button>
+                      <button onClick={() => handleToDoDelete(item.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div> ))}
-
+            ))}
           </div>
-        
         </div>
-
-      
       </div>
     </div>
   );
 }
 
 export default ToDoList;
+

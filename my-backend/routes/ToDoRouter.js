@@ -19,10 +19,10 @@ toDoRouter.get("/:id", verifyToken, async (req, res) => {
 });
 
 toDoRouter.post("/addToDo", verifyToken, async (req, res) => {
-  const { title, content, flag_id, user_id } = req.body;
+  const { title, content, flag_id, user_id, start_date, end_date } = req.body;
   db.query(
-    "INSERT INTO todo_list (title, content, flag_id, user_id) VALUES ($1, $2, $3, $4)",
-    [title, content, flag_id, user_id],
+    "INSERT INTO todo_list (title, content, flag_id, user_id, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6)",
+    [title, content, flag_id, user_id, start_date, end_date],
     (err, result) => {
       if (!err) {
         res.status(201).json({ message: "To Do added successfully" });
@@ -34,8 +34,8 @@ toDoRouter.post("/addToDo", verifyToken, async (req, res) => {
 });
 
 toDoRouter.put('/updateToDo', verifyToken, async (req, res) => {
-    const { title, content, flag_id, user_id, id } = req.body;
-    db.query('UPDATE todo_list SET title = $1, content = $2, flag_id = $3, user_id = $4 WHERE id = $5', [title, content, flag_id, user_id, id], (err, result) => {
+    const { title, content, flag_id, user_id, id, start_date, end_date} = req.body;
+    db.query('UPDATE todo_list SET title = $1, content = $2, flag_id = $3, user_id = $4, start_date = $6, end_date = $7 WHERE id = $5', [title, content, flag_id, user_id, id, start_date, end_date], (err, result) => {
         if (!err) {
             res.status(200).json({ message: "To Do updated successfully" });
         } else {
