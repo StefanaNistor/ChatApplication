@@ -401,7 +401,7 @@ for (let i = 0; i < toDoListItems.length; i++) {
                         <p>End date: {item.end_date.slice(0, -14)}</p>
                       </div>
                       <div className="flag-container">
-                        Flag: {flags[item.flagID - 1]?.name}
+                      Flag: <span id={`id${item.flagID - 1}`}>{flags[item.flagID - 1]?.name}</span>
                       </div>
                       <div className="to-do-buttons">
                         <button onClick={() => handleToDoEdit(item.id)}>

@@ -7,8 +7,10 @@
   flex-direction: column;
 }
 
+
+
 .main-todo-container h2 {
-  font-family: "Bacasime Antique", serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
   color: #422020;
@@ -17,7 +19,7 @@
 }
 
 .main-todo-container h3 {
-  font-family: "Bacasime Antique", serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
   color: #422020;
@@ -30,10 +32,8 @@
   border-radius: 7px;
 }
 
-.to-do-item-content {
-  margin-top: 2vh;
-  margin-bottom: 2vh;
-}
+
+
 
 .to-do-item-content-text {
   overflow-y: scroll;
@@ -45,7 +45,7 @@
 }
 
 .flag-container {
-  font-family: "Bacasime Antique", serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
   color: #422020;
@@ -61,7 +61,7 @@
 }
 
 .main-todo-container p {
-  font-family: "Bacasime Antique", serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
   color: #422020;
@@ -156,7 +156,11 @@
 
 .to-do-item-content {
   margin-left: 10px;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  font-size: 0.8em;
 }
+
 
 ::-webkit-scrollbar {
   width: 12px;
@@ -180,7 +184,7 @@
 }
 
 .calendar-container h2 {
-  font-family: "Bacasime Antique", serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
   color: #422020;
@@ -193,7 +197,7 @@
 }
 
 #sortHeader {
-  font-family: "Bacasime Antique", serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
   color: #422020;
@@ -237,4 +241,57 @@ input[type="date"] {
   width: 13vw;
   border: 1px solid #ccc;
   height: 7.1vh;
+}
+
+.to-do-buttons {
+  display: flex;
+    justify-content: space-between;
+    margin: 2vw;
+}
+
+.to-do-buttons button {
+  width: 10vw;
+}
+
+
+#id0 {
+  background-color: #f21d1d; 
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+#id1 {
+  background-color: #ffa500; 
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+#id2 {
+  background-color: #ffd700; 
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+#id3 {
+  background-color: #6495ed; 
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+#id4 {
+  background-color: #32cd32; 
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+#id5 {
+  background-color: #b02ea3;
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
 }

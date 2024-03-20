@@ -44,13 +44,13 @@ ul li:hover {
     margin-bottom: 10px;
 }
 
-#messageInput {
+/* #messageInput {
     width: calc(100% - 70px);
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
+} */
 
 button {
     padding: 10px 20px;

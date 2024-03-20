@@ -27,11 +27,12 @@
      border: 2px solid #d9d6db;
      margin-top: 2vh;
      box-shadow: 0 8px 16px hsl(280, 3%, 82%);
+     background-color: white;
 
 }
 
 .profile-about-header h1{
-    font-family: "Bacasime Antique", serif;
+    font-family: "DM Sans", sans-serif;
     font-weight: 600;
     font-style: normal;
     color: #422020;
@@ -49,10 +50,11 @@
     border: 2px solid #dbd6d7;
     margin-top: 2vh;
     box-shadow: 0 8px 16px hsl(330, 2%, 82%);
+    background-color: white;
 }
 
 #firstname, #lastname, #date_of_birth, #phone, #address, #hobby, #about, #email_profile{
-    font-family: "Bacasime Antique", serif;
+    font-family: "DM Sans", sans-serif;
     font-weight: 600;
     font-style: normal;
     display: flex;

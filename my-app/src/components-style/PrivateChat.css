@@ -3,6 +3,8 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    width: 78vw;
+    height: 100vh;
 }
 
 .privateChatHeader {
@@ -16,7 +18,11 @@
 
 .privateChatBody {
     overflow-y: scroll;
-    max-height: calc(67vh - 80px); /* Adjust as needed */
+    max-height: 71vh;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    
 }
 
 .message {
@@ -26,13 +32,6 @@
     margin-bottom: 10px;
 }
 
-#messageInput {
-    width: calc(100% - 70px);
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
 
 button {
     padding: 10px 20px;
@@ -48,3 +47,38 @@ button:hover {
     background-color: #86aa8d;
     transition: 0.5s;
 }
+
+.chatFooter {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    bottom:0;
+    position: fixed;
+    width: 78vw;
+    margin: 3vw;
+
+}
+
+.messageInput input{
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.messageInput  {
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+   
+}
+
+.messageInput button {
+    width: 7vw;
+}
+
+
