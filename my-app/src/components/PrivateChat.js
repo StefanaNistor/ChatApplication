@@ -132,7 +132,6 @@ function PrivateChat({ chatID }) {
   return (
     <div className="private-container">
       <div className="privateChatHeader">
-        <h1 id="privateTitle">ADD USERNAME HERE</h1>
       </div>
 
       <div className="privateChatBody">

@@ -3,22 +3,33 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    width: 78vw;
+    height: 100vh;
+    margin-top: 6vh;
 }
 
 .groupChatHeader {
-    margin-bottom: 20px;
+    margin-bottom: 1vh;
 }
 
 #groupTitle {
     color: #333;
     font-size: 24px;
-    margin-bottom: 5px;
+    margin-bottom: 1vh;
 }
 
 #groupDescription {
     color: #666;
     font-size: 16px;
     margin-bottom: 10px;
+}
+
+.groupChatBody{
+    overflow-y: scroll;
+    max-height: 55vh;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
 }
 
 ul {

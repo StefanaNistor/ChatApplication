@@ -158,7 +158,7 @@ function GroupChat({ groupID }) {
                 </ul>}
             </div>
 
-            <div className='groupChatBody' style={{ overflowY: 'scroll', maxHeight: '60vh'}}>
+            <div className='groupChatBody'>
             <div className='chatMessages' style={{  }}>
                 {messages.map((message, index) => (
                     <div key={index} className='message'>
@@ -168,8 +168,12 @@ function GroupChat({ groupID }) {
                     </div>
                 ))}
             </div>
+            <div className="chatFooter">
+                <div className="messageInput">
                 {groupID && <input type='text' id='messageInput' placeholder='Type your message here...' /> }
                 {groupID && <button onClick={handleSendMessage}>Send</button>}
+            </div>
+            </div>
             </div>
 
         </div>

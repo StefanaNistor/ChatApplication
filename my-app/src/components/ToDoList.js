@@ -220,7 +220,7 @@ function ToDoList() {
 
     console.log(toDoListItems)
     console.log(new Date(startDate));
-    console.log('END',new Date(toDoListItems[1].end_date));
+    //console.log('END',new Date(toDoListItems[1].end_date));
 
 for (let i = 0; i < toDoListItems.length; i++) {
     let item = toDoListItems[i];
