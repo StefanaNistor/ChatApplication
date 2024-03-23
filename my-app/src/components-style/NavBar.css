@@ -1,5 +1,5 @@
 .navbar-container{
-    background-color: #9B4444;
+    background-color: rgb(187, 130, 133);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -34,7 +34,7 @@
 }
 
 #logoutBtn{
-    background: #9B4444;
+    background: rgb(187, 130, 133);
     color: #fff;
     border: none;
     font-size: 1em;

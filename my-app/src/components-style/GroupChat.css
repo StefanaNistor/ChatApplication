@@ -1,5 +1,5 @@
 .groupChat-container {
-    background-color: #EEEEEE;
+    background-color: #fcf0f1;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
@@ -53,7 +53,7 @@ ul {
     height: 10vh;
     width: 10.5vw;
     position: absolute;
-    background: rgba(255, 255, 255);
+    background: #ffffff;
     padding: 5px;
     border: 1px solid #ccc;
     z-index: 99;
@@ -61,8 +61,7 @@ ul {
 
 ul li {
     cursor: pointer;
-    /* margin-bottom: 5px; */
-    color: #A3C9AA;
+    color: #517fad;
 }
 
 ul li:hover {
@@ -77,17 +76,9 @@ ul li:hover {
     margin-bottom: 10px;
 }
 
-/* #messageInput {
-    width: calc(100% - 70px);
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-} */
-
 button {
     padding: 10px 20px;
-    background-color: #A3C9AA;
+    background-color: #84a5c6;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -96,5 +87,5 @@ button {
 }
 
 button:hover {
-    background-color: #86aa8d;
+    background-color: #517fad;
 }

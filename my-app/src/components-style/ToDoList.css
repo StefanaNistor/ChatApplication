@@ -2,12 +2,10 @@
   margin-top: 10.9vh;
   overflow-y: scroll;
   max-height: 90vh;
-  background-color: #eeeeee;
+  background-color: #fcf0f1;
   display: flex;
   flex-direction: column;
 }
-
-
 
 .main-todo-container h2 {
   font-family: "DM Sans", sans-serif;
@@ -31,8 +29,6 @@
 .to-do-item {
   border-radius: 7px;
 }
-
-
 
 
 .to-do-item-content-text {
@@ -81,7 +77,7 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45vw;
   margin-left: 1vw;
-  background: white;
+  background: #fffbfb;
 }
 
 #add-to-do-form.active {
@@ -135,11 +131,8 @@
   box-shadow: 4px 2px 10px rgb(0, 0, 0, 0.2);
   width: 30vw;
   margin-left: 1vw;
-  background: white;
+  background: #fffbfb;
   color: #422020;
-  /* height: 40vh; */
-  /* max-height: 40vh; */
-  /* overflow-y: scroll; */
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -161,22 +154,21 @@
   font-size: 0.8em;
 }
 
-
 ::-webkit-scrollbar {
   width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #eeeeee;
+  background: #fcf0f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a3c9aa;
+  background: #84a5c6;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #759977;
+  background: #517fad;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -220,10 +212,10 @@
   display: flex;
   padding: 5px;
   border-radius: 5px;
-  background-color: #f5f5f5;
+  background-color: #fffbfb;
   justify-content: space-between;
   margin: 5px;
-  border-bottom: 2px solid #e8e2e2;
+  border-bottom: 2px solid rgb(223, 208, 208);
   box-shadow: 0px 4px 9px hsla(330, 2%, 82%, 0.44);
 }
 

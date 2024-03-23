@@ -202,8 +202,9 @@ function Profile() {
                   <div className='profile-about-header'>
                   <h1>Personal Information</h1>
                   </div>
-                   
+                  
                    <div className='profile-about-details'>
+                    <div className='profile-about-details-container'>
                     <div id='firstname'>
                     <p>First Name:</p> <div id="firstname_value">{userAbout.firstname}</div>
                     </div>
@@ -225,9 +226,11 @@ function Profile() {
                     <div id='about'>
                       <p style={{marginRight:'3vw'}}>About:</p>  <div id="about_value" className={isEditable ? "editable" : ""}>{userAbout.about}</div>
                     </div>
-                    </div>
+                    
                 <button id='editBtn' onClick={handleEditing}>Edit</button>
                 <button id='saveBtn' onClick={handleSave} style={{display:'none'}}> Save </button>
+                </div>
+                </div>
             </div>
         </div>
         </div>

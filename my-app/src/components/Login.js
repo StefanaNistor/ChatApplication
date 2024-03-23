@@ -42,7 +42,7 @@ function Login() {
     <div>
         <div className= 'container'>
         <div className='photo-container'>
-        <img src='../loginPic.jpg' id='loginPic' alt='LoginPhoto'/>
+        <img src='../loginPicture.jpg' id='loginPic' alt='LoginPhoto'/>
         </div>
         <div className='login-container'>
         <br/>

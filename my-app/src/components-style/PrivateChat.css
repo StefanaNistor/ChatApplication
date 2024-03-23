@@ -1,5 +1,5 @@
 .private-container {
-    background-color: #EEEEEE;
+    background-color: #fcf0f1;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
@@ -58,7 +58,7 @@
 
 button {
     padding: 10px 20px;
-    background-color: #A3C9AA;
+    background-color: #84a5c6;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -67,7 +67,7 @@ button {
 }
 
 button:hover {
-    background-color: #86aa8d;
+    background-color: #517fad;
     transition: 0.5s;
 }
 
