@@ -60,7 +60,7 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
 
   const fetchPrivateChats = () => {
     axios
-      .get(`http://localhost:7979/privateChat/getByCurrentUser/${userID}`, {
+      .get(`http://localhost:7979/privateChat/getChatListByCurrentUser/${userID}`, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },

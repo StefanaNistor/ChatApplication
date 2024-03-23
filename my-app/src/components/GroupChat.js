@@ -148,14 +148,34 @@ function GroupChat({ groupID }) {
     return (
         <div className='groupChat-container' >
             <div className='groupChatHeader'>
+                <div className='rightHeader'>
+
+                <div>
                 <h1 id='groupTitle'>{selectedGroupChat.groupname}</h1>
+                </div>
+                
+                <div>
                 <h2 id='groupDescription'>{selectedGroupChat.description}</h2>
+                </div>
+
+                <div>
                 <button onClick={getMembers}>Show Group Members</button>
-                {showMembers && <ul>
+                </div>
+                
+                {showMembers && <div className='showMembersOverlay'> <ul>
                     {groupMembers.map((member, index) => (
                         <li key={index} onClick={()=> handleUserClick(member.user_id)} > {member.username}</li>
                     ))}
-                </ul>}
+                </ul>
+                </div>
+                }
+                </div>
+                <img src='https://via.placeholder.com/100' alt='groupPicture' style={{width:'100px', height: '100px', borderRadius:'50px', padding:'2vh'}}/>
+                
+                
+               
+               
+                
             </div>
 
             <div className='groupChatBody'>

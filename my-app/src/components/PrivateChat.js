@@ -8,11 +8,13 @@ function PrivateChat({ chatID }) {
   const [usernames, setUsernames] = useState({});
   const [messageInput, setMessageInput] = useState("");
   const [otherUser, setOtherUser] = useState({});
+  const [otherUserDetails, setOtherUserDetails] = useState({});
 
   useEffect(() => {
     if (chatID) {
       getMessages(chatID);
     }
+    getOtherUser(chatID);
   }, [chatID]);
 
   function getMessages(chatID) {
@@ -54,28 +56,71 @@ function PrivateChat({ chatID }) {
 
   const socket = io("http://localhost:7979");
 
-  function getOtherUser(chatID) {
-    let chat = {};
-    axios
-      .get(`http://localhost:7979/privateChat/getByCurrentUser/${chatID}`, {
+  async function getOtherUserDetails(userId){
+    try {
+      const response = await axios.get(`http://localhost:7979/userDetails/${userId}`, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
-      })
-      .then((res) => {
-        console.log("Other user:", res.data);
-        chat = res.data;
-      })
-      .catch((err) => {
-        console.log("An error occurred while getting other user:", err);
-      });
+        });
 
-    if (chat.user1_id === JSON.parse(localStorage.getItem("user")).id) {
-      setOtherUser(chat.user2_id);
-    } else {
-      setOtherUser(chat.user1_id);
+        setOtherUserDetails(response.data[0])
     }
+    catch (error) {
+      console.error("An error occurred while getting user details:", error);
+    }
+
+    
   }
+
+  async function getOtherUser(chatID) {
+    try {
+        const response = await axios.get(`http://localhost:7979/privateChat/getByCurrentUser/${chatID}`, {
+            headers: {
+                "x-access-token": localStorage.getItem("token"),
+            },
+        });
+
+        const chatArray = response.data;
+
+        // Check if chatArray is not empty
+        if (!chatArray || chatArray.length === 0) {
+            console.log("No chats found for ID:", chatID);
+            return;
+        }
+
+        // Find the chat with the given ID
+        const chat = chatArray.find(chat => chat.chat_id === chatID);
+
+        // Check if chat is found
+        if (!chat) {
+            console.log("Chat not found for ID:", chatID);
+            return;
+        }
+
+        // Retrieve current user ID from localStorage
+        const currentUserID = JSON.parse(localStorage.getItem("user")).id;
+
+        let otherUserId;
+
+        // Determine the other user's ID based on the retrieved chat
+        if (chat.user1_id === currentUserID) {
+            otherUserId = chat.user2_id;
+        } else {
+            otherUserId = chat.user1_id;
+        }
+
+        // Set the other user's ID
+        setOtherUser(otherUserId);
+        //console.log("Other user:", otherUserId);
+
+        getOtherUserDetails(otherUserId);
+    } catch (err) {
+        console.log("An error occurred while getting other user:", err);
+    }
+}
+
+  
 
   async function getUserNameById(userID) {
     try {
@@ -131,7 +176,20 @@ function PrivateChat({ chatID }) {
 
   return (
     <div className="private-container">
-      <div className="privateChatHeader">
+       <div className="privateChatHeader">
+      <div className="privateTitle">
+        <div className="privateTitleRight">
+        <h1>
+          {otherUserDetails && otherUserDetails.firstname}{" "}
+          {otherUserDetails && otherUserDetails.lastname}
+        </h1>
+        <h2>
+          {otherUserDetails && otherUserDetails.about}
+        </h2>
+        </div>
+      </div>
+      <img src='https://via.placeholder.com/100' alt='groupPicture' style={{width:'100px', height: '100px', borderRadius:'50px', padding:'2vh'}}/>
+     
       </div>
 
       <div className="privateChatBody">

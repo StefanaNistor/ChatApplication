@@ -10,12 +10,21 @@
 
 .groupChatHeader {
     margin-bottom: 1vh;
+        display: flex;
+        justify-content: space-between;
+        width: 70vw;
+        padding-top: 2vh;
+}
+
+.rightHeader {
+    display: column;
 }
 
 #groupTitle {
     color: #333;
     font-size: 24px;
     margin-bottom: 1vh;
+    text-align: start;
 }
 
 #groupDescription {
@@ -35,11 +44,24 @@
 ul {
     list-style: none;
     padding: 0;
+    display: contents;
+}
+
+.showMembersOverlay {
+    overflow-y: scroll;
+    max-height: 10vh;
+    height: 10vh;
+    width: 10.5vw;
+    position: absolute;
+    background: rgba(255, 255, 255);
+    padding: 5px;
+    border: 1px solid #ccc;
+    z-index: 99;
 }
 
 ul li {
     cursor: pointer;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
     color: #A3C9AA;
 }
 
