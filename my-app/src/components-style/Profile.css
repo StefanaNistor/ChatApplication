@@ -1,7 +1,14 @@
+body {
+  font-family: "DM Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fcf0f1;
+}
+
 .main-user-container {
   margin-top: 10.9vh;
   overflow-y: scroll;
-  max-height: 90vh;
+  max-height: 100vh;
   background-color: #fcf0f1;
 }
 
@@ -30,7 +37,8 @@
   box-shadow: 0 8px 16px hsl(280, 3%, 82%);
   background-color: white;
   border-radius: 20px;
-  height: 10vh;
+  height: 8vh;
+  text-align: center;
 }
 
 .profile-about-header h1 {
@@ -38,7 +46,7 @@
   font-weight: 600;
   font-style: normal;
   color: #422020;
-  margin: 12px;
+  margin: auto;
 }
 
 .profile-about p {
@@ -51,11 +59,11 @@
 
 .profile-about-details {
   border: 2px solid #eac3c5ff;
-  margin-top: 2vh;
+  margin-top: 1vh;
   box-shadow: 0 8px 16px hsl(330, 2%, 82%);
   background-color: white;
   border-radius: 20px;
-  height: 73vh;
+  height: 75vh;
 }
 
 .profile-about-details-container {
@@ -119,12 +127,13 @@
 }
 
 .profile-picture {
-  display: flex;
-  margin-top: 5vh;
-  align-items: center;
-  flex-direction: column;
-  margin-left: 3vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-left: 3vw;
+    margin: auto;
 }
+  
 
 .editable {
   border: 1px solid black;

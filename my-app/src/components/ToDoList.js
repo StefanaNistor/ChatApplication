@@ -281,6 +281,7 @@ for (let i = 0; i < toDoListItems.length; i++) {
                     id="todoContentInput"
                     rows="4"
                   ></textarea>
+                  <div className='labelEndDate'>End date</div>
                   <input
                     type="date"
                     placeholder="End Date"

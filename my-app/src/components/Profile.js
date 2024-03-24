@@ -182,6 +182,7 @@ function Profile() {
         <div className='main-user-container'>
             <div className='profile-container'>
             <div className='profile-picture'>
+              <div className='pic'>
             {selectedFile ? (
           <img
           src={URL.createObjectURL(selectedFile)}
@@ -190,11 +191,12 @@ function Profile() {
         />
       ) : (
         <img
-          src="https://via.placeholder.com/480"
+          src="https://via.placeholder.com/300"
           alt="Placeholder"
-          style={{ maxWidth: "480px", maxHeight: "480px" }}
+          style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
         />
       )}
+      </div>
                     <input type='file' id='fileForProfile' onChange={handleFileChange} style = {{display :'none'}}/>
                     <button id='uploadBtn' onClick={handleUpdatePhoto}>Upload photo</button>
               </div>
