@@ -83,36 +83,28 @@ function PrivateChat({ chatID }) {
 
         const chatArray = response.data;
 
-        // Check if chatArray is not empty
         if (!chatArray || chatArray.length === 0) {
             console.log("No chats found for ID:", chatID);
             return;
         }
 
-        // Find the chat with the given ID
         const chat = chatArray.find(chat => chat.chat_id === chatID);
 
-        // Check if chat is found
         if (!chat) {
             console.log("Chat not found for ID:", chatID);
             return;
         }
-
-        // Retrieve current user ID from localStorage
         const currentUserID = JSON.parse(localStorage.getItem("user")).id;
 
         let otherUserId;
 
-        // Determine the other user's ID based on the retrieved chat
         if (chat.user1_id === currentUserID) {
             otherUserId = chat.user2_id;
         } else {
             otherUserId = chat.user1_id;
         }
 
-        // Set the other user's ID
         setOtherUser(otherUserId);
-        //console.log("Other user:", otherUserId);
 
         getOtherUserDetails(otherUserId);
     } catch (err) {

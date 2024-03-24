@@ -5,7 +5,6 @@ import axios from "axios";
 import { useState } from "react";
 import { parse } from "@fortawesome/fontawesome-svg-core";
 
-
 function ToDoList() {
   const [toDoListItems, setToDoListItems] = useState([]);
   const [flags, setFlags] = useState([]);
@@ -59,7 +58,6 @@ function ToDoList() {
       });
   };
 
-  
   function getToDoDataInputs() {
     const titleElement = document.getElementById("todoTitleInput");
     const contentElement = document.getElementById("todoContentInput");
@@ -201,8 +199,8 @@ function ToDoList() {
 
   const handleSort = (e) => {
     e.preventDefault();
-    
-   const titleElement = document.getElementById("sortByTitle");
+
+    const titleElement = document.getElementById("sortByTitle");
     const startDateElement = document.getElementById("sortByStartDate");
     const endDateElement = document.getElementById("sortByEndDate");
     const contentElement = document.getElementById("sortByContent");
@@ -213,47 +211,45 @@ function ToDoList() {
     const endDate = endDateElement.value ? endDateElement.value : null;
     const content = contentElement.value ? contentElement.value : null;
     const flag = flagElement.value ? flagElement.value : null;
-    
-
 
     let sortedItems = [];
 
-    console.log(toDoListItems)
+    console.log(toDoListItems);
     console.log(new Date(startDate));
     //console.log('END',new Date(toDoListItems[1].end_date));
 
-for (let i = 0; i < toDoListItems.length; i++) {
-    let item = toDoListItems[i];
-    
-    if ((!title || includesInOrder(item.title.toLowerCase(), title.toLowerCase())) &&
-    (!startDate || item.start_date.slice(0, 10) === startDate) &&
-    (!endDate || item.end_date.slice(0, 10) === endDate) &&
-    (!content || includesInOrder(item.content.toLowerCase(), content.toLowerCase())) &&
-    (!flag || item.flagID === parseInt(flag))) {
+    for (let i = 0; i < toDoListItems.length; i++) {
+      let item = toDoListItems[i];
 
-    sortedItems.push(item);
-}
-  }
+      if (
+        (!title ||
+          includesInOrder(item.title.toLowerCase(), title.toLowerCase())) &&
+        (!startDate || item.start_date.slice(0, 10) === startDate) &&
+        (!endDate || item.end_date.slice(0, 10) === endDate) &&
+        (!content ||
+          includesInOrder(item.content.toLowerCase(), content.toLowerCase())) &&
+        (!flag || item.flagID === parseInt(flag))
+      ) {
+        sortedItems.push(item);
+      }
+    }
 
     console.log(sortedItems);
 
-    if(sortedItems.length === 0){
-      alert('No items found!');
-    }
-    else{
+    if (sortedItems.length === 0) {
+      alert("No items found!");
+    } else {
       setToDoListItems(sortedItems);
     }
-    
-    //MAJOR TO DO- SOMEHOW UPDATE THE UI 
 
-  }
+    //MAJOR TO DO- SOMEHOW UPDATE THE UI
+  };
 
+ 
   return (
     <div>
       <NavBar />
-      <div
-        className="main-container-todo-calendar"
-      >
+      <div className="main-container-todo-calendar">
         <div
           className="main-todo-container"
           style={{ overflowY: "scroll", height: "100vh" }}
@@ -262,91 +258,115 @@ for (let i = 0; i < toDoListItems.length; i++) {
             className="main-todo-header"
             style={{
               display: "grid",
-              gridTemplateColumns: "2fr 2fr",
+              gridTemplateColumns: "0.5fr 2fr",
               marginRight: "5px",
             }}
           >
-            <div className="to-do-add-header">
-              <h2>Add to your to do list!</h2>
+            <div  style={{marginTop:'4vh'}}>
               <button onClick={setFormVisibility} id="addBtn">
-            Add a new to-do!
-          </button>
-          <div className="add-to-do-container">
-            {areAddingToDo && (
-              <form id="add-to-do-form" className="active">
-                <div className="add-form-content">
-                  <input type="text" placeholder="Title" id="todoTitleInput" />
-                  <textarea
-                    placeholder="Content"
-                    id="todoContentInput"
-                    rows="4"
-                  ></textarea>
-                  <div className='labelEndDate'>End date</div>
-                  <input
-                    type="date"
-                    placeholder="End Date"
-                    id="todoEndDateInput"
-                    style={{ width: "93%" }}
-                  />
-                  <select id="todoFlagInput">
-                    {flags.map((flag, index) => (
-                      <option key={index} value={flag.id}>
-                        {flag.name}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="add-to-do-buttons">
-                    <button onClick={handleCancelAdd} id="cancelAddBtn">
-                      {" "}
-                      Cancel{" "}
-                    </button>
-                    <button onClick={handleAddNewToDo} id="saveToDo">
-                      {" "}
-                      Save To Do{" "}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-          </div>
+                Add a new to-do!
+              </button>
             </div>
-            <div className="to-do-header-sort">
-              <h3 id="sortHeader">Sort by:</h3>
-              <div className="sortByTitle">
-              <p>Title:</p>
-              <input type="text" id="sortByTitle" />
-              </div>
-              <div className="sortByStartDate">
-              <p>Start Date:</p>
+           
+           
+
+            <div className="add-to-do-container">
+              {areAddingToDo && (
+                <form id="add-to-do-form" className="active">
+                  <div className="add-form-content">
+                    <input
+                      type="text"
+                      placeholder="Title"
+                      id="todoTitleInput"
+                    />
+                    <textarea
+                      placeholder="Content"
+                      id="todoContentInput"
+                      rows="4"
+                    ></textarea>
+                    <div className="labelEndDate">End date</div>
+                    <input
+                      type="date"
+                      placeholder="End Date"
+                      id="todoEndDateInput"
+                      style={{ width: "93%" }}
+                    />
+                    <select id="todoFlagInput">
+                      {flags.map((flag, index) => (
+                        <option key={index} value={flag.id}>
+                          {flag.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="add-to-do-buttons">
+                      <button onClick={handleCancelAdd} id="cancelAddBtn">
+                        {" "}
+                        Cancel{" "}
+                      </button>
+                      <button onClick={handleAddNewToDo} id="saveToDo">
+                        {" "}
+                        Save To Do{" "}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+
+          <div
+            className="to-do-header-sort"
+          >
+            <div className="sortByTitle">
+              Title:
+              <input
+                type="text"
+                id="sortByTitle"
+                placeholder="Enter Title..."
+              />
+            </div>
+            <div className="sortByStartDate">
+              Start Date:
               <input type="date" id="sortByStartDate" />
-              </div>
-              <div className="sortByEndDate">
-              <p>End Date:</p>
-              <input type="date" id="sortByEndDate" />
-              </div>
-              <div className="sortByContent">
-              <p>Content:</p>
-              <input type="text" id="sortByContent" />
-              </div>
-              <div className="sortByFlag">
-              <p>Flag:</p>
+            </div>
+
+            <div className="sortByEndDate">
+              End Date:
+              <input type="date" id="sortByEndDate"  placeholder="END DATE"/>
+            </div>
+            
+            <div className="sortByContent">
+              Content:
+              <input
+                type="text"
+                id="sortByContent"
+                placeholder="Enter Content..."
+              />
+            </div>
+            <div className="sortByFlag">
+              Flag:
               <select id="sortByFlag">
+                <option value="">Choose flag</option>
                 {flags.map((flag, index) => (
                   <option key={index} value={flag.id}>
                     {flag.name}
                   </option>
                 ))}
               </select>
-              </div>
-              <button id="sortBtn" onClick={handleSort} style={{width:'12vw'}}>Sort</button>
-
             </div>
+            <div>
+            <button id="sortBtn" onClick={handleSort} style={{ width: "12vw" }}>
+              Sort
+            </button>
+            </div>
+            
           </div>
 
-         
-
           <div id="to-do-list-container">
-            <div className="to-do-list" style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr'}}>
+            <div
+              className="to-do-list"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
+            >
               {toDoListItems.map((item, index) => (
                 <div key={index} className="to-do-item" id={item.id}>
                   {updatedToDo && updatedToDo.id === item.id ? (
@@ -402,7 +422,10 @@ for (let i = 0; i < toDoListItems.length; i++) {
                         <p>End date: {item.end_date.slice(0, -14)}</p>
                       </div>
                       <div className="flag-container">
-                      Flag: <span id={`id${item.flagID - 1}`}>{flags[item.flagID - 1]?.name}</span>
+                        {" "}
+                        <span id={`id${item.flagID - 1}`}>
+                          {flags[item.flagID - 1]?.name}
+                        </span>
                       </div>
                       <div className="to-do-buttons">
                         <button onClick={() => handleToDoEdit(item.id)}>
