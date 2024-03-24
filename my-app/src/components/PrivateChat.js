@@ -175,12 +175,13 @@ function PrivateChat({ chatID }) {
           {otherUserDetails && otherUserDetails.firstname}{" "}
           {otherUserDetails && otherUserDetails.lastname}
         </h1>
-        <h2>
+
+        <div className="userDetails">
           {otherUserDetails && otherUserDetails.about}
-        </h2>
+        </div>
         </div>
       </div>
-      <img src='https://via.placeholder.com/100' alt='groupPicture' style={{width:'100px', height: '100px', borderRadius:'50px', padding:'2vh'}}/>
+      <img src='https://via.placeholder.com/70' alt='groupPicture' style={{width:'70px', height: '70px', borderRadius:'50%', padding:'2vh'}}/>
      
       </div>
 
@@ -199,7 +200,7 @@ function PrivateChat({ chatID }) {
           ))}
         </div>
       </div>
-      <div className="chatFooter">
+      <div className="chatFooterPrivate">
         <div className="messageInput">
           {chatID && (
             <input

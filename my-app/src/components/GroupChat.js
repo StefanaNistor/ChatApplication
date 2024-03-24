@@ -146,58 +146,51 @@ function GroupChat({ groupID }) {
     }
 
     return (
-        <div className='groupChat-container' >
-            <div className='groupChatHeader'>
-                <div className='rightHeader'>
-
-                <div>
-                <h1 id='groupTitle'>{selectedGroupChat.groupname}</h1>
+        <div className="groupChat-container">
+          <div className="groupChatHeader">
+            <div className="rightHeader">
+              <div className="privateTitleRight">
+                <h1 id="groupTitle">{selectedGroupChat.groupname}</h1>
+                <div className="userDetails" id="groupDescription">
+                  {selectedGroupChat.description}
                 </div>
-                
-                <div>
-                <h2 id='groupDescription'>{selectedGroupChat.description}</h2>
-                </div>
-
-                <div>
+              </div>
+              <div>
                 <button onClick={getMembers}>Show Group Members</button>
-                </div>
-                
-                {showMembers && <div className='showMembersOverlay'> <ul>
-                    {groupMembers.map((member, index) => (
-                        <li key={index} onClick={()=> handleUserClick(member.user_id)} > {member.username}</li>
-                    ))}
-                </ul>
-                </div>
-                }
-                </div>
-                <img src='https://via.placeholder.com/100' alt='groupPicture' style={{width:'100px', height: '100px', borderRadius:'50px', padding:'2vh'}}/>
-                
-                
-               
-               
-                
+                {showMembers && (
+                  <div className="showMembersOverlay">
+                    <ul>
+                      {groupMembers.map((member, index) => (
+                        <li key={index} onClick={() => handleUserClick(member.user_id)}>
+                          {member.username}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
-
-            <div className='groupChatBody'>
-            <div className='chatMessages' style={{  }}>
-                {messages.map((message, index) => (
-                    <div key={index} className='message'>
-                        <p>{usernames[message.user_id] ? usernames[message.user_id].username + ": " : ""}</p>
-                        <p>{message.content}</p>
-                        <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
-                    </div>
-                ))}
+            <img src="https://via.placeholder.com/70" alt="groupPicture" style={{ width: '70px', height: '70px', borderRadius: '50%', padding: '2vh' }} />
+          </div>
+          <div className="groupChatBody">
+            <div className="chatMessages">
+              {messages.map((message, index) => (
+                <div key={index} className="message">
+                  <p>{usernames[message.user_id] ? usernames[message.user_id].username + ": " : ""}</p>
+                  <p>{message.content}</p>
+                  <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+                </div>
+              ))}
             </div>
             <div className="chatFooter">
-                <div className="messageInput">
-                {groupID && <input type='text' id='messageInput' placeholder='Type your message here...' /> }
+              <div className="messageInput">
+                {groupID && <input type="text" id="messageInput" placeholder="Type your message here..." />}
                 {groupID && <button onClick={handleSendMessage}>Send</button>}
+              </div>
             </div>
-            </div>
-            </div>
-
+          </div>
         </div>
-    );
+      );
 }
 
 export default GroupChat;

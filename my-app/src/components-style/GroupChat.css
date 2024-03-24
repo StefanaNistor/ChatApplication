@@ -2,81 +2,83 @@
     background-color: #fcf0f1;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
     width: 78vw;
     height: 100vh;
-    margin-top: 6vh;
-}
-
-.groupChatHeader {
-    margin-bottom: 1vh;
-        display: flex;
-        justify-content: space-between;
-        width: 70vw;
-        padding-top: 2vh;
-}
-
-.rightHeader {
-    display: column;
-}
-
-#groupTitle {
-    color: #333;
-    font-size: 24px;
+    margin-top: 8vh;
+  }
+  
+  .groupChatHeader {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 2vh;
+    height: 18vh;
+    padding: 2vh 20px 0px 0px;
+  }
+  
+  .rightHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  #groupTitle {
+    font-size: 20px;
     margin-bottom: 1vh;
     text-align: start;
-}
-
-#groupDescription {
-    color: #666;
+  }
+  
+  #groupDescription {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 5px;
     font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.groupChatBody{
+    width: 50vw;
+  }
+  
+  .groupChatBody {
     overflow-y: scroll;
     max-height: 55vh;
     padding: 10px;
     border: 2px solid #ccc;
     border-radius: 5px;
-}
-
-ul {
+  }
+  
+  ul {
     list-style: none;
     padding: 0;
     display: contents;
-}
-
-.showMembersOverlay {
+  }
+  
+  .showMembersOverlay {
     overflow-y: scroll;
     max-height: 10vh;
     height: 10vh;
-    width: 10.5vw;
+    width: 11vw;
     position: absolute;
     background: #ffffff;
     padding: 5px;
     border: 1px solid #ccc;
     z-index: 99;
-}
-
-ul li {
+  }
+  
+  ul li {
     cursor: pointer;
     color: #517fad;
-}
-
-ul li:hover {
+  }
+  
+  ul li:hover {
     text-decoration: underline;
-}
-
-
-.message {
+  }
+  
+  .message {
     background-color: #fff;
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
-}
-
-button {
+  }
+  
+  button {
     padding: 10px 20px;
     background-color: #84a5c6;
     color: #fff;
@@ -84,8 +86,37 @@ button {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
-}
-
-button:hover {
+  }
+  
+  button:hover {
     background-color: #517fad;
-}
+  }
+  
+  .chatFooter {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    bottom: 0;
+    position: fixed;
+    width: 78vw;
+    margin: 1.5vw;
+  }
+  
+  .messageInput input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+  
+  .messageInput {
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .messageInput button {
+    width: 7vw;
+  }
+  
