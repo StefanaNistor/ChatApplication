@@ -7,6 +7,7 @@ import Profile from './components/Profile';
 import Calendar from './components/Calendar';
 import UserMasterList from './components/UserMasterList';
 import OtherProfile from './components/OtherProfile';
+import AdminPanel from './components/AdminPanel';
 
 import React from 'react';
 
@@ -22,6 +23,7 @@ function App() {
         <Route path='calendar' element={<Calendar/>}/>
         <Route path='user-master-list' element={<UserMasterList/>}/>
         <Route path="/otherProfile/:otherUserID" element={<OtherProfile />} />
+        <Route path='admin' element={<AdminPanel/>}/>
 
       </Routes>
   </Router>

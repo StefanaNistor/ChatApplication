@@ -4,6 +4,9 @@ const db = require('../dbConfig');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('../middleware');
+const axios = require('axios');
+const { Pool } = require('pg');
+const dbConfig = require('../dbConfig');
 
 // ---------------- HASHING PASSWORDS ----------------
 db.query('SELECT id, password FROM users', (err, result) => {
@@ -103,7 +106,56 @@ userRouter.get('/username/:id',  verifyToken, async (req, res) => {
     });
 });
 
+
+userRouter.delete('/:id', verifyToken, async (req, res) => {
+    const userId = req.params.id;
+    const numericUserId = parseInt(userId);
+
+    if (isNaN(numericUserId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    try {
+   
+        await db.query('BEGIN');
+
+        // delete form mongo
+        await axios.delete(`http://localhost:7979/privateMessages/deleteByUser/${numericUserId}`, {
+            headers: {
+                "x-access-token": req.headers['x-access-token'],
+            },
+        });
+
+        await axios.delete(`http://localhost:7979/groupMessages/deleteByUser/${numericUserId}`, {
+            headers: {
+                "x-access-token": req.headers['x-access-token'],
+            },
+        });
+
+        // delete form postgres
+        await db.query('DELETE FROM todo_list WHERE user_id = $1', [numericUserId]);
+        await db.query('DELETE FROM privatechats WHERE user1_id = $1 OR user2_id = $1', [numericUserId]);
+        await db.query('DELETE FROM user_in_group WHERE user_id = $1', [numericUserId]);
+        await db.query('DELETE FROM user_details WHERE user_id = $1', [numericUserId]);
+
+        // delete the user
+        await db.query('DELETE FROM users WHERE id = $1', [numericUserId]);
+        
+        await db.query('COMMIT');
+
+        res.status(200).json({ message: "User deleted" });
+    } catch (error) {
+      
+        await db.query('ROLLBACK');
+        console.error(error);
+        res.status(500).json({ message: "An error occurred" });
+    }
+});
+
+
 console.log('...UserRouter is running');
+
+
 
 
 module.exports = userRouter;

@@ -105,4 +105,19 @@ privateMessageRouter.get("/getByChat/:id", verifyToken, async (req, res) => {
   }
 });
 
+
+privateMessageRouter.delete("/deleteByUser/:id", async (req, res) => {
+  const userID = req.params.id;
+  if (!userID) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  try {
+    const result = await PrivateMessage.deleteMany({ user_id: userID });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error deleting private messages:", error);
+    res.status(500).json({ error: "EROARE BACKEND" });
+  }
+});
+
 module.exports = privateMessageRouter;

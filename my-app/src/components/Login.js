@@ -40,11 +40,6 @@ function Login() {
     }
 
 
-
-    useEffect(() => {
-       
-    }, []);
-
   return (
     <div>
         <div className= 'container'>

@@ -6,6 +6,8 @@ import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 
 function NavBar(){
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = user.isAdmin;
     const navigate = useNavigate();
     
     const handleHomeClick = () => {
@@ -37,6 +39,11 @@ function NavBar(){
         console.log('user master list');
         navigate('/user-master-list');
     }
+
+    const handleAdminClick = () => {
+        console.log('admin');
+        navigate('/admin');
+    }
     
     return(
         <div className='navbar-container'>
@@ -46,6 +53,7 @@ function NavBar(){
                 <li onClick={handleUserMasterListClick}>User Master List</li>
                 <li onClick={handleToDoListClick}>To Do List</li>
                 <li onClick={handleCalendarClick}>Calendar</li>
+                {isAdmin && <li onClick={handleAdminClick}>Admin</li>}
                 <li><button id="logoutBtn" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} /></button></li>
             </ul>
         </div>

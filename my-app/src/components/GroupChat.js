@@ -177,7 +177,7 @@ function GroupChat({ groupID }) {
             <div className="chatMessages">
               {messages.map((message, index) => (
                 <div key={index} className="message">
-                  <p>{usernames[message.user_id] ? usernames[message.user_id].username + ": " : ""}</p>
+                  <p>{usernames[message.user_id] ? (message.user_id === 0 ? "DeletedUser" : usernames[message.user_id].username + ": ") : ""}</p>
                   <p>{message.content}</p>
                   <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
                 </div>

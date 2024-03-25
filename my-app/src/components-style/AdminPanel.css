@@ -1,0 +1,85 @@
+.admin-panel{
+    margin-top: 11.5vh;
+    max-height: 91.8vh;
+    height: 91.8vh;
+    overflow-y: scroll;
+}
+
+
+.admin-panel-CRUD-section{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+  .admin-panel-CRUD-section h2 {
+    color: #9B4444;
+    font-size: 24px;
+  }
+  
+  .admin-panel-CRUD-section input[type="text"],
+  .admin-panel-CRUD-section input[type="password"],
+  .admin-panel-CRUD-section input[type="date"],
+  .admin-panel-CRUD-section select {
+    padding: 10px;
+    border: 1px solid #eac3c5ff;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 5px;
+  }
+  
+  .admin-panel-CRUD-section input[type="file"] {
+    display: none;
+  }
+  
+  .admin-panel-CRUD-section button {
+    padding: 8px 16px;
+    background-color: #84a5c6;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .admin-panel-CRUD-section button:hover {
+    background-color: #517fad;
+  }
+  
+  .admin-panel-CRUD-section input[type="checkbox"] {
+    margin-right: 5px;
+  }
+  
+  .admin-panel-CRUD-section select {
+    margin-top: 10px;
+  }
+  
+  .statistics-section h2 {
+    color: #9B4444;
+    font-size: 24px;
+  }
+  
+
+  .create-user-section, .delete-user-section, .change-user-details-section,
+  .create-group-section, .delete-group-section, .add-remove-user-section, .change-group-details-section{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 10px;
+    border: 1px solid #eac3c5ff;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 8px 16px hsl(280, 3%, 82%);
+}
+  
+.IsAdmin {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+
+.IsAdmin input[type="checkbox"] {
+    margin-right: auto;
+}

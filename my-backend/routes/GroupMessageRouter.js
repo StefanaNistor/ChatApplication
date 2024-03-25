@@ -58,4 +58,20 @@ groupMessageRouter.post('/add', async (req, res) => {
     }
   });
 
+
+  // -- simulate delete group message but change the user id to 0
+groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    try {
+      const result = await GroupMessage.updateMany({ user_id: userId }, { user_id: 0 });
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error deleting group messages:", error);
+      res.status(500).json({ error: "EROARE BACKEND" });
+    }
+  });
+
   module.exports = groupMessageRouter;
