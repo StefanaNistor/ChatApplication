@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 import "../components-style/ToDoList.css";
 import axios from "axios";
-import { useState } from "react";
-import { parse } from "@fortawesome/fontawesome-svg-core";
 
 function ToDoList() {
   const [toDoListItems, setToDoListItems] = useState([]);
+  const [initialToDoList, setInitialToDoList] = useState([]);
   const [flags, setFlags] = useState([]);
   const [updatedToDo, setUpdatedToDo] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -52,6 +51,7 @@ function ToDoList() {
           end_date: item.end_date,
         }));
         setToDoListItems(items);
+        setInitialToDoList(items); 
       })
       .catch((err) => {
         console.log("ERROR TODO FRONTEND!");
@@ -214,12 +214,12 @@ function ToDoList() {
 
     let sortedItems = [];
 
-    console.log(toDoListItems);
-    console.log(new Date(startDate));
+    //console.log(toDoListItems);
+    //console.log(new Date(startDate));
     //console.log('END',new Date(toDoListItems[1].end_date));
 
-    for (let i = 0; i < toDoListItems.length; i++) {
-      let item = toDoListItems[i];
+    for (let i = 0; i < initialToDoList.length; i++) {
+      let item = initialToDoList[i];
 
       if (
         (!title ||
@@ -242,10 +242,13 @@ function ToDoList() {
       setToDoListItems(sortedItems);
     }
 
-    //MAJOR TO DO- SOMEHOW UPDATE THE UI
   };
 
- 
+  const handleReset = (e) => {
+    e.preventDefault();
+    getToDoListItems();
+  }
+
   return (
     <div>
       <NavBar />
@@ -262,13 +265,11 @@ function ToDoList() {
               marginRight: "5px",
             }}
           >
-            <div  style={{marginTop:'4vh'}}>
+            <div style={{ marginTop: "4vh" }}>
               <button onClick={setFormVisibility} id="addBtn">
                 Add a new to-do!
               </button>
             </div>
-           
-           
 
             <div className="add-to-do-container">
               {areAddingToDo && (
@@ -314,9 +315,7 @@ function ToDoList() {
             </div>
           </div>
 
-          <div
-            className="to-do-header-sort"
-          >
+          <div className="to-do-header-sort">
             <div className="sortByTitle">
               Title:
               <input
@@ -328,13 +327,12 @@ function ToDoList() {
             <div className="sortByStartDate">
               Start Date:
               <input type="date" id="sortByStartDate" />
-            </div>
-
+              </div>
             <div className="sortByEndDate">
               End Date:
-              <input type="date" id="sortByEndDate"  placeholder="END DATE"/>
+              <input type="date" id="sortByEndDate" placeholder="END DATE" />
             </div>
-            
+
             <div className="sortByContent">
               Content:
               <input
@@ -355,17 +353,30 @@ function ToDoList() {
               </select>
             </div>
             <div>
-            <button id="sortBtn" onClick={handleSort} style={{ width: "12vw" }}>
-              Sort
-            </button>
+              <button
+                id="sortBtn"
+                onClick={handleSort}
+                style={{ width: "12vw" }}
+              >
+                Sort list
+              </button>
+              <button
+              id="resetBtn"
+              onClick={handleReset}
+              style={{ width: "12vw" }}
+              >
+                Reset List
+              </button>
             </div>
-            
           </div>
 
           <div id="to-do-list-container">
             <div
               className="to-do-list"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+              }}
             >
               {toDoListItems.map((item, index) => (
                 <div key={index} className="to-do-item" id={item.id}>
@@ -448,3 +459,4 @@ function ToDoList() {
 }
 
 export default ToDoList;
+

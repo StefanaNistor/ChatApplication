@@ -325,6 +325,17 @@ input[type="date"] {
   cursor: pointer;
 }
 
+#resetBtn{
+  width: 12vw;
+  padding: 5px 10px;
+  margin-left: 5px;
+  background-color: #84a5c6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 #sortBtn:hover {
   background-color: #517fad;
 }

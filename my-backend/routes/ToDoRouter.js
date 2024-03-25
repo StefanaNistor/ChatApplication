@@ -3,6 +3,9 @@ const toDoRouter = express.Router();
 const db = require("../dbConfig");
 const { verifyToken } = require("../middleware");
 
+// const redis = require('ioredis');
+// const client = new redis(); 
+
 toDoRouter.get("/:id", verifyToken, async (req, res) => {
   const userID = req.params.id;
   db.query(
