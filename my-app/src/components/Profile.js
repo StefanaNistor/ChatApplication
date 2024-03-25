@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import NavBar from './NavBar';
 import axios from 'axios';
 import { useState } from 'react';
@@ -8,17 +8,23 @@ function Profile() {
    const[userAbout, setUserAbout] = useState({});
    const [userID, setUserID] = useState('');
    const user = JSON.parse(localStorage.getItem('user'));
+   const userId = user.id;
    const userEmail = user.email;
    const [selectedFile, setSelectedFile] = useState(null);
    const [isEditable, setIsEditable] = useState(false);
+   const [photoURL, setPhotoURL] =  useState("https://via.placeholder.com/300");
+   const fileInputRef = useRef(null);
 
    useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const userId = user.id;
     setUserID(userId);
     getUserDetails(userId);
 
   }, [userAbout]);
+
+  useEffect(()=>{
+    getUserProfilePhoto(userId);
+  }, [user])
   
   
 
@@ -165,15 +171,47 @@ function Profile() {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+    
   };
+
+
+  function getUserProfilePhoto(userID){
+    // axios.get(`http://localhost:7979/photos/getPhoto`,{
+    //   filename: 'User'+ userID
+    // }, {
+    //   headers: {
+    //     "x-access-token": localStorage.getItem('token'),
+    //   },
+    
+    // }).then((res) => {
+    //   console.log('PhotoFromCloud:', res);
+    //   setPhotoURL(res);
+
+    // }).catch((err)=>{
+    //   console.log(err);
+    // })
+   }
 
   const handleUpdatePhoto = (e) =>{
     e.preventDefault();
-    //TODO: upload photo
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
 
-    console.log('Handle Update')
+    // axios.post(`http://localhost:7979/photos/uploadPhoto`,{
+    //   filepath: selectedFile,
+    //   filename: 'User'+ userID
+    // },{
+    //     headers: {
+    //         "x-access-token": localStorage.getItem('token'),
+    //     },
+    // }).then((res) => {
+    //     console.log('Photo uploaded successfully');
+    // }).catch((err) => {
+    //     console.log('An error occurred while uploading photo!');
+    // })
+    // console.log('Handle Update')
 
-    
   }
 
   return (
@@ -182,23 +220,23 @@ function Profile() {
         <div className='main-user-container'>
             <div className='profile-container'>
             <div className='profile-picture'>
-              <div className='pic'>
-            {selectedFile ? (
-          <img
-          src={URL.createObjectURL(selectedFile)}
-          alt="Selected File"
-          style={{ maxWidth: "480px", maxHeight: "580px" }}
-        />
-      ) : (
-        <img
-          src="https://via.placeholder.com/300"
-          alt="Placeholder"
-          style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
-        />
-      )}
-      </div>
-                    <input type='file' id='fileForProfile' onChange={handleFileChange} style = {{display :'none'}}/>
-                    <button id='uploadBtn' onClick={handleUpdatePhoto}>Upload photo</button>
+            <div className='pic'>
+              {selectedFile ? (
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="Selected File"
+                  style={{ maxWidth: "480px", maxHeight: "580px" }}
+                />
+              ) : (
+                <img
+                  src= {photoURL}
+                  alt="Placeholder"
+                  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
+                />
+              )}
+            </div>
+            <input type='file' ref={fileInputRef} id='fileForProfile' onChange={handleFileChange} style = {{display :'none'}}/>
+            <button id='uploadBtn' onClick={handleUpdatePhoto}>Upload photo</button>
               </div>
                 <div className='profile-about'>
                   <div className='profile-about-header'>

@@ -33,11 +33,17 @@ function NavBar(){
         navigate('/');
     }
 
+    const handleUserMasterListClick = () => {
+        console.log('user master list');
+        navigate('/user-master-list');
+    }
+    
     return(
         <div className='navbar-container'>
             <ul id='navList'>
                 <li onClick={handleHomeClick}>Home</li>
                 <li onClick={handleProfileClick}>Profile</li>
+                <li onClick={handleUserMasterListClick}>User Master List</li>
                 <li onClick={handleToDoListClick}>To Do List</li>
                 <li onClick={handleCalendarClick}>Calendar</li>
                 <li><button id="logoutBtn" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} /></button></li>

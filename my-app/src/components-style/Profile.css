@@ -117,7 +117,7 @@ body {
   overflow-y: scroll;
   max-height: 15vh;
   margin-top: 10px;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 
 #editBtn,

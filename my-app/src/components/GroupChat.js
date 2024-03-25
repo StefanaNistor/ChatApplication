@@ -15,6 +15,11 @@ function GroupChat({ groupID }) {
     const [messageInput, setMessageInput] = useState('');
     const [showMembers, setShowMembers] = useState(false);
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user.id;
+
+    const navigate = useNavigate();
+
     const socket = io('http://localhost:7979');
 
     useEffect(() => {
@@ -139,11 +144,6 @@ function GroupChat({ groupID }) {
         fetchUsernames();
     }, [messages]);
 
-    const handleUserClick = (userID) => {
-
-        return <OtherProfile clickedUserID={userID} />
-
-    }
 
     return (
         <div className="groupChat-container">
@@ -160,12 +160,13 @@ function GroupChat({ groupID }) {
                 {showMembers && (
                   <div className="showMembersOverlay">
                     <ul>
-                      {groupMembers.map((member, index) => (
-                        <li key={index} onClick={() => handleUserClick(member.user_id)}>
-                          {member.username}
-                        </li>
-                      ))}
+                    {groupMembers.map((member, index) => (
+  <li key={index} onClick={member.id === userId ? null : () => navigate(`/otherProfile/${member.id}`)}>
+    {member.id === userId ? "You" : member.username}
+  </li>
+))}
                     </ul>
+                     
                   </div>
                 )}
               </div>

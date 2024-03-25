@@ -35,6 +35,7 @@ const groupChatRouter = require('./routes/GrupChatRouter');
 const privateChatRouter = require('./routes/PrivateChatRouter');
 const privateMessageRouter = require('./routes/PrivateMessageRouter');
 const groupMessageRouter = require('./routes/GroupMessageRouter');
+const photoRouter = require('./routes/PhotoRouter');
 
 // --- Postgress Connection ---
 db.connect((err) => {
@@ -61,6 +62,7 @@ app.use('/groupChat', groupChatRouter);
 app.use('/privateChat', privateChatRouter)
 app.use('/privateMessages', privateMessageRouter);
 app.use('/groupMessages', groupMessageRouter);
+app.use('/photos', photoRouter);
 
 // --- Socket.io ---
 let chatRooms = {};

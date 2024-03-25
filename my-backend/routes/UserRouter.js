@@ -53,6 +53,17 @@ userRouter.post('/login', async (req, res) => {
     });
 });
 
+userRouter.get('/allUsers/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    db.query('SELECT * FROM users WHERE id != $1', [id], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json(result.rows);
+        }
+    });
+});
+
 userRouter.get('/all', verifyToken, async (req, res) => {
     db.query('SELECT * FROM users', (err, result) => {
         if (err) {
