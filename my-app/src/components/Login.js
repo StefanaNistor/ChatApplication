@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../components-style/Login.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [shouldRedirect, setShouldRedirect] = useState(false);
+    
     const navigate = useNavigate();
 
     const handleOnClick = (e) => {
@@ -37,6 +38,12 @@ function Login() {
     if (shouldRedirect) {
         navigate('/main');
     }
+
+
+
+    useEffect(() => {
+       
+    }, []);
 
   return (
     <div>
