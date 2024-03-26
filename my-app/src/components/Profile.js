@@ -201,7 +201,7 @@ function Profile() {
       headers: {
         "x-access-token": localStorage.getItem('token'),
       },
-      responseType: 'blob' // Set response type to blob
+      responseType: 'blob' 
     }).then((res) => {
       const url = URL.createObjectURL(res.data);
       setPhotoURL(url);

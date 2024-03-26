@@ -3,12 +3,10 @@ import axios from "axios";
 import "../components-style/AdminPanel.css";
 import NavBar from "./NavBar";
 
-
-
-
 function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
+    const [allGroups, setAllGroups] = useState([]);
 
     //-------------------------CHECKBOX FOR CREATE  -------------------------
     const [isChecked, setIsChecked] = useState(false);
@@ -30,6 +28,7 @@ function AdminPanel() {
     useEffect(() => {
         getAllButCurrentUser();
         getAllUsers();
+        getAllGroups();
     }, []);
 
     async function getAllButCurrentUser() {
@@ -61,6 +60,20 @@ function AdminPanel() {
         }
     }
 
+    async function getAllGroups(){
+        try {
+            const response = await axios.get("http://localhost:7979/groupChat/", {
+                headers: {
+                    "x-access-token": localStorage.getItem('token'),
+                },
+            });
+            //console.log(response.data);
+            setAllGroups(response.data);
+           
+        } catch (error) {
+            console.error('An error occurred while getting groups!', error);
+        }
+    }
 
     // --------------------------------------- create user ---------------------------------------
 
@@ -277,7 +290,73 @@ const handleChangeUserDetails = () => {
 
 
     }
-    // --------------------------------------------------------------------------------------------
+    // ------------------------------------------create group--------------------------------------------------
+
+    const handleCreateGroup = () => {
+        const newGroup = {
+            name: document.getElementById("group-name").value,
+            description: document.getElementById("group-description").value,
+        };
+        axios.post('http://localhost:7979/groupChat/createGroup', newGroup, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+        }).then((res) => {
+            console.log('GROUPCHAT', res.data);
+            const message = document.createElement('p');
+            message.textContent = 'Group has been created!';
+            document.querySelector('.create-group-section').appendChild(message);
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+            window.location.reload();
+        }).catch((err) => {
+            console.error('An error occurred while creating group:', err);
+        });
+    };
+
+    // ------------------------------------------delete group--------------------------------------------------
+
+    const handleDeleteClick = () => {
+        document.getElementById("delete-group-confirm-btn").style.display = "block";
+    }
+
+    const handleDeleteGroup = () => {
+        const deletedGroupId = document.getElementById("delete-group-dropdown").value;
+        axios.delete(`http://localhost:7979/groupChat/deleteGroup/${deletedGroupId}`, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+        }).then((res) => {
+            // console.log('Group deleted:', res.data);
+            const message = document.createElement('p');
+            message.textContent = 'Group has been deleted!';
+            document.querySelector('.delete-group-section').appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            const confirmBtn = document.getElementById("delete-group-confirm-btn");
+            confirmBtn.style.display = "none";
+            window.location.reload();
+
+        }).catch((err) => {
+            console.log('An error occurred while deleting group!');
+        });
+
+
+    }
+
+    // ------------------------------------------add and remove user from group--------------------------------------------------
+
+    const handleAddUserGroup = () => {
+        //TODO
+    }
+
+    const handleRemoveUserGroup = () => {
+        //TODO
+    }
 
   return (
     <div>
@@ -373,19 +452,19 @@ const handleChangeUserDetails = () => {
               />
               <button id="addPhoto">Add Photo</button>
               <input type="file" id="group-photo" style={{ display: "none" }} />
-              <button id="create-group-btn">Create Group</button>
+              <button id="create-group-btn" onClick= {handleCreateGroup}>Create Group</button>
             </div>
           </div>
 
           <div className="delete-group-section">
             <h2>Delete Group</h2>
             <select id="delete-group-dropdown">
-              <option value="group1">Group 1</option>
-              <option value="group2">Group 2</option>
-              <option value="group3">Group 3</option>
+                {allGroups.map((group) => (
+                    <option value={group.id}>{group.groupname}</option>
+                ))}
             </select>
-            <button id="delete-group-btn">Delete Group</button>
-            <button id="delete-group-confirm-btn" style={{ display: "none" }}>
+            <button id="delete-group-btn" onClick={handleDeleteClick}>Delete Group</button>
+            <button id="delete-group-confirm-btn" style={{ display: "none" }} onClick={handleDeleteGroup}> 
               Confirm Delete
             </button>
           </div>
@@ -399,13 +478,13 @@ const handleChangeUserDetails = () => {
             </select>
 
             <select id="add-remove-group-dropdown">
-              <option value="group1">Group 1</option>
-              <option value="group2">Group 2</option>
-              <option value="group3">Group 3</option>
+                {allGroups.map((group) => (
+                    <option value={group.id}>{group.groupname}</option>
+                ))}
             </select>
 
-            <button id="add-user-btn">Add User</button>
-            <button id="remove-user-btn">Remove User</button>
+            <button id="add-user-btn" onClick={handleAddUserGroup}>Add User</button>
+            <button id="remove-user-btn" onClick={handleRemoveUserGroup}>Remove User</button>
           </div>
 
           <div className="change-group-details-section">

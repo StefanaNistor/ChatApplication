@@ -2,6 +2,7 @@ const express = require('express');
 const grupChatRouter = express.Router();
 const db = require('../dbConfig');
 const { verifyToken } = require('../middleware');
+const axios = require('axios');
 
 grupChatRouter.get('/',  verifyToken, async (req, res) => {
     db.query('SELECT * FROM groupchat', (err, result) => {
@@ -64,6 +65,54 @@ grupChatRouter.get("/:id", verifyToken, async (req, res) => {
       }
     );
   }); 
+
+
+  grupChatRouter.post("/createGroup", verifyToken, async (req, res) => {
+    const { name, description } = req.body;
+    db.query("INSERT INTO groupchat (groupname, description) VALUES ($1, $2)", [name, description], (err, result) => {
+      if (err) {
+        console.error("Error creating group chat:", err);
+        res.status(500).json({ message: "An error occurred while creating group chat" });
+      } else {
+        res.status(201).json({message: "Group chat created successfully"});
+      }
+    });
+  });
+
+  grupChatRouter.delete("/deleteGroup/:id", verifyToken, async (req, res) => {
+    const groupID = req.params.id;
+    if (!groupID) {
+      return res.status(400).json({ message: "Group chat ID is required" });
+    }
+
+    // delete from mongo
+    axios.delete(`http://localhost:7979/groupMessages/deleteByGroup/${groupID}`)
+    .then((response) => {
+      console.log("Group messages deleted successfully");
+    })
+    .catch((error) => {
+      console.error("Error deleting group messages:", error);
+    });
+
+
+    db.query("DELETE FROM user_in_group WHERE group_id = $1", [groupID], (err, result) => {
+      if (err) {
+        console.error("Error deleting user in group:", err);
+        res.status(500).json({ message: "An error occurred while deleting user in group" });
+      } else {
+
+        db.query("DELETE FROM groupchat WHERE id = $1", [groupID], (err, result) => {
+          if (err) {
+            console.error("Error deleting group chat:", err);
+            res.status(500).json({ message: "An error occurred while deleting group chat" });
+          } else {
+            res.status(200).json({message: "Group chat deleted successfully"});
+          }
+        });
+
+      }
+    });
+  });
 
     module.exports = grupChatRouter;
   

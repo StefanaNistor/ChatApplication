@@ -74,4 +74,18 @@ groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
     }
   });
 
+  groupMessageRouter.delete('/deleteByGroup/:id', async (req, res) => {
+    const groupId = req.params.id;
+    if (!groupId) {
+      return res.status(400).json({ message: "Group ID is required" });
+    }
+    try {
+      const result = await GroupMessage.deleteMany({ group_id: groupId });
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error deleting group messages:", error);
+      res.status(500).json({ error: "EROARE BACKEND" });
+    }
+  });
+
   module.exports = groupMessageRouter;

@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 function OtherProfile() {
 
     const { otherUserID } = useParams();
+    const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/300");
 
     const [userAbout, setUserAbout] = useState({});
     const [userEmail, setUserEmail] = useState('');
@@ -15,6 +16,10 @@ function OtherProfile() {
         getUserDetails(otherUserID);
         getUserEmail(otherUserID);
     }, [userAbout]);
+
+    useEffect(() => {
+        getUserProfilePhoto();
+    }, [])
 
     function getUserDetails(userId){
         axios.get(`http://localhost:7979/userDetails/${userId}`,{
@@ -46,6 +51,23 @@ function OtherProfile() {
         })
       }
 
+
+      function getUserProfilePhoto(){
+        const user = JSON.parse(localStorage.getItem('user'));
+        const filename = otherUserID + 'profilePic.jpg';
+        axios.get(`http://localhost:7979/photos/getPhoto/${otherUserID}?filename=${filename}`, {
+          headers: {
+            "x-access-token": localStorage.getItem('token'),
+          },
+          responseType: 'blob' 
+        }).then((res) => {
+          const url = URL.createObjectURL(res.data);
+          setPhotoURL(url);
+        }).catch((err)=>{
+          console.log(err);
+        })
+      }
+
     return(
         <div>
             <NavBar />
@@ -53,7 +75,7 @@ function OtherProfile() {
                 <div className='profile-container'>
                     <div className='profile=picture'>
                     <div className='pic'>
-                        <img src="https://via.placeholder.com/300" alt="profile-pic" />
+                        <img src={photoURL} alt="profile-pic" />
                     </div>
                     </div>
 
