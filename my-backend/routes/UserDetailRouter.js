@@ -16,6 +16,20 @@ userDetailsRouter.get('/:id', verifyToken, async (req, res) => {
     });
 });
 
+// create user details
+
+userDetailsRouter.post('/create', verifyToken, async (req, res) => {
+    const { userID, firstname, lastname, date_of_birth, position } = req.body;
+    db.query('INSERT INTO user_details (user_id, firstname, lastname, date_of_birth, position) VALUES ($1, $2, $3, $4, $5)', [userID, firstname, lastname, date_of_birth, position], (err, result) => {
+        if (err) {
+            console.log('ERROR BACKEND')
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(201).json({ message: "User details created" });
+        }
+    });
+});
+
 // ------------------- ADD details -------------------
 
 userDetailsRouter.post('/addPhone', verifyToken, async (req, res) => {
@@ -97,8 +111,9 @@ userDetailsRouter.put('/updateAbout', verifyToken, async (req, res) => {
     });
 });
 
-userDetailsRouter.put('/updateDateOfBirth', verifyToken, async (req, res) => {
-    const { dateOfBirth, userID } = req.body;
+userDetailsRouter.put('/updateDateOfBirth/:id', verifyToken, async (req, res) => {
+    const userID = req.params.id;
+    const { dateOfBirth} = req.body;
     db.query('UPDATE user_details SET date_of_birth = $1 WHERE user_id = $2', [dateOfBirth, userID], (err, result) => {
         if (err) {
             res.status(500).json({ message: "An error occurred" });
@@ -108,8 +123,43 @@ userDetailsRouter.put('/updateDateOfBirth', verifyToken, async (req, res) => {
     });
 });
 
-//------------------- DELETE details -------------------
+userDetailsRouter.put('/updatePosition/:id', verifyToken, async (req, res) => {
+    const userID = req.params.id;
+    const { position } = req.body;
+    db.query('UPDATE user_details SET position = $1 WHERE user_id = $2', [position, userID], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json({ message: "Position updated" });
+        }
+    });
+});
 
+userDetailsRouter.put('/updateFirstname/:id', verifyToken, async (req, res) => {
+    const userID = req.params.id;
+    const { firstname} = req.body;
+    db.query('UPDATE user_details SET firstname = $1 WHERE user_id = $2', [firstname, userID], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json({ message: "Firstname updated" });
+        }
+    });
+});
+
+userDetailsRouter.put('/updateLastname/:id', verifyToken, async (req, res) => { 
+    const userID = req.params.id;
+    const { lastname } = req.body;
+    db.query('UPDATE user_details SET lastname = $1 WHERE user_id = $2', [lastname, userID], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json({ message: "Lastname updated" });
+        }
+    });
+});
+
+//------------------- DELETE details -------------------
 userDetailsRouter.delete('/deletePhone', verifyToken, async (req, res) => {
     const { userID } = req.body;
     db.query('UPDATE user_details SET phone = $1 WHERE user_id = $2', [null, userID], (err, result) => {

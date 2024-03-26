@@ -57,6 +57,19 @@ userRouter.post('/login', async (req, res) => {
     });
 });
 
+// -- create user
+userRouter.post('/create', async (req, res) => {
+    const { username, password, email, isAdmin } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    db.query('INSERT INTO users (username, password, email, isadmin) VALUES ($1, $2, $3, $4) RETURNING id', [username, hashedPassword, email, isAdmin], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(201).json({ message: "User created", id: result.rows[0].id });
+        }
+    });
+});
+
 userRouter.get('/allUsers/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
     db.query('SELECT * FROM users WHERE id != $1', [id], (err, result) => {
@@ -104,6 +117,70 @@ userRouter.get('/username/:id',  verifyToken, async (req, res) => {
             res.status(200).json(result.rows[0]);
         }
     });
+});
+
+
+// update username
+userRouter.put('/updateUsername/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const { username } = req.body;
+    db.query('UPDATE users SET username = $1 WHERE id = $2', [username, id], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json({ message: "Username updated" });
+        }
+    });
+});
+
+// update email
+userRouter.put('/updateEmail/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const { email } = req.body;
+    db.query('UPDATE users SET email = $1 WHERE id = $2', [email, id], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json({ message: "Email updated" });
+        }
+    });
+});
+
+// update password
+userRouter.put('/updatePassword/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const { password } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    db.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, id], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "An error occurred" });
+        } else {
+            res.status(200).json({ message: "Password updated" });
+        }
+    });
+});
+
+//update isAdmin
+userRouter.put('/updateIsAdmin/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const { isAdmin } = req.body;
+    if(isAdmin === true){
+        db.query('UPDATE users SET isadmin = $1 WHERE id = $2', [true, id], (err, result) => {
+            if (err) {
+                res.status(500).json({ message: "An error occurred" });
+            } else {
+                res.status(200).json({ message: "User is now admin" });
+            }
+        });
+    } else {
+        db.query('UPDATE users SET isadmin = $1 WHERE id = $2', [false, id], (err, result) => {
+            if (err) {
+                res.status(500).json({ message: "An error occurred" });
+            } else {
+                res.status(200).json({ message: "User is no longer admin" });
+            }
+        });
+    }
 });
 
 

@@ -5,15 +5,16 @@ import { useState } from 'react';
 import '../components-style/Profile.css';
 
 function Profile() {
-   const[userAbout, setUserAbout] = useState({});
-   const [userID, setUserID] = useState('');
-   const user = JSON.parse(localStorage.getItem('user'));
-   const userId = user.id;
-   const userEmail = user.email;
-   const [selectedFile, setSelectedFile] = useState(null);
-   const [isEditable, setIsEditable] = useState(false);
-   const [photoURL, setPhotoURL] =  useState("https://via.placeholder.com/300");
-   const fileInputRef = useRef(null);
+  const[userAbout, setUserAbout] = useState({});
+  const [userID, setUserID] = useState('');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user.id;
+  const userEmail = user.email;
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isEditable, setIsEditable] = useState(false);
+  const [photoURL, setPhotoURL] =  useState("https://via.placeholder.com/300");
+  const fileInputRef = useRef(null);
+
 
    useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -23,8 +24,8 @@ function Profile() {
   }, [userAbout]);
 
   useEffect(()=>{
-    getUserProfilePhoto(userId);
-  }, [user])
+    getUserProfilePhoto();
+  }, [])
   
   
 
@@ -171,48 +172,50 @@ function Profile() {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-    
+  
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userID = user.id;
+  
+    const formData = new FormData();
+    formData.append('file', event.target.files[0]);
+  
+    axios.post(`http://localhost:7979/photos/uploadPhoto/${userID}`, formData, {
+      headers: {
+        "x-access-token": localStorage.getItem('token'),
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then((res) => {
+      console.log('Photo uploaded successfully');
+      setPhotoURL(res.data.fileUrl); // Update the photo URL after successful upload
+    }).catch((err) => {
+      console.log('An error occurred while uploading photo!');
+    })
   };
 
 
-  function getUserProfilePhoto(userID){
-    // axios.get(`http://localhost:7979/photos/getPhoto`,{
-    //   filename: 'User'+ userID
-    // }, {
-    //   headers: {
-    //     "x-access-token": localStorage.getItem('token'),
-    //   },
-    
-    // }).then((res) => {
-    //   console.log('PhotoFromCloud:', res);
-    //   setPhotoURL(res);
+  function getUserProfilePhoto(){
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userID = user.id;
+    const filename = userID + 'profilePic.jpg';
+    axios.get(`http://localhost:7979/photos/getPhoto/${userID}?filename=${filename}`, {
+      headers: {
+        "x-access-token": localStorage.getItem('token'),
+      },
+      responseType: 'blob' // Set response type to blob
+    }).then((res) => {
+      const url = URL.createObjectURL(res.data);
+      setPhotoURL(url);
+    }).catch((err)=>{
+      console.log(err);
+    })
+  }
 
-    // }).catch((err)=>{
-    //   console.log(err);
-    // })
-   }
-
-  const handleUpdatePhoto = (e) =>{
+   const handleUpdatePhoto = (e) => {
     e.preventDefault();
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-
-    // axios.post(`http://localhost:7979/photos/uploadPhoto`,{
-    //   filepath: selectedFile,
-    //   filename: 'User'+ userID
-    // },{
-    //     headers: {
-    //         "x-access-token": localStorage.getItem('token'),
-    //     },
-    // }).then((res) => {
-    //     console.log('Photo uploaded successfully');
-    // }).catch((err) => {
-    //     console.log('An error occurred while uploading photo!');
-    // })
-    // console.log('Handle Update')
-
-  }
+  };
 
   return (
     <div>

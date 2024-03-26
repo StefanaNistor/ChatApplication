@@ -1,59 +1,73 @@
 const express = require('express');
 const photoRouter = express.Router();
 
+const multer = require('multer');
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // limit file size to 5MB
+  },
+});
+
+
 const { Storage } = require("@google-cloud/storage");
 
 const storage = new Storage({
 
   projectId: "projectchatapp-418312",
-  keyFilename: "service-account.json",
+  keyFilename: "../my-backend/service-account.json",
 
 });
 
-photoRouter.get('/getPhoto', async (req, res) => {
-    const { filename } = req.body;
+photoRouter.get('/getPhoto/:id', async (req, res) => {
+    const { id } = req.params;
+    const { filename } = req.query; // Retrieve filename from query parameters
+  
     try {
-        const gcs = storage.bucket("gs://licenta-chatapp");
-        const storagepath = `storage_folder/${filename}`;
-
-        const file = gcs.file(storagepath);
-        const [url] = await file.getSignedUrl({
-            action: "read",
-            expires: Date.now() + 1000 * 60 * 60,
-        });
-
-        return url;
-
+      const gcs = storage.bucket("gs://licenta-chatapp");
+      const storagepath = `storage_folder/${filename}`;
+  
+      const file = gcs.file(storagepath);
+  
+      res.setHeader('Content-Disposition', 'attachment; filename=' + filename);
+      file.createReadStream().pipe(res);
+  
     } catch (error) {
-        console.log(error);
-        throw new Error(error.message);
-
+      console.log(error);
+      res.status(500).json({ error: error.message }); // Send an error response
     }
-});
+  });
 
-photoRouter.post('/uploadPhoto', async (req, res) => {
-    const { filepath, filename } = req.body;
+photoRouter.post('/uploadPhoto/:userID', upload.single('file'), async (req, res) => {
+    const { userID } = req.params;
     try {
-
-        const gcs = storage.bucket("gs://licenta-chatapp");
-        const storagepath = `storage_folder/${filename}`;
-
-        const result = await gcs.upload(filepath, {
-            destination: storagepath,
-            public: true,
-            metadata: {
-                contentType: "application/plain",
-            }
-        });
-        return result[0].metadata.mediaLink;
-
+      const gcs = storage.bucket("gs://licenta-chatapp");
+      const filename = userID + 'profilePic.jpg';
+      const storagepath = `storage_folder/${filename}`;
+  
+      const blob = gcs.file(storagepath);
+      const blobStream = blob.createWriteStream({
+        metadata: {
+          contentType: req.file.mimetype,
+        },
+      });
+  
+      blobStream.on('error', (err) => {
+        console.log(err);
+        throw new Error(err.message);
+      });
+  
+      blobStream.on('finish', () => {
+        const publicUrl = `https://storage.googleapis.com/${gcs.name}/${blob.name}`;
+        res.status(200).send({ fileUrl: publicUrl });
+      });
+  
+      blobStream.end(req.file.buffer);
     } catch (error) {
-
-        console.log(error);
-        throw new Error(error.message);
-
+      console.log(error);
+      res.status(500).json({ error: error.toString() });
     }
-    
-});
+  });
+
 
 module.exports = photoRouter;

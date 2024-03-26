@@ -10,6 +10,23 @@ function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
 
+    //-------------------------CHECKBOX FOR CREATE  -------------------------
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleCheckboxChange = () => {
+      setIsChecked(!isChecked); 
+      console.log('CHECKBOX STATE', isChecked)
+    };
+
+    //-------------------------CHECKBOX FOR upadate  -------------------------
+
+    const [isCheckedUpdate, setIsCheckedUpdate] = useState(false);
+
+    const handleCheckboxChangeUpdate = () => {
+      setIsCheckedUpdate(!isCheckedUpdate);
+      console.log('CHECKBOX STATE UPDATE', isCheckedUpdate)
+    };
+
     useEffect(() => {
         getAllButCurrentUser();
         getAllUsers();
@@ -44,6 +61,193 @@ function AdminPanel() {
         }
     }
 
+
+    // --------------------------------------- create user ---------------------------------------
+
+    const handleCreateUser = () => {
+
+      if (document.getElementById("username").value === "" || document.getElementById("password").value === "" || document.getElementById("e-mail").value === "") {
+          alert("Please fill in all fields!");
+          return;
+      }
+
+      const newUser = {
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value,
+          email: document.getElementById("e-mail").value,
+          isAdmin: isChecked
+      };
+  
+      const userDetail = {
+          userID: null,
+          firstname: document.getElementById("first_name").value,
+          lastname: document.getElementById("last_name").value,
+          date_of_birth: document.getElementById("birthday").value,
+          position: document.getElementById("position").value
+      };
+  
+      const token = localStorage.getItem('token');
+      const headers = { "x-access-token": token };
+  
+      axios.post('http://localhost:7979/users/create', newUser, { headers })
+          .then(res => {
+              const newUserId = res.data.id;
+              userDetail.userID = newUserId;
+  
+              return axios.post('http://localhost:7979/userDetails/create', userDetail, { headers });
+          })
+          .then(res => {
+              console.log('User details created:', res.data);
+              const message = document.createElement('p');
+              message.textContent = 'User has been created!';
+              document.querySelector('.create-user-section').appendChild(message);
+              setTimeout(() => {
+                  message.remove();
+              }, 3000);
+              window.location.reload();
+          })
+          .catch(err => {
+              console.error('Error creating user:', err);
+          });
+  };
+
+  // --------------------------------------- change user details ---------------------------------------
+
+  function displayMessage(elementId, message) {
+    const parent = document.getElementById(elementId);
+    if (!parent) {
+        return;
+    }
+    parent.style.display = 'block';
+    const msgElement = document.createElement('p');
+    msgElement.textContent = message;
+    parent.appendChild(msgElement);
+    setTimeout(() => {
+        msgElement.remove();
+        parent.style.display = 'none';
+    }, 3000);
+}
+
+const handleChangeUserDetails = () => {
+  const editedUserID = document.getElementById("change-user-dropdown").value;
+  const newUsername = document.getElementById("new-username").value;
+  const newFirstName = document.getElementById("new-first-name").value;
+  const newLastName = document.getElementById("new-last-name").value;
+  const newEmail = document.getElementById("new-email").value;
+  const newPassword = document.getElementById("new-password").value;
+  const newPosition = document.getElementById("new-position").value;
+  const newBirthday = document.getElementById("new-birthday").value;
+
+  if (newUsername) {
+      axios.put(`http://localhost:7979/users/updateUsername/${editedUserID}`, { username: newUsername }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('Username updated:', res.data);
+          displayMessage('new-username-message', 'Username updated');
+      }).catch((err) => {
+          console.log('Error updating username:', err);
+      });
+  }
+
+  if (newFirstName) {
+      axios.put(`http://localhost:7979/userDetails/updateFirstname/${editedUserID}`, { firstname: newFirstName }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('First Name updated:', res.data);
+          displayMessage('new-first-name-message', 'First Name updated');
+      }).catch((err) => {
+          console.log('Error updating first name:', err);
+      });
+  }
+
+  if (newLastName) {
+      axios.put(`http://localhost:7979/userDetails/updateLastname/${editedUserID}`, { lastname: newLastName }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('Last Name updated:', res.data);
+          displayMessage('new-last-name-message', 'Last Name updated');
+      }).catch((err) => {
+          console.log('Error updating last name:', err);
+      });
+  }
+
+  if (newEmail) {
+      axios.put(`http://localhost:7979/users/updateEmail/${editedUserID}`, { email: newEmail }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('Email updated:', res.data);
+          displayMessage('new-email-message', 'Email updated');
+      }).catch((err) => {
+          console.log('Error updating email:', err);
+      });
+  }
+
+  if (newPassword) {
+      axios.put(`http://localhost:7979/users/updatePassword/${editedUserID}`, { password: newPassword }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('Password updated:', res.data);
+          displayMessage('new-password-message', 'Password updated');
+      }).catch((err) => {
+          console.log('Error updating password:', err);
+      });
+  }
+
+  if (newPosition) {
+      axios.put(`http://localhost:7979/userDetails/updatePosition/${editedUserID}`, { position: newPosition }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('Position updated:', res.data);
+          displayMessage('new-position-message', 'Position updated');
+      }).catch((err) => {
+          console.log('Error updating position:', err);
+      });
+  }
+
+
+  if(isCheckedUpdate){
+      axios.put(`http://localhost:7979/users/updateIsAdmin/${editedUserID}`, { isAdmin: isCheckedUpdate }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('IsAdmin updated:', res.data);
+          displayMessage('new-isAdmin-message', 'IsAdmin updated');
+      }).catch((err) => {
+          console.log('Error updating isAdmin:', err);
+      });
+  }
+
+  if (newBirthday) {
+      axios.put(`http://localhost:7979/userDetails/updateDateOfBirth/${editedUserID}`, { dateOfBirth: newBirthday }, {
+          headers: {
+              "x-access-token": localStorage.getItem('token'),
+          },
+      }).then((res) => {
+          console.log('Date of Birth updated:', res.data);
+          displayMessage('new-birthday-message', 'Date of Birth updated');
+      }).catch((err) => {
+          console.log('Error updating date of birth:', err);
+      });
+  }
+
+  window.location.reload();
+};
+
+    // --------------------------------------- delete user ---------------------------------------
+
     const handleDelete = () => {
         document.getElementById("delete-user-confirm-btn").style.display = "block";
     }
@@ -73,6 +277,7 @@ function AdminPanel() {
 
 
     }
+    // --------------------------------------------------------------------------------------------
 
   return (
     <div>
@@ -90,44 +295,56 @@ function AdminPanel() {
 
             <div className="IsAdmin">
               <p style={{ marginRight: "1.5vw" }}>Admin </p>
-              <input type="checkbox" id="new-isAdmin" />
+              <input type="checkbox"  checked={isChecked} onChange={handleCheckboxChange} id="isAdmin" />
             </div>
 
+            <label htmlFor="birthday">Birthday:</label>
             <input type="date" id="birthday" />
-            <button id="create-user-btn">Create User</button>
+            <button id="create-user-btn" onClick={handleCreateUser}>Create User</button>
           </div>
+
+
 
           <div className="change-user-details-section">
-            <h2>Change User Details</h2>
-            <select id="change-user-dropdown">
-                {allUsers.map((user) => (
-                    <option value={user.id}>{user.username}</option>
-                ))}
-            </select>
+    <h2>Change User Details</h2>
+    <select id="change-user-dropdown">
+        {allUsers.map((user) => (
+            <option value={user.id}>{user.username}</option>
+        ))}
+    </select>
 
-            <input type="text" id="new-username" placeholder="New Username" />
-            <input
-              type="text"
-              id="new-first-name"
-              placeholder="New First Name"
-            />
-            <input type="text" id="new-last-name" placeholder="New Last Name" />
-            <input type="text" id="new-email" placeholder="New Email" />
-            <input
-              type="password"
-              id="new-password"
-              placeholder="New Password"
-            />
-            <input type="text" id="new-position" placeholder="New Position" />
+    <input type="text" id="new-username" placeholder="New Username" />
+    <p id="new-username-message"style={{display:'none'}}></p> 
 
-            <div className="IsAdmin">
-              <p style={{ marginRight: "1.5vw" }}>Admin </p>
-              <input type="checkbox" id="new-isAdmin" />
-            </div>
+    <input type="text" id="new-first-name" placeholder="New First Name" />
+    <p id="new-first-name-message"style={{display:'none'}}></p> 
 
-            <input type="date" id="new-date_of_birth" />
-            <button id="change-user-details-btn">Change User Details</button>
-          </div>
+    <input type="text" id="new-last-name" placeholder="New Last Name" />
+    <p id="new-last-name-message" style={{display:'none'}}></p> 
+
+    <input type="text" id="new-email" placeholder="New Email" />
+    <p id="new-email-message" style={{display:'none'}}></p> 
+
+    <input type="password" id="new-password" placeholder="New Password" />
+    <p id="new-password-message" style={{display:'none'}}></p>
+
+    <input type="text" id="new-position" placeholder="New Position" />
+    <p id="new-position-message" style={{display:'none'}}></p> 
+
+    <div className="IsAdmin">
+        <p style={{ marginRight: "1.5vw" }}>Admin </p>
+        <input type="checkbox" checked={isCheckedUpdate} onChange={handleCheckboxChangeUpdate} id="new-isAdmin" />
+        <p id="new-isAdmin-message"  style={{display:'none'}}></p>
+    </div>
+
+    <label htmlFor="new-birthday">Birthday:</label>
+    <input type="date" id="new-birthday" />
+    <p id="new-birthday-message"></p> {/* Message container for birthday */}
+
+    <button id="change-user-details-btn" onClick={handleChangeUserDetails}>Change User Details</button>
+</div>
+
+
 
           <div
             className="delete-user-create-group-section"
