@@ -196,6 +196,14 @@ userRouter.delete('/:id', verifyToken, async (req, res) => {
    
         await db.query('BEGIN');
 
+        //delete picture from storage
+
+        await axios.delete(`http://localhost:7979/photos/deletePhoto/${numericUserId}?filename=${numericUserId}profilePic.jpg`, {
+            headers: {
+                "x-access-token": req.headers['x-access-token'],
+            },
+        })
+
         // delete form mongo
         await axios.delete(`http://localhost:7979/privateMessages/deleteByUser/${numericUserId}`, {
             headers: {

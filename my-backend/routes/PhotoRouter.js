@@ -73,5 +73,50 @@ photoRouter.post('/uploadPhoto/:userID', upload.single('file'), async (req, res)
     }
   });
 
+  async function checkIfUserHasPhotos(id) {
+try{
+  const gcs = storage.bucket("gs://licenta-chatapp");
+  const filename = id + 'profilePic.jpg';
+  const storagepath = `storage_folder/${filename}`;
+
+  const file = gcs.file(storagepath);
+  const exists = await file.exists();
+  return exists[0]; 
+}catch(error){
+  console.log(error);
+  return false;
+
+}
+  }
+
+  photoRouter.delete('/deletePhoto/:id', async (req, res) => {
+    const { id } = req.params;
+    const { filename } = req.query; 
+  
+    try {
+
+        const userHasPhotos = await checkIfUserHasPhotos(id);
+
+        if (!userHasPhotos) {
+            return res.status(200).json({ message: "User has no photos" });
+        }
+
+        const gcs = storage.bucket("gs://licenta-chatapp");
+        const storagepath = `storage_folder/${filename}`;
+  
+        const file = gcs.file(storagepath);
+        const exists = await file.exists();
+        if (!exists[0]) {
+            return res.status(404).json({ error: "File not found" });
+        }
+  
+        await file.delete();
+        res.status(200).json({ message: "File deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 module.exports = photoRouter;

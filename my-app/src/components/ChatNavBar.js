@@ -33,26 +33,27 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
 
   function getFullInfo(chats) {
     const fullInfoArray = [];
-    chats.map((chat) => {
-      const fullInfoObj = {
-        id: chat.chat_id,
-        username: "",
-        user1_id: chat.user1_id,
-        user2_id: chat.user2_id,
-      };
-
+  
+    chats.forEach(chat => {
+      const otherUserId = chat.user1_id === userID ? chat.user2_id : chat.user1_id;
+  
       axios
-        .get(`http://localhost:7979/users/username/${chat.user2_id}`, {
+        .get(`http://localhost:7979/users/username/${otherUserId}`, {
           headers: {
             "x-access-token": localStorage.getItem("token"),
           },
         })
-        .then((res) => {
-          fullInfoObj.username = res.data.username;
+        .then(res => {
+          const fullInfoObj = {
+            id: chat.chat_id,
+            username: res.data.username,
+            user1_id: chat.user1_id,
+            user2_id: chat.user2_id,
+          };
           fullInfoArray.push(fullInfoObj);
-          setFullInfo([...fullInfoArray]); // Update fullInfo with new data
+          setFullInfo([...fullInfoArray]);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log("An error occurred while getting username!");
         });
     });
@@ -105,7 +106,7 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
     return fullInfo.map((privateChat) => (
       <div
         key={privateChat.id}
-        className="privateChat" // Change class name to differentiate private chats
+        className="privateChat" 
         onClick={() => handleChatRoomClick(privateChat.id)}
       >
         {privateChat.username}
