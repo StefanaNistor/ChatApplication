@@ -9,12 +9,14 @@ function PrivateChat({ chatID }) {
   const [messageInput, setMessageInput] = useState("");
   const [otherUser, setOtherUser] = useState({});
   const [otherUserDetails, setOtherUserDetails] = useState({});
+  const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
 
   useEffect(() => {
     if (chatID) {
       getMessages(chatID);
     }
     getOtherUser(chatID);
+    //getUserProfilePhoto();
   }, [chatID]);
 
   function getMessages(chatID) {
@@ -53,6 +55,30 @@ function PrivateChat({ chatID }) {
       socket.off("chat private client");
     };
   }, [chatID]);
+
+  async function getUserProfilePhoto(otherID) {
+    if (typeof otherID !== 'number') {
+      console.error('Invalid otherUserID:', otherID);
+      setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
+      return;
+    }
+  
+    const filename = otherID + 'profilePic.jpg';
+    try {
+      const response = await axios.get(`http://localhost:7979/photos/getPhoto/${otherID}?filename=${filename}`, {
+        headers: {
+          "x-access-token": localStorage.getItem('token'),
+        },
+        responseType: 'blob'
+      });
+      const url = URL.createObjectURL(response.data);
+      setPhotoURL(url);
+    } catch (error) {
+      console.log('Error fetching user profile photo:', error);
+      setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
+    }
+  }
+  
 
   const socket = io("http://localhost:7979");
 
@@ -105,8 +131,9 @@ function PrivateChat({ chatID }) {
         }
 
         setOtherUser(otherUserId);
-
+        getUserProfilePhoto(otherUserId);
         getOtherUserDetails(otherUserId);
+
     } catch (err) {
         console.log("An error occurred while getting other user:", err);
     }
@@ -181,7 +208,7 @@ function PrivateChat({ chatID }) {
         </div>
         </div>
       </div>
-      <img src='https://via.placeholder.com/70' alt='groupPicture' style={{width:'70px', height: '70px', borderRadius:'50%', padding:'2vh'}}/>
+      <img src={photoURL} alt='groupPicture' style={{width:'70px', height: '70px', borderRadius:'50%', padding:'2vh'}}/>
      
       </div>
 

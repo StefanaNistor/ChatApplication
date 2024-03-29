@@ -20,23 +20,27 @@ const storage = new Storage({
 });
 
 photoRouter.get('/getPhoto/:id', async (req, res) => {
-    const { id } = req.params;
-    const { filename } = req.query; // Retrieve filename from query parameters
-  
-    try {
-      const gcs = storage.bucket("gs://licenta-chatapp");
-      const storagepath = `storage_folder/${filename}`;
-  
-      const file = gcs.file(storagepath);
-  
-      res.setHeader('Content-Disposition', 'attachment; filename=' + filename);
-      file.createReadStream().pipe(res);
-  
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: error.message }); // Send an error response
+  const { id } = req.params;
+  const { filename } = req.query; 
+
+  try {
+    const gcs = storage.bucket("gs://licenta-chatapp");
+    const storagepath = `storage_folder/${filename}`;
+
+    const file = gcs.file(storagepath);
+    const exists = await file.exists();
+    if (!exists[0]) {
+      return res.status(404).json({ error: "File not found" });
     }
-  });
+
+    res.setHeader('Content-Disposition', 'attachment; filename=' + filename);
+    file.createReadStream().pipe(res);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 photoRouter.post('/uploadPhoto/:userID', upload.single('file'), async (req, res) => {
     const { userID } = req.params;
