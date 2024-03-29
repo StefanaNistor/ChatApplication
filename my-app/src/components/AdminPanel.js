@@ -2,7 +2,6 @@ import { React, useState, useEffect } from "react";
 import axios from "axios";
 import "../components-style/AdminPanel.css";
 import NavBar from "./NavBar";
-
 function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
@@ -286,6 +285,12 @@ const handleChangeUserDetails = () => {
 
         }).catch((err) => {
             console.log('An error occurred while deleting user!');
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while deleting user!';
+            document.querySelector('.delete-user-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
         });
 
 
@@ -312,6 +317,12 @@ const handleChangeUserDetails = () => {
             window.location.reload();
         }).catch((err) => {
             console.error('An error occurred while creating group:', err);
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while creating group!';
+            document.querySelector('.create-group-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
         });
     };
 
@@ -343,6 +354,12 @@ const handleChangeUserDetails = () => {
 
         }).catch((err) => {
             console.log('An error occurred while deleting group!');
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while deleting group!';
+            document.querySelector('.delete-group-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
         });
 
 
@@ -351,12 +368,104 @@ const handleChangeUserDetails = () => {
     // ------------------------------------------add and remove user from group--------------------------------------------------
 
     const handleAddUserGroup = () => {
-        //TODO
+        const userID = document.getElementById("add-remove-user-dropdown").value;
+        const groupID = document.getElementById("add-remove-group-dropdown").value;
+
+        axios.post(`http://localhost:7979/groupChat/addMember`, { groupID, userID }, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+        }).then((res) => {
+            //console.log('User added to group:', res.data);
+            const message = document.createElement('p');
+            message.textContent = 'User has been added to group!';
+            document.querySelector('.add-remove-user-section').appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            window.location.reload();
+
+        }).catch((err) => {
+            console.log('An error occurred while adding user to group!');
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while adding user to group!';
+            document.querySelector('.add-remove-user-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
+        });
     }
 
     const handleRemoveUserGroup = () => {
-        //TODO
+        const userID = document.getElementById("add-remove-user-dropdown").value;
+        const groupID = document.getElementById("add-remove-group-dropdown").value;
+
+        axios.delete(`http://localhost:7979/groupChat/removeMember`, {
+        headers: {
+            "x-access-token": localStorage.getItem('token'),
+        },
+        data: {
+            groupID: groupID,
+            userID: userID
+        }
+    }).then((res) => {
+            //console.log('User removed from group:', res.data);
+            const message = document.createElement('p');
+            message.textContent = 'User has been removed from group!';
+            document.querySelector('.add-remove-user-section').appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            window.location.reload();
+
+        }).catch((err) => {
+            console.log('An error occurred while removing user from group!');
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while removing user from group!';
+            document.querySelector('.add-remove-user-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
+        });
     }
+
+    // ------------------------------------------change group details--------------------------------------------------
+
+    const handleChangeGroupDetails = () => {
+        const editedGroupID = document.getElementById("change-group-dropdown").value;
+        const newGroupName = document.getElementById("new-group-name").value;
+        const newGroupDescription = document.getElementById("new-group-description").value;
+        axios.put(`http://localhost:7979/groupChat/updateGroup/${editedGroupID}`, { name: newGroupName, description: newGroupDescription }, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+        }).then((res) => {
+            //console.log('Group updated:', res.data);
+            const message = document.createElement('p');
+            message.textContent = 'Group details have been updated!';
+            document.querySelector('.change-group-details-section').appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            window.location.reload();
+
+        }).catch((err) => {
+            console.log('An error occurred while updating group!');
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while updating group!';
+            document.querySelector('.change-group-details-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
+        });
+    }
+
 
   return (
     <div>
@@ -418,12 +527,10 @@ const handleChangeUserDetails = () => {
 
     <label htmlFor="new-birthday">Birthday:</label>
     <input type="date" id="new-birthday" />
-    <p id="new-birthday-message"></p> {/* Message container for birthday */}
+    <p id="new-birthday-message"></p> 
 
     <button id="change-user-details-btn" onClick={handleChangeUserDetails}>Change User Details</button>
 </div>
-
-
 
           <div
             className="delete-user-create-group-section"
@@ -490,9 +597,9 @@ const handleChangeUserDetails = () => {
           <div className="change-group-details-section">
             <h2>Change Group Details</h2>
             <select id="change-group-dropdown">
-              <option value="group1">Group 1</option>
-              <option value="group2">Group 2</option>
-              <option value="group3">Group 3</option>
+                {allGroups.map((group) => (
+                    <option value={group.id}>{group.groupname}</option>
+                ))}
             </select>
 
             <input
@@ -505,7 +612,7 @@ const handleChangeUserDetails = () => {
               id="new-group-description"
               placeholder="New Group Description"
             />
-            <button id="change-group-details-btn">Change Group Details</button>
+            <button id="change-group-details-btn" onClick={handleChangeGroupDetails}>Change Group Details</button>
           </div>
         </div>
 
