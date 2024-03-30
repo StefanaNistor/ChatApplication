@@ -43,8 +43,8 @@ function AdminPanel() {
                     "x-access-token": localStorage.getItem('token'),
                 },
             });
-            console.log(response.data);
-            setAllUsers(response.data);
+            //console.log(response.data);
+            setOtherUsers(response.data);
         } catch (error) {
             console.error('An error occurred while getting users!', error);
         }
@@ -58,7 +58,7 @@ function AdminPanel() {
                 },
             });
             console.log(response.data);
-            setOtherUsers(response.data);
+            setAllUsers(response.data);
         } catch (error) {
             console.error('An error occurred while getting users!', error);
         }

@@ -84,25 +84,19 @@ function GroupChat({ groupID }) {
     const handleSendMessage = () => {
         const timestamp = new Date().toISOString();
         const user_id = JSON.parse(localStorage.getItem('user')).id;
-        const messageInput = document.getElementById('messageInput').value;
-
+    
         const messageObj = {
             user_id: user_id,
             group_id: groupID,
             content: messageInput,
             timestamp: timestamp,
         };
-
-        console.log('Message:', messageObj)
-
+    
+        console.log('Message:', messageObj);
+    
         socket.emit("chat group server", messageObj);
         setMessageInput('');
-        setMessages(prevMessages => [...prevMessages, messageObj]);
-
-        const message = document.getElementById('messageInput');
-        message.value = '';
-        }
-
+    };
 
     async function fetchUsernames() {
         const usernamesMap = {};
@@ -185,7 +179,7 @@ function GroupChat({ groupID }) {
             </div>
             <div className="chatFooter">
               <div className="messageInput">
-                {groupID && <input type="text" id="messageInput" placeholder="Type your message here..." />}
+              {groupID && <input type="text" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="Type your message here..." />}
                 {groupID && <button onClick={handleSendMessage}>Send</button>}
               </div>
             </div>
