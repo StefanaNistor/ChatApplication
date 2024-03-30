@@ -9,6 +9,7 @@ function AdminPanel() {
     const [allGroups, setAllGroups] = useState([]);
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFileNew, setSelectedFileNew] = useState(null);
     const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/50");
 
     //-------------------------CHECKBOX FOR CREATE  -------------------------
@@ -314,7 +315,6 @@ const handleChangeUserDetails = () => {
             },
         }).then((res) => {
 
-    
             if (selectedFile) {
                 handleFileUpload(res.data.id);
             } else {
@@ -446,6 +446,9 @@ const handleChangeUserDetails = () => {
     }
 
     // ------------------------------------------change group details--------------------------------------------------
+    // MASIVE TO DO HERE !!!
+    // UPDATE groupname and description individually so that the user can update only one or neither or both
+    // fix the photo upload so that it works properly
 
     const handleChangeGroupDetails = () => {
         const editedGroupID = document.getElementById("change-group-dropdown").value;
@@ -456,16 +459,20 @@ const handleChangeUserDetails = () => {
                 "x-access-token": localStorage.getItem('token'),
             },
         }).then((res) => {
-            //console.log('Group updated:', res.data);
-            const message = document.createElement('p');
-            message.textContent = 'Group details have been updated!';
-            document.querySelector('.change-group-details-section').appendChild(message);
 
-            setTimeout(() => {
-                message.remove();
-            }, 3000);
+            if (selectedFile) {
+                handleFileUploadNew(editedGroupID);
+            } else {
+                const message = document.createElement('p');
+                message.textContent = 'Group details have been updated!';
+                document.querySelector('.change-group-details-section').appendChild(message);
+                setTimeout(() => {
+                    message.remove();
+                    window.location.reload();
+                }, 3000);
 
-            window.location.reload();
+                window.location.reload();
+            }
 
         }).catch((err) => {
             console.log('An error occurred while updating group!');
@@ -478,13 +485,12 @@ const handleChangeUserDetails = () => {
         });
     }
     
-
     // ------------------------------------------add photo--------------------------------------------------
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
-    
+
     const handleFileUpload = (groupID) => {
         const formData = new FormData();
         formData.append('file', selectedFile);
@@ -513,7 +519,7 @@ const handleChangeUserDetails = () => {
             }, 3000);
         });
     };
-    
+
     const handleUpdatePhoto = (e) => {
         e.preventDefault();
         if (fileInputRef.current) {
@@ -521,8 +527,48 @@ const handleChangeUserDetails = () => {
         }
     };
 
+    // ------------------------------------------edit photo--------------------------------------------------
 
+    const handleFileChangeNew = (e) => {
+        setSelectedFileNew(e.target.files[0]);
+    };
 
+    const handleFileUploadNew = (groupID) => {
+        const formData = new FormData();
+        formData.append('file', selectedFileNew);
+
+        axios.post(`http://localhost:7979/photos/uploadGroupPhoto/${groupID}`, formData, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+                'Content-Type': 'multipart/form-data',
+            },
+        }).then((res) => {
+            //setPhotoURL(res.data.fileUrl);
+            const message = document.createElement('p');
+            message.textContent = 'Group details have been updated!';
+            document.querySelector('.change-group-details-section').appendChild(message);
+            setTimeout(() => {
+                message.remove();
+                window.location.reload();
+            }, 3000);
+        }).catch((err) => {
+            console.error('An error occurred while uploading photo:', err);
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while uploading photo!';
+            document.querySelector('.change-group-details-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
+        });
+    };
+
+    const handleUpdatePhotoNew = (e) => {
+        e.preventDefault();
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+    
   return (
     <div>
       <NavBar />
@@ -681,8 +727,8 @@ const handleChangeUserDetails = () => {
               id="new-group-description"
               placeholder="New Group Description"
             />
-            <button id="change-group-photo" > Change Group Photo </button>
-            <input type="file" id="group-photo" style={{ display: "none" }} />
+            <button id="change-group-photo" onClick={handleUpdatePhotoNew}> Change Group Photo </button>
+            <input type="file" id="group-photo" ref={fileInputRef} style={{ display: "none" }} onChange= {handleFileChangeNew} />
             <button id="change-group-details-btn" onClick={handleChangeGroupDetails}>Change Group Details</button>
           </div>
         </div>
