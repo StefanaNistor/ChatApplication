@@ -82,9 +82,16 @@ function Calendar() {
           break;
         } else {
           const toDoItems = toDoList.filter((item) => {
-            const itemDate = new Date(item.start_date);
-            const itemEndDate = new Date(item.end_date);
-            return itemDate.getDate() <= day && itemEndDate.getDate() >= day;
+            const startDate = new Date(item.start_date);
+            const endDate = new Date(item.end_date);
+            return (
+              startDate.getFullYear() === year &&
+              startDate.getMonth() === month &&
+              startDate.getDate() <= day &&
+              endDate.getFullYear() === year &&
+              endDate.getMonth() === month &&
+              endDate.getDate() >= day
+            );
           });
           week.push({ day, toDoItems });
           day++;
