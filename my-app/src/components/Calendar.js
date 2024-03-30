@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "./NavBar";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "../components-style/Calendar.css";
 
 function Calendar() {
   const [date, setDate] = useState(new Date());
@@ -62,12 +63,9 @@ function Calendar() {
   };
 
   const getMonthData = () => {
-    // BIG TO DO: for whatever reason, the first day of my to-do items is off by one day
-    // ALKSFS
-
     const year = date.getFullYear();
     const month = date.getMonth();
-    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; // Adjusted here
+    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; 
     const totalDays = daysInMonth(year, month);
     const monthData = [];
   
@@ -82,8 +80,8 @@ function Calendar() {
           break;
         } else {
           const toDoItems = toDoList.filter((item) => {
-            const startDate = new Date(item.start_date);
-            const endDate = new Date(item.end_date);
+            const startDate = new Date(item.start_date.slice(0, -14));
+            const endDate = new Date(item.end_date.slice(0, -14));
             return (
               startDate.getFullYear() === year &&
               startDate.getMonth() === month &&
@@ -114,30 +112,40 @@ function Calendar() {
   return (
     <div>
       <NavBar />
-      <h1>Calendar</h1>
+      <div className='calendar-container'>
       <h2>
         {date.toLocaleString("default", { month: "long", year: "numeric" })}
       </h2>
+      <div className="calendar-buttons">
       <button onClick={prevMonth}>Previous</button>
       <button onClick={nextMonth}>Next</button>
-      <table>
-        <thead>
+      </div>
+      <div className="calendar">
+      <table id='calendarTable'>
+        <thead id='calendarHeader'>
           <tr>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-            <th>Sun</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id='calendarBody'>
           {getMonthData().map((week, index) => (
             <tr key={index}>
               {week.map((dayData, idx) => (
-                <td key={idx}>
+                <td key={idx}
+                style={{
+                  color: dayData.day === date.getDate() ? "#0080ff" : "#9B4444",
+                  padding: "10px",
+                 
+                }}
+                >
                   {dayData.day}
+                  {dayData.day === date.getDate() ? " You're here! :)" : ""}
                   {dayData.toDoItems &&
                     dayData.toDoItems.map((item, i) => (
                       <div
@@ -146,8 +154,18 @@ function Calendar() {
                           backgroundColor: generateColorForToDo(
                             item.flagID - 1
                           ),
-                          width: "100%",
-                          height: "20px",
+                          
+                          borderRadius: "5px",
+                          margin: "2px",
+                          color: "white",
+                          textAlign: "center",
+                          fontSize: "12px",
+                          cursor: "pointer",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          opacity: "1",
+
                         }}
                       >
                         {item.title}
@@ -159,6 +177,8 @@ function Calendar() {
           ))}
         </tbody>
       </table>
+      </div>
+      </div>
     </div>
   );
 }

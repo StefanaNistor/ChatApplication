@@ -5,6 +5,15 @@
     overflow-y: scroll;
 }
 
+.calendar-container{
+  display: grid;
+  margin-top: 11vh;
+  height: 87vh;
+  overflow-y: scroll;
+  justify-content: center;
+}
+
+
 
 .admin-panel-CRUD-section{
     display: grid;
@@ -14,6 +23,7 @@
   .admin-panel-CRUD-section h2 {
     color: #9B4444;
     font-size: 24px;
+    margin-top: 0;
   }
   
   .admin-panel-CRUD-section input[type="text"],

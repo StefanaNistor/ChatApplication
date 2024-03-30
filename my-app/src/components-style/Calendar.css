@@ -1,0 +1,42 @@
+
+.calendar-container h2{
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.calendar-container button {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+    width: 10vw;
+
+}
+
+
+.calendar th {
+    background: #9B4444;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 200;
+    padding: 5px;
+    border-radius: 5px;
+    border: 2px solid #9B4444;
+}
+
+.calendar td {
+    background: #ffffff;
+    border-radius: 5px;
+    border: 2px solid #eac3c5ff;
+    padding: 5px;
+    width: 12vw;
+    height: 8vh;
+    max-height: 15vh;
+    max-width: 12vw;
+    overflow-y: scroll;
+}
+
+.calendar::-webkit-scrollbar {
+    display: none;
+}

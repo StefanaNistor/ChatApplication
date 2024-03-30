@@ -29,6 +29,8 @@
     padding: 5px;
     font-size: 15px;
     width: 50vw;
+    max-height: 7.5vh;
+    overflow-y: scroll;
 }
 
 .privateTitle h1 {
@@ -39,9 +41,10 @@
 
 .privateChatBody {
     overflow-y: scroll;
+    height: 55vh;
     max-height: 55vh;
     padding: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid #eac3c5ff;
     border-radius: 5px;
     
 }
