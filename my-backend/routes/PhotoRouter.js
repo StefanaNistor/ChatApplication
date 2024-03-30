@@ -42,6 +42,38 @@ photoRouter.get('/getPhoto/:id', async (req, res) => {
   }
 });
 
+
+photoRouter.post('/uploadGroupPhoto/:groupID', upload.single('file'), async (req, res) => {
+  const { groupID } = req.params;
+  try {
+    const gcs = storage.bucket("gs://licenta-chatapp");
+    const filename = groupID + 'groupPic.jpg';
+    const storagepath = `storage_folder/${filename}`;
+
+    const blob = gcs.file(storagepath);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+
+    blobStream.on('error', (err) => {
+      console.log(err);
+      throw new Error(err.message);
+    });
+
+    blobStream.on('finish', () => {
+      const publicUrl = `https://storage.googleapis.com/${gcs.name}/${blob.name}`;
+      res.status(200).send({ fileUrl: publicUrl });
+    });
+
+    blobStream.end(req.file.buffer);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.toString() });
+  }
+});
+
 photoRouter.post('/uploadPhoto/:userID', upload.single('file'), async (req, res) => {
     const { userID } = req.params;
     try {

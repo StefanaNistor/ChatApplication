@@ -72,7 +72,7 @@ grupChatRouter.get("/members/:id", verifyToken, async (req, res) => {
 grupChatRouter.post("/createGroup", verifyToken, async (req, res) => {
   const { name, description } = req.body;
   db.query(
-    "INSERT INTO groupchat (groupname, description) VALUES ($1, $2)",
+    "INSERT INTO groupchat (groupname, description) VALUES ($1, $2) RETURNING id", 
     [name, description],
     (err, result) => {
       if (err) {
@@ -81,11 +81,13 @@ grupChatRouter.post("/createGroup", verifyToken, async (req, res) => {
           .status(500)
           .json({ message: "An error occurred while creating group chat" });
       } else {
-        res.status(201).json({ message: "Group chat created successfully" });
+        const groupId = result.rows[0].id; 
+        res.status(201).json({ id: groupId, message: "Group chat created successfully" });
       }
     }
   );
 });
+
 
 grupChatRouter.delete("/deleteGroup/:id", verifyToken, async (req, res) => {
   const groupID = req.params.id;

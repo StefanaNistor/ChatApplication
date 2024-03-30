@@ -1,11 +1,15 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../components-style/AdminPanel.css";
 import NavBar from "./NavBar";
+
 function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
     const [allGroups, setAllGroups] = useState([]);
+    const fileInputRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/50");
 
     //-------------------------CHECKBOX FOR CREATE  -------------------------
     const [isChecked, setIsChecked] = useState(false);
@@ -28,6 +32,7 @@ function AdminPanel() {
         getAllButCurrentUser();
         getAllUsers();
         getAllGroups();
+      
     }, []);
 
     async function getAllButCurrentUser() {
@@ -302,19 +307,25 @@ const handleChangeUserDetails = () => {
             name: document.getElementById("group-name").value,
             description: document.getElementById("group-description").value,
         };
+    
         axios.post('http://localhost:7979/groupChat/createGroup', newGroup, {
             headers: {
                 "x-access-token": localStorage.getItem('token'),
             },
         }).then((res) => {
-            console.log('GROUPCHAT', res.data);
-            const message = document.createElement('p');
-            message.textContent = 'Group has been created!';
-            document.querySelector('.create-group-section').appendChild(message);
-            setTimeout(() => {
-                message.remove();
-            }, 3000);
-            window.location.reload();
+
+    
+            if (selectedFile) {
+                handleFileUpload(res.data.id);
+            } else {
+                const message = document.createElement('p');
+                message.textContent = 'Group has been created!';
+                document.querySelector('.create-group-section').appendChild(message);
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+                window.location.reload();
+            }
         }).catch((err) => {
             console.error('An error occurred while creating group:', err);
             const errorMessage = document.createElement('p');
@@ -325,6 +336,7 @@ const handleChangeUserDetails = () => {
             }, 3000);
         });
     };
+    
 
     // ------------------------------------------delete group--------------------------------------------------
 
@@ -465,6 +477,50 @@ const handleChangeUserDetails = () => {
             }, 3000);
         });
     }
+    
+
+    // ------------------------------------------add photo--------------------------------------------------
+
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+    
+    const handleFileUpload = (groupID) => {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+    
+        axios.post(`http://localhost:7979/photos/uploadGroupPhoto/${groupID}`, formData, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+                'Content-Type': 'multipart/form-data',
+            },
+        }).then((res) => {
+            setPhotoURL(res.data.fileUrl);
+            const message = document.createElement('p');
+            message.textContent = 'Group created and photo uploaded successfully!';
+            document.querySelector('.create-group-section').appendChild(message);
+            setTimeout(() => {
+                message.remove();
+                window.location.reload();
+            }, 3000);
+        }).catch((err) => {
+            console.error('An error occurred while uploading photo:', err);
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred while uploading photo!';
+            document.querySelector('.create-group-section').appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
+        });
+    };
+    
+    const handleUpdatePhoto = (e) => {
+        e.preventDefault();
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
 
 
   return (
@@ -490,8 +546,6 @@ const handleChangeUserDetails = () => {
             <input type="date" id="birthday" />
             <button id="create-user-btn" onClick={handleCreateUser}>Create User</button>
           </div>
-
-
 
           <div className="change-user-details-section">
     <h2>Change User Details</h2>
@@ -532,8 +586,7 @@ const handleChangeUserDetails = () => {
     <button id="change-user-details-btn" onClick={handleChangeUserDetails}>Change User Details</button>
 </div>
 
-          <div
-            className="delete-user-create-group-section"
+          <div className="delete-user-create-group-section"
             style={{ display: "grid" }}
           >
             <div className="delete-user-section">
@@ -557,10 +610,26 @@ const handleChangeUserDetails = () => {
                 id="group-description"
                 placeholder="Group Description"
               />
-              <button id="addPhoto">Add Photo</button>
-              <input type="file" id="group-photo" style={{ display: "none" }} />
+              <button id="addPhoto" onClick={handleUpdatePhoto}>Add Photo</button>
+              <input type="file"  ref={fileInputRef} id="group-photo"  onChange= {handleFileChange} style={{ display: "none" }} />
+              <div className='pic'>
+              {selectedFile ? (
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="Selected File"
+                  style={{ maxWidth: "50px", maxHeight: "50px" }}
+                />
+              ) : (
+                <img
+                  src= {photoURL}
+                  alt="Placeholder"
+                  style={{ width: "50px", height: "50px", borderRadius: "50%", margin: 'auto'}}
+                />
+              )}
+            </div>
               <button id="create-group-btn" onClick= {handleCreateGroup}>Create Group</button>
             </div>
+
           </div>
 
           <div className="delete-group-section">
@@ -612,6 +681,8 @@ const handleChangeUserDetails = () => {
               id="new-group-description"
               placeholder="New Group Description"
             />
+            <button id="change-group-photo" > Change Group Photo </button>
+            <input type="file" id="group-photo" style={{ display: "none" }} />
             <button id="change-group-details-btn" onClick={handleChangeGroupDetails}>Change Group Details</button>
           </div>
         </div>
