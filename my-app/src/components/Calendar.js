@@ -62,6 +62,9 @@ function Calendar() {
   };
 
   const getMonthData = () => {
+    // BIG TO DO: for whatever reason, the first day of my to-do items is off by one day
+    // ALKSFS
+
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; // Adjusted here
