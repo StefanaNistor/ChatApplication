@@ -124,6 +124,10 @@ function GroupChat({ groupID }) {
   }
 
   async function getUserNameById(userID) {
+    if(userID === 0){
+      return {username: "DeletedUser"};
+    }
+    else {
     try {
       const response = await axios.get(
         `http://localhost:7979/users/username/${userID}`,
@@ -139,6 +143,7 @@ function GroupChat({ groupID }) {
       throw error;
     }
   }
+}
 
   useEffect(() => {
     if (groupID === "") {
@@ -214,19 +219,19 @@ function GroupChat({ groupID }) {
       </div>
       <div className="groupChatBody">
         <div className="chatMessages">
-          {messages.map((message, index) => (
-            <div key={index} className="message">
-              <p>
-                {usernames[message.user_id]
-                  ? message.user_id === 0
-                    ? "DeletedUser"
-                    : usernames[message.user_id].username + ": "
-                  : ""}
-              </p>
-              <p>{message.content}</p>
-              <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
-            </div>
-          ))}
+        {messages.map((message, index) => (
+  <div key={index} className="message">
+    <p>
+      {usernames[message.user_id]
+        ? message.user_id == 0
+          ? "DeletedUser"
+          : usernames[message.user_id].username + ": "
+        : ""}
+    </p>
+    <p>{message.content}</p>
+    <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+  </div>
+))}
         </div>
         <div className="chatFooter">
           <div className="messageInput">
