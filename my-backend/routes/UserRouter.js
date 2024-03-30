@@ -184,6 +184,7 @@ userRouter.put('/updateIsAdmin/:id', verifyToken, async (req, res) => {
 });
 
 
+// REVIEW THIS TOO
 userRouter.delete('/:id', verifyToken, async (req, res) => {
     const userId = req.params.id;
     const numericUserId = parseInt(userId);
