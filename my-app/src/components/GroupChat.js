@@ -153,8 +153,6 @@ function GroupChat({ groupID }) {
     fetchUsernames();
   }, [messages]);
 
-  
-
   function getGroupProfilePhoto(){
     const filename = groupID + 'groupPic.jpg';
     axios.get(`http://localhost:7979/photos/getPhoto/${groupID}?filename=${filename}`, {
