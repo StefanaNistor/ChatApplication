@@ -11,6 +11,7 @@ function AdminPanel() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileNew, setSelectedFileNew] = useState(null);
     const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/50");
+    const [photoURLNew, setPhotoURLNew] = useState("https://via.placeholder.com/50");
 
     //-------------------------CHECKBOX FOR CREATE  -------------------------
     const [isChecked, setIsChecked] = useState(false);
@@ -454,35 +455,42 @@ const handleChangeUserDetails = () => {
         const editedGroupID = document.getElementById("change-group-dropdown").value;
         const newGroupName = document.getElementById("new-group-name").value;
         const newGroupDescription = document.getElementById("new-group-description").value;
-        axios.put(`http://localhost:7979/groupChat/updateGroup/${editedGroupID}`, { name: newGroupName, description: newGroupDescription }, {
-            headers: {
-                "x-access-token": localStorage.getItem('token'),
-            },
-        }).then((res) => {
+        
+        if(newGroupName){
+            axios.put(`http://localhost:7979/groupChat/updateGroup/${editedGroupID}`, { name: newGroupName }, {
+                headers: {
+                    "x-access-token": localStorage.getItem('token'),
+                },
+            }).then((res) => {
+                console.log('Group name updated:', res.data);
+            }).catch((err) => {
+                console.log('Error updating group name:', err);
+            });
+        }
 
-            if (selectedFile) {
-                handleFileUploadNew(editedGroupID);
-            } else {
-                const message = document.createElement('p');
-                message.textContent = 'Group details have been updated!';
-                document.querySelector('.change-group-details-section').appendChild(message);
-                setTimeout(() => {
-                    message.remove();
-                    window.location.reload();
-                }, 3000);
+        if(newGroupDescription){
+            axios.put(`http://localhost:7979/groupChat/updateGroup/${editedGroupID}`, { description: newGroupDescription }, {
+                headers: {
+                    "x-access-token": localStorage.getItem('token'),
+                },
+            }).then((res) => {
+                console.log('Group description updated:', res.data);
+            }).catch((err) => {
+                console.log('Error updating group description:', err);
+            });
+        }
 
-                window.location.reload();
-            }
-
-        }).catch((err) => {
-            console.log('An error occurred while updating group!');
-            const errorMessage = document.createElement('p');
-            errorMessage.textContent = 'An error occurred while updating group!';
-            document.querySelector('.change-group-details-section').appendChild(errorMessage);
+        if (selectedFileNew) {
+            handleFileUploadNew(editedGroupID);
+        } else {
+            const message = document.createElement('p');
+            message.textContent = 'Group details have been updated!';
+            document.querySelector('.change-group-details-section').appendChild(message);
             setTimeout(() => {
-                errorMessage.remove();
+                message.remove();
+                window.location.reload();
             }, 3000);
-        });
+        }
     }
     
     // ------------------------------------------add photo--------------------------------------------------
@@ -543,7 +551,7 @@ const handleChangeUserDetails = () => {
                 'Content-Type': 'multipart/form-data',
             },
         }).then((res) => {
-            //setPhotoURL(res.data.fileUrl);
+            setPhotoURLNew(res.data.fileUrl);
             const message = document.createElement('p');
             message.textContent = 'Group details have been updated!';
             document.querySelector('.change-group-details-section').appendChild(message);
@@ -729,6 +737,19 @@ const handleChangeUserDetails = () => {
             />
             <button id="change-group-photo" onClick={handleUpdatePhotoNew}> Change Group Photo </button>
             <input type="file" id="group-photo" ref={fileInputRef} style={{ display: "none" }} onChange= {handleFileChangeNew} />
+            {selectedFileNew ? (
+                <img
+                  src={URL.createObjectURL(selectedFileNew)}
+                  alt="Selected File"
+                  style={{ maxWidth: "50px", maxHeight: "50px" }}
+                />
+              ) : (
+                <img
+                  src= {photoURLNew}
+                  alt="Placeholder"
+                  style={{ width: "50px", height: "50px", borderRadius: "50%", margin: 'auto'}}
+                />
+              )}
             <button id="change-group-details-btn" onClick={handleChangeGroupDetails}>Change Group Details</button>
           </div>
         </div>

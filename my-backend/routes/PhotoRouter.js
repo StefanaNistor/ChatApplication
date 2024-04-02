@@ -42,7 +42,6 @@ photoRouter.get('/getPhoto/:id', async (req, res) => {
   }
 });
 
-
 photoRouter.post('/uploadGroupPhoto/:groupID', upload.single('file'), async (req, res) => {
   const { groupID } = req.params;
   try {
@@ -120,6 +119,49 @@ try{
 
 }
   }
+
+  async function checkIfGroupHasPhotos(groupID) {
+    try {
+        const gcs = storage.bucket("gs://licenta-chatapp");
+        const filename = groupID + 'groupPic.jpg';
+        const storagepath = `storage_folder/${filename}`;
+    
+        const file = gcs.file(storagepath);
+        const exists = await file.exists();
+        return exists[0];
+    } catch (error) {
+        console.log(error);
+        return false;
+    } 
+  }
+
+  photoRouter.delete('/deleteGroupPhoto/:groupID', async (req, res) => {
+    const { groupID } = req.params;
+    const filename= groupID + 'groupPic.jpg';
+
+    try {
+      const gcs = storage.bucket("gs://licenta-chatapp");
+      const storagepath = `storage_folder/${filename}`;
+      if(checkIfGroupHasPhotos(groupID)){
+      const file = gcs.file(storagepath);
+      const exists = await file.exists();
+      if (!exists[0]) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      else {
+        await file.delete();
+        res.status(200).json({ message: "File deleted successfully" });
+
+      }
+    } else {
+      return res.status(200).json({ message: "Group has no photos" });
+    }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
 
   photoRouter.delete('/deletePhoto/:id', async (req, res) => {
     const { id } = req.params;

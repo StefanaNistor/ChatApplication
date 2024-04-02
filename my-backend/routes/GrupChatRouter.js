@@ -105,6 +105,15 @@ grupChatRouter.delete("/deleteGroup/:id", verifyToken, async (req, res) => {
       console.error("Error deleting group messages:", error);
     });
 
+    // delete from cloud
+    axios.delete(`http://localhost:7979/photos/deleteGroupPhoto/${groupID}`)
+    .then((response) => {
+      console.log("Group photo deleted successfully");
+    })
+    .catch((error) => {
+      console.error("Error deleting group photo:", error);
+    });
+    
   db.query(
     "DELETE FROM user_in_group WHERE group_id = $1",
     [groupID],
@@ -154,6 +163,45 @@ grupChatRouter.put("/updateGroup/:id", verifyToken, async (req, res) => {
     }
   );
 });
+
+grupChatRouter.put("/updateGroupName/:id", verifyToken, async (req, res) => {
+  const groupID = req.params.id;
+  const { name } = req.body;
+  db.query(
+    "UPDATE groupchat SET groupname = $1 WHERE id = $2",
+    [name, groupID],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating group chat name:", err);
+        res
+          .status(500)
+          .json({ message: "An error occurred while updating group chat name" });
+      } else {
+        res.status(200).json({ message: "Group chat name updated successfully" });
+      }
+    }
+  );
+});
+
+grupChatRouter.put("/updateGroupDescription/:id", verifyToken, async (req, res) => {
+  const groupID = req.params.id;
+  const { description } = req.body;
+  db.query(
+    "UPDATE groupchat SET description = $1 WHERE id = $2",
+    [description, groupID],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating group chat description:", err);
+        res
+          .status(500)
+          .json({ message: "An error occurred while updating group chat description" });
+      } else {
+        res.status(200).json({ message: "Group chat description updated successfully" });
+      }
+    }
+  );
+});
+
 
 grupChatRouter.post("/addMember", verifyToken, async (req, res) => {
   const { groupID, userID } = req.body;
