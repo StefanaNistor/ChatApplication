@@ -274,7 +274,7 @@ function PrivateChat({ chatID }) {
     });
   };
   
-
+//TODOODDODOOD
   const sendToToDo = (messageContent) => {
     const todoInput = document.getElementById("todoInput");
     todoInput.value = messageContent;
@@ -336,6 +336,7 @@ function PrivateChat({ chatID }) {
                 </p>
                 <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
               </div>
+
               <div className="messageButtons">
                 {message.user_id === userId && (message.is_deleted==false) && (
                   <div className="messageButtons">
@@ -350,7 +351,7 @@ function PrivateChat({ chatID }) {
                     </button>
                   </div>
                 )}
-                {message.user_id !== userId && (
+                {message.user_id !== userId && (message.is_deleted==false) && (
                   <button
                     className="sendToToDoButton"
                     onClick={() => sendToToDo(message.content)}

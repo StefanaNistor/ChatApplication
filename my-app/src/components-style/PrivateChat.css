@@ -114,13 +114,13 @@ button:hover {
     background-color: #e6f2ff; 
   }
   
-  .messageContent {
+  /* .messageContent {
     border-radius: 10px;
     padding: 10px;
     max-width: 70%;
     max-height: 200px; 
     overflow-y: auto; 
-  }
+  } */
   
   .messageButtons {
     display: flex;

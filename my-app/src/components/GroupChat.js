@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTasks } from "@fortawesome/free-solid-svg-icons";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+
 
 function GroupChat({ groupID }) {
   const [selectedGroupChat, setSelectedGroupChat] = useState("");
@@ -20,7 +22,7 @@ function GroupChat({ groupID }) {
   const placeholderAvatar = "https://via.placeholder.com/30";
   const userAvatars = {};
   
-
+ 
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user.id;
@@ -184,14 +186,75 @@ function GroupChat({ groupID }) {
   }
 
 const deleteMessage = (messageID) => {
+  axios
+    .delete(`http://localhost:7979/groupMessages/deleteMsg/${messageID}`, {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    })
+    .then((res) => {
+      if (res.status === 200) {
+
+        const prompt = document.querySelector(".variousPromptsText");
+        prompt.innerText = "Message deleted successfully!";
+        setTimeout(() => {
+          prompt.innerText = "";
+        }, 3000);
+        
+        getMessages(groupID);
+        
+      } else {
+        console.log("An error occurred while deleting the message!");
+      }
+    })
+    .catch((err) => {
+      console.log("An error occurred while deleting the message!");
+    });
 }
 
+//TODODODODODO  sendToToDo
 const sendToToDo = (messageContent) => {
 
 }
 
 const editMessage = (messageID) => {
+  const editedMessage = messages.find((msg) => msg.id === messageID);
+    const contentText = document.getElementById(`contentText-${messageID}`);
+    contentText.contentEditable = true;
+    contentText.focus();
+  
+    contentText.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        contentText.contentEditable = false;
+        const newContent = contentText.innerText;
+        console.log("New content:", newContent);
+
+        axios.put(`http://localhost:7979/groupMessages/editMsg/${messageID}`, {
+          content: newContent,
+        }, {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            const prompt = document.querySelector(".variousPromptsText");
+            prompt.innerText = "Message edited successfully!";
+            setTimeout(() => {
+              prompt.innerText = "";
+            }, 3000);
+            getMessages(groupID);
+          } else {
+            console.log("An error occurred while editing the message!");
+          }
+        })
+        .catch((err) => {
+          console.log("An error occurred while editing the message!");
+        });
+      }
+    });
 }
+
 
 return (
   <div className="groupChat-container">
@@ -247,39 +310,52 @@ return (
       src={userAvatars[message.user_id] || placeholderAvatar}
       alt="Avatar"
     />
-    <div className={`messageContent ${message.user_id == userId ? "myMessageContent" : ""}`}>
-      <p>
-        <span id="usernameStyling">
-        {usernames[message.user_id]
-          ? message.user_id === 0
-            ? "DeletedUser"
-            : usernames[message.user_id].username
-          : ""}
-        
+    <div className={`messageContent ${message.user_id === userId ? "myMessageContent" : ""}`}>
+  <p>
+    <span id="usernameStyling">
+      {usernames[message.user_id]
+        ? message.user_id === 0
+          ? "DeletedUser"
+          : usernames[message.user_id].username
+        : ""}
+    </span>
+  </p>
+
+    <p id={`contentText-${message._id}`}>
+      {message.is_deleted
+        ? "Message has been deleted"
+        : message.content}
+      {message.is_edited && (
+        <span className="edited-indicator">
+          <FontAwesomeIcon icon={faPencilAlt} />
         </span>
-      </p>
-      
-      <p>{message.content}</p>
-      <time>{new Date(message.timestamp).toLocaleTimeString()}</time>
-    </div>
-    {message.user_id === userId && (
-      <button className="deleteButton" onClick={() => deleteMessage(message.id)}>
+      )}
+    </p>
+    <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+  
+</div>
+      <div className="messageButtons">
+    {message.user_id === userId && (message.is_deleted==false) && (
+      <button className="deleteButton" onClick={() => deleteMessage(message._id)}>
         <FontAwesomeIcon icon={faTrashAlt} />
       </button>
     )}
-    {message.user_id === userId && (
-       <button className="editButton" onClick={() => editMessage(message.id)}>
+    {message.user_id === userId && (message.is_deleted==false) && (
+       <button className="editButton" onClick={() => editMessage(message._id)}>
        <FontAwesomeIcon icon={faEdit} />
        </button>
     )}
-    {message.user_id !== userId && (
+    {message.user_id !== userId && (message.is_deleted==false) && (
       <button className="sendToToDoButton" onClick={() => sendToToDo(message.content)}>
         <FontAwesomeIcon icon={faTasks} />
       </button>
     )}
+    </div>
+
   </div>
 ))}
-      </div>
+    
+
       <div className="chatFooter">
         <div className="messageInput">
           {groupID && (
@@ -292,7 +368,11 @@ return (
           )}
           {groupID && <button onClick={handleSendMessage}>Send</button>}
         </div>
+        <div className="variousPromptsText"></div>
+        </div>
+        
       </div>
+
     </div>
   </div>
 );
