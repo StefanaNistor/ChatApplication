@@ -7,11 +7,13 @@ import "../components-style/Calendar.css";
 function Calendar() {
   const [date, setDate] = useState(new Date());
   const [toDoList, setToDoList] = useState([]);
+  const [todayDate,setTodayDate] = useState();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     getToDoListItems();
+      setTodayDate(new Date());
   }, []);
 
   const getToDoListItems = () => {
@@ -91,7 +93,7 @@ function Calendar() {
               endDate.getDate() >= day
             );
           });
-          week.push({ day, toDoItems });
+          week.push({ day, month, year, toDoItems });
           day++;
         }
       }
@@ -139,13 +141,13 @@ function Calendar() {
               {week.map((dayData, idx) => (
                 <td key={idx}
                 style={{
-                  color: dayData.day === date.getDate() ? "#0080ff" : "#9B4444",
+                  color: dayData.day === todayDate.getDate() && dayData.month === todayDate.getMonth() && dayData.year === todayDate.getFullYear() ? "red" : "black",
                   padding: "10px",
                  
                 }}
                 >
                   {dayData.day}
-                  {dayData.day === date.getDate() ? " You're here! :)" : ""}
+                  {dayData.day === todayDate.getDate() && dayData.month === todayDate.getMonth() && dayData.year === todayDate.getFullYear() ? <div style={{color: "red"}}>You're here! :)</div> : null}
                   {dayData.toDoItems &&
                     dayData.toDoItems.map((item, i) => (
                       <div
