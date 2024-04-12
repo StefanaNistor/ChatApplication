@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTasks } from "@fortawesome/free-solid-svg-icons";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
-
+import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
@@ -18,7 +18,6 @@ function PrivateChat({ chatID }) {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user.id;
-
 
   useEffect(() => {
     if (chatID) {
@@ -66,89 +65,91 @@ function PrivateChat({ chatID }) {
   }, [chatID]);
 
   async function getUserProfilePhoto(otherID) {
-    if (typeof otherID !== 'number') {
-      console.error('Invalid otherUserID:', otherID);
+    if (typeof otherID !== "number") {
+      console.error("Invalid otherUserID:", otherID);
       setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
       return;
     }
-  
-    const filename = otherID + 'profilePic.jpg';
+
+    const filename = otherID + "profilePic.jpg";
     try {
-      const response = await axios.get(`http://localhost:7979/photos/getPhoto/${otherID}?filename=${filename}`, {
-        headers: {
-          "x-access-token": localStorage.getItem('token'),
-        },
-        responseType: 'blob'
-      });
+      const response = await axios.get(
+        `http://localhost:7979/photos/getPhoto/${otherID}?filename=${filename}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+          responseType: "blob",
+        }
+      );
       const url = URL.createObjectURL(response.data);
       setPhotoURL(url);
     } catch (error) {
-      console.log('Error fetching user profile photo:', error);
+      console.log("Error fetching user profile photo:", error);
       setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
     }
   }
-  
 
   const socket = io("http://localhost:7979");
 
-  async function getOtherUserDetails(userId){
+  async function getOtherUserDetails(userId) {
     try {
-      const response = await axios.get(`http://localhost:7979/userDetails/${userId}`, {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-        });
+      const response = await axios.get(
+        `http://localhost:7979/userDetails/${userId}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      );
 
-        setOtherUserDetails(response.data[0])
-    }
-    catch (error) {
+      setOtherUserDetails(response.data[0]);
+    } catch (error) {
       console.error("An error occurred while getting user details:", error);
     }
-
-    
   }
 
   async function getOtherUser(chatID) {
     try {
-        const response = await axios.get(`http://localhost:7979/privateChat/getByCurrentUser/${chatID}`, {
-            headers: {
-                "x-access-token": localStorage.getItem("token"),
-            },
-        });
-
-        const chatArray = response.data;
-
-        if (!chatArray || chatArray.length === 0) {
-            console.log("No chats found for ID:", chatID);
-            return;
+      const response = await axios.get(
+        `http://localhost:7979/privateChat/getByCurrentUser/${chatID}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
         }
+      );
 
-        const chat = chatArray.find(chat => chat.chat_id === chatID);
+      const chatArray = response.data;
 
-        if (!chat) {
-            console.log("Chat not found for ID:", chatID);
-            return;
-        }
-        const currentUserID = JSON.parse(localStorage.getItem("user")).id;
+      if (!chatArray || chatArray.length === 0) {
+        console.log("No chats found for ID:", chatID);
+        return;
+      }
 
-        let otherUserId;
+      const chat = chatArray.find((chat) => chat.chat_id === chatID);
 
-        if (chat.user1_id === currentUserID) {
-            otherUserId = chat.user2_id;
-        } else {
-            otherUserId = chat.user1_id;
-        }
+      if (!chat) {
+        console.log("Chat not found for ID:", chatID);
+        return;
+      }
+      const currentUserID = JSON.parse(localStorage.getItem("user")).id;
 
-        setOtherUser(otherUserId);
-        getUserProfilePhoto(otherUserId);
-        getOtherUserDetails(otherUserId);
+      let otherUserId;
 
+      if (chat.user1_id === currentUserID) {
+        otherUserId = chat.user2_id;
+      } else {
+        otherUserId = chat.user1_id;
+      }
+
+      setOtherUser(otherUserId);
+      getUserProfilePhoto(otherUserId);
+      getOtherUserDetails(otherUserId);
     } catch (err) {
-        console.log("An error occurred while getting other user:", err);
+      console.log("An error occurred while getting other user:", err);
     }
-}
-
-  
+  }
 
   async function getUserNameById(userID) {
     try {
@@ -203,15 +204,84 @@ function PrivateChat({ chatID }) {
   };
 
   const deleteMessage = (messageID) => {
-  }
+    axios
+      .delete(
+        `http://localhost:7979/privateMessages/deleteMsg/${messageID}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((res) => {
+        console.log("Message deleted:", res.data);
+        getMessages(chatID);
+
+        const prompt = document.querySelector(".variousPromptsText");
+        prompt.innerText = "Message deleted successfully!";
+        setTimeout(() => {
+          prompt.innerText = "";
+        }, 3000);
+      })
+      .catch((err) => {
+        console.log("An error occurred while deleting message:", err);
+      });
+  };
+
+  const handleEditMessage = (messageID) => {
+    console.log("Editing message:", messageID);
+    editMessage(messageID);
+  };
 
   const editMessage = (messageID) => {
-  }
+    const editedMessage = messages.find((msg) => msg.id === messageID);
+    const contentText = document.getElementById(`contentText-${messageID}`);
+    contentText.contentEditable = true;
+    contentText.focus();
+  
+    contentText.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        contentText.contentEditable = false;
+        const newContent = contentText.innerText;
+        console.log("New content:", newContent);
+
+        axios
+          .put(
+            `http://localhost:7979/privateMessages/edit/${messageID}`,
+            {
+              content: newContent,
+            },
+            {
+              headers: {
+                "x-access-token": localStorage.getItem("token"),
+              },
+            }
+          )
+          .then((res) => {
+            console.log("Message updated:", res.data);
+            const prompt = document.querySelector(".variousPromptsText");
+            prompt.innerText = "Message updated successfully!";
+            setTimeout(() => {
+              prompt.innerText = "";
+            }, 3000);
+            getMessages(chatID);
+
+          })
+          .catch((err) => {
+            console.log("An error occurred while updating message:", err);
+          });
+      }
+    });
+  };
+  
 
   const sendToToDo = (messageContent) => {
-  }
+    const todoInput = document.getElementById("todoInput");
+    todoInput.value = messageContent;
 
-
+    const currentUserId = JSON.parse(localStorage.getItem("user")).id;
+    // TO DO
+  };
 
   return (
     <div className="private-container">
@@ -227,45 +297,73 @@ function PrivateChat({ chatID }) {
             </div>
           </div>
         </div>
-        <img src={photoURL} alt='groupPicture' style={{width:'70px', height: '70px', borderRadius:'50%', padding:'2vh'}}/>
+        <img
+          src={photoURL}
+          alt="groupPicture"
+          style={{
+            width: "70px",
+            height: "70px",
+            borderRadius: "50%",
+            padding: "2vh",
+          }}
+        />
       </div>
-  
+
       <div className="privateChatBody">
         <div className="chatMessages">
           {messages.map((message, index) => (
-            <div key={index} className={`message ${message.user_id === userId ? "myMessage" : ""}`}>
+            <div
+              key={index}
+              className={`message ${
+                message.user_id === userId ? "myMessage" : ""
+              }`}
+            >
               <div className="messageContent">
-              <p>
-                {usernames[message.user_id]
-                  ? usernames[message.user_id].username + ": "
-                  : ""}
-              </p>
-              <p>{message.content}</p>
-              <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
-              
+                <p>
+                  {usernames[message.user_id]
+                    ? usernames[message.user_id].username + ": "
+                    : ""}
+                </p>
+                <p id={`contentText-${message._id}`}>
+                  {message.is_deleted
+                    ? "Message has been deleted"
+                    : message.content}
+                  {message.is_edited && (
+                    <span className="edited-indicator">
+                      <FontAwesomeIcon icon={faPencilAlt} />
+                    </span>
+                  )}
+                </p>
+                <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
               </div>
               <div className="messageButtons">
-              {message.user_id === userId && (
-                <div className="messageButtons">
-                  <button className="deleteButton" onClick={() => deleteMessage(message.id)}>
-                    <FontAwesomeIcon icon={faTrashAlt} />
-                  </button>
-                  <button className="editButton" onClick={() => editMessage(message.id)}>
+                {message.user_id === userId && (message.is_deleted==false) && (
+                  <div className="messageButtons">
+                    <button
+                      className="deleteButton"
+                      onClick={() => deleteMessage(message._id)}
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                    <button className="editButton" onClick={() => handleEditMessage(message._id)}>
                     <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                  </div>
+                )}
+                {message.user_id !== userId && (
+                  <button
+                    className="sendToToDoButton"
+                    onClick={() => sendToToDo(message.content)}
+                  >
+                    <FontAwesomeIcon icon={faTasks} />
                   </button>
-                </div>
-              )}
-              {message.user_id !== userId && (
-                <button className="sendToToDoButton" onClick={() => sendToToDo(message.content)}>
-                  <FontAwesomeIcon icon={faTasks} />
-                </button>
-              )}
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
-  
+
       <div className="chatFooterPrivate">
         <div className="messageInput">
           {chatID && (
@@ -279,11 +377,9 @@ function PrivateChat({ chatID }) {
         </div>
         <div className="attachButtons"></div>
       </div>
+      <div className="variousPromptsText"></div>
     </div>
   );
-  
-  
-
 }
 
 export default PrivateChat;

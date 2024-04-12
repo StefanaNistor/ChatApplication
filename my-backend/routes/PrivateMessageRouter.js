@@ -114,6 +114,22 @@ privateMessageRouter.get("/getByChat/:id", verifyToken, async (req, res) => {
 });
 
 
+
+
+privateMessageRouter.delete("/deleteMsg/:id", async (req, res) => {
+  const privateMessageID = req.params.id;
+  if (!privateMessageID) {
+    return res.status(400).json({ message: "Private message ID is required" });
+  }
+  try {
+    const result = await PrivateMessage.findByIdAndUpdate(privateMessageID, { is_deleted: true });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error deleting private message:", error);
+    res.status(500).json({ error: "EROARE BACKEND" });
+  }
+});
+
 privateMessageRouter.delete("/deleteByUser/:id", async (req, res) => {
   const userID = req.params.id;
   if (!userID) {
@@ -124,6 +140,21 @@ privateMessageRouter.delete("/deleteByUser/:id", async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error("Error deleting private messages:", error);
+    res.status(500).json({ error: "EROARE BACKEND" });
+  }
+});
+
+privateMessageRouter.put("/edit/:id", async (req, res) => {
+  const privateMessageID = req.params.id;
+  const { content } = req.body;
+  if (!privateMessageID || !content) {
+    return res.status(400).json({ message: "Private message ID and content are required" });
+  }
+  try {
+    const result = await PrivateMessage.findByIdAndUpdate(privateMessageID, { content, is_edited: true });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error editing private message:", error);
     res.status(500).json({ error: "EROARE BACKEND" });
   }
 });

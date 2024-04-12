@@ -67,7 +67,7 @@ groupMessageRouter.post('/add', async (req, res) => {
   });
 
 
-  // -- simulate delete group message but change the user id to 0
+  
 groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
     const userId = req.params.id;
     if (!userId) {
@@ -92,6 +92,35 @@ groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
       res.status(200).json(result);
     } catch (error) {
       console.error("Error deleting group messages:", error);
+      res.status(500).json({ error: "EROARE BACKEND" });
+    }
+  });
+
+  groupMessageRouter.delete('/deleteMsg/:id', async (req, res) => {
+    const msgId = req.params.id;
+    if (!msgId) {
+      return res.status(400).json({ message: "Message ID is required" });
+    }
+    try {
+      const result = await GroupMessage.findByIdAndUpdate(msgId, { is_deleted: true });
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error deleting group messages:", error);
+      res.status(500).json({ error: "EROARE BACKEND" });
+    }
+  });
+
+  groupMessageRouter.put('/editMsg/:id', async (req, res) => {
+    const msgId = req.params.id;
+    const { content } = req.body;
+    if (!msgId || !content) {
+      return res.status(400).json({ message: "Message ID and content are required" });
+    }
+    try {
+      const result = await GroupMessage.findByIdAndUpdate(msgId, { content, is_edited: true });
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error editing group message:", error);
       res.status(500).json({ error: "EROARE BACKEND" });
     }
   });
