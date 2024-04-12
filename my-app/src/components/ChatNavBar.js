@@ -106,19 +106,19 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
     return fullInfo.map((privateChat) => (
       <div
         key={privateChat.id}
-        className="privateChat" 
+        className="listItem privateChat" 
         onClick={() => handleChatRoomClick(privateChat.id)}
       >
         {privateChat.username}
       </div>
     ));
   };
-
+  
   const renderGroupChats = () => {
     return groupChats.map((groupChat) => (
       <div
         key={groupChat.id}
-        className="groupChat"
+        className="listItem groupChat"
         onClick={() => handleChatRoomClick(groupChat.id)}
       >
         {groupChat.groupname}
@@ -129,36 +129,39 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
   return (
     <div className="chatNavBar-container">
       <div className="chatNavBar">
+        <input type="text" placeholder="Search..." id="searchBar" />
         <div id="chatOptions">
-          <button
-            id="privateChat"
-            className={activeButton === "privateChat" ? "active" : ""}
-            onClick={() => handleButtonClick("privateChat")}
-          >
-            Private Chats
-          </button>
           <div className="dropdownPrivate">
+            <button
+              id="privateChat"
+              className={activeButton === "privateChat" ? "active" : ""}
+              onClick={() => handleButtonClick("privateChat")}
+            >
+              Private Chats
+            </button>
             {privateChatsFetched && (
               <div className="dropPrivateContent">{renderPrivateChats()}</div>
             )}
           </div>
-          <button
-            id="groupChat"
-            className={activeButton === "groupChat" ? "active" : ""}
-            onClick={() => handleButtonClick("groupChat")}
-          >
-            Group Chats
-          </button>
+         
           <div className="dropdownGroup">
+            <button
+              id="groupChat"
+              className={activeButton === "groupChat" ? "active" : ""}
+              onClick={() => handleButtonClick("groupChat")}
+            >
+              Group Chats
+            </button>
             {groupChatsFetched && (
               <div className="dropGroupContent">{renderGroupChats()}</div>
             )}
           </div>
         </div>
-        <input type="text" placeholder="Search..." id="searchBar" />
       </div>
     </div>
   );
+  
+
 }
 
 export default ChatNavBar;

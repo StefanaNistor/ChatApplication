@@ -1,10 +1,13 @@
 .chatNavBar-container {
     background-color: #EAC3C5ff;
     margin-top: 10vh;
-    height: 100vh;
-    width: 20%;
+    height: 90vh;
+    width: 17%;
     position: fixed;
     left: 0;
+    margin-top: 10.9vh;
+    padding: 20px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
 }
 
 .chatNavBar {
@@ -13,17 +16,16 @@
     justify-content: flex-start;
     align-items: center;
     height: 100%;
-    padding-top: 20px;
 }
 
 #searchBar {
-    width: 80%;
+    width: calc(100% - 40px); 
     margin-bottom: 20px;
     padding: 10px;
     border: 2px solid #fff;
     border-radius: 3px;
     background-color: #f9f9f9;
-    color: #fff;
+    color: #000;
 }
 
 #searchBar:focus {
@@ -43,13 +45,13 @@
     background-color: transparent;
     border: none;
     padding: 10px;
-    color: #fff;
+    color: #000;
     transition: background-color 0.3s, color 0.3s;
 }
 
 #groupChat:hover, #privateChat:hover {
     background-color: rgba(255, 255, 255, 0.3);
-    color: #fff;
+    color: #000;
 }
 
 #groupChat.active, #privateChat.active {
@@ -58,24 +60,71 @@
     font-weight: bold;
 }
 
-.dropdownContent {
+.dropdownPrivate, .dropdownGroup {
+    width: 100%;
+    margin-bottom: 20px; 
+    border: 2px solid #fff; 
+    border-radius: 5px; 
+    box-shadow: 3px 6px 5px rgba(0, 0, 0, 0.1);
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+
+.dropdownPrivate::-webkit-scrollbar, .dropdownGroup::-webkit-scrollbar {
     display: none;
-    position: absolute;
+}
+
+
+.dropPrivateContent, .dropGroupContent {
+    padding: 10px;
+}
+
+.separator {
+    width: 80%;
+    border-bottom: 1px solid #fff;
+    margin: 10px 0;
+}
+
+.chatNavBar .listItem {
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-bottom: 8px;
     background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.dropdown:hover .dropdownContent {
-    display: block;
+.chatNavBar .listItem:hover {
+    background-color: #ddd; 
 }
 
-.dropdownContent {
-    transition: opacity 0.3s;
-    opacity: 0;
+.chatNavBar .listItem.active {
+    background-color: #84a5c6; 
+    color: #fff;
+}
+#privateChat, #groupChat {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 5px;
+    margin-top: inherit;
+    font-size: large;
+    max-width: 100%;
+    width: 100%;
 }
 
-.dropdown:hover .dropdownContent {
-    opacity: 1;
+#privateChat:hover, #groupChat:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #000;
 }
+
+#privateChat.active, #groupChat.active {
+    background-color: #84a5c6;
+    color: #fff;
+    font-weight: bold;
+}
+

@@ -340,7 +340,7 @@ input[type="date"] {
   background-color: #517fad;
 }
 
-/* Styles for input fields, textareas, and select dropdowns in edit mode */
+
 .to-do-item-content input,
 .to-do-item-content textarea,
 .to-do-item-content select {
@@ -348,12 +348,12 @@ input[type="date"] {
   border: 1px solid #eac3c5ff;
   border-radius: 5px;
   margin-bottom: 10px;
-  width: calc(100% - 22px); /* Adjust width as needed */
+  width: calc(100% - 22px); 
 }
 
-/* Styles for buttons in edit mode */
+
 .to-do-buttons button {
-  width: 100px; /* Adjust width as needed */
+  width: 100px; 
   margin: 5px;
   padding: 10px;
   background-color: #84a5c6;
