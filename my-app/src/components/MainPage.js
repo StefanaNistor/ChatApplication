@@ -11,6 +11,7 @@ function MainPage() {
   const [selectedChatType, setSelectedChatType] = useState(null);
   const [showPlaceholder, setShowPlaceholder] = useState(true);
 
+
   const handlePrivateChatRoomClick = (chatId) => {
     setSelectedChatId(chatId);
     setSelectedChatType("private");

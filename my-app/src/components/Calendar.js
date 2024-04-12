@@ -4,16 +4,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "../components-style/Calendar.css";
 
-function Calendar() {
+function Calendar({todayDate}) {
   const [date, setDate] = useState(new Date());
   const [toDoList, setToDoList] = useState([]);
-  const [todayDate,setTodayDate] = useState();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     getToDoListItems();
-      setTodayDate(new Date());
+
   }, []);
 
   const getToDoListItems = () => {
@@ -147,7 +146,7 @@ function Calendar() {
                 }}
                 >
                   {dayData.day}
-                  {dayData.day === todayDate.getDate() && dayData.month === todayDate.getMonth() && dayData.year === todayDate.getFullYear() ? <div style={{color: "red"}}>You're here! :)</div> : null}
+                  {dayData.day === todayDate?.getDate() && dayData.month === todayDate?.getMonth() && dayData.year === todayDate?.getFullYear() ? <div style={{color: "red"}}>You're here! :)</div> : null}
                   {dayData.toDoItems &&
                     dayData.toDoItems.map((item, i) => (
                       <div

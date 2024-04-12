@@ -19,9 +19,18 @@
     font-size: 2.5rem;
     color: #517fad;
     margin-left: 27%;
-    width: 100%;
+    width: 100vh;
+    text-align: center;
   }
-  
+
+  @media screen and (max-width: 900px) {
+    .placeholder {
+        font-size: 2rem; 
+        margin-left: 20%; 
+        width: 45vh;
+    }
+}
+
   .placeholder p:hover {
     transform: scale(1.05);
     transition: transform 0.5s ease-in-out; 

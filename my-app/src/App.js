@@ -12,6 +12,8 @@ import AdminPanel from './components/AdminPanel';
 import React from 'react';
 
 function App() {
+  
+  const today = new Date();
 
   return (
     <Router>
@@ -20,7 +22,7 @@ function App() {
         <Route path="/main" element={<MainPage />} />
         <Route path='todo-list' element={<ToDoList/>}/>
         <Route path='profile' element={<Profile/>}/>
-        <Route path='calendar' element={<Calendar/>}/>
+        <Route path='calendar' element={<Calendar todayDate={today}/>}/>
         <Route path='user-master-list' element={<UserMasterList/>}/>
         <Route path="/otherProfile/:otherUserID" element={<OtherProfile />} />
         <Route path='admin' element={<AdminPanel/>}/>

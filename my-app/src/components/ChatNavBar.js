@@ -105,6 +105,8 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
   const renderPrivateChats = () => {
     return fullInfo.map((privateChat) => (
       <div
+      style={{  overflow: "hidden",
+      textOverflow: "ellipsis",}}
         key={privateChat.id}
         className="listItem privateChat" 
         onClick={() => handleChatRoomClick(privateChat.id)}
@@ -117,6 +119,8 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
   const renderGroupChats = () => {
     return groupChats.map((groupChat) => (
       <div
+      style={{  overflow: "hidden",
+      textOverflow: "ellipsis",}}
         key={groupChat.id}
         className="listItem groupChat"
         onClick={() => handleChatRoomClick(groupChat.id)}
