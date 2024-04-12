@@ -9,7 +9,6 @@
 }
 
 .privateChatHeader {
-    /* margin-bottom: 20px; */
     display: flex;
     justify-content: space-between;
     padding-top: 2vh;
@@ -37,8 +36,6 @@
     font-size: 20px;
 }
 
-
-
 .privateChatBody {
     overflow-y: scroll;
     height: 55vh;
@@ -48,14 +45,6 @@
     border-radius: 5px;
     
 }
-
-.message {
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
 
 button {
     padding: 10px 20px;
@@ -103,4 +92,59 @@ button:hover {
     width: 7vw;
 }
 
-
+.message.myMessage {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    display: flex;
+    align-items: center;
+    padding: 0; 
+    margin-bottom: 10px;
+  }
+  
+  .message.myMessage .messageContent {
+    background-color: #ffcce0; 
+  }
+  
+  .message .messageContent {
+    background-color: #e6f2ff; 
+  }
+  
+  .messageContent {
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 70%;
+    max-height: 200px; 
+    overflow-y: auto; 
+  }
+  
+  .messageButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  
+  .messageButtons button {
+    padding: 5px;
+    margin-right: 5px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .messageButtons button:hover {
+    background-color: #517fad;
+  }
+  
+  .deleteButton {
+    background-color: #e74c3c;
+  }
+  
+  .editButton {
+    background-color: #2ecc71;
+  }

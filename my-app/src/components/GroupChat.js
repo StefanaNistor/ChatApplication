@@ -4,6 +4,10 @@ import axios from "axios";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import OtherProfile from "./OtherProfile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTasks } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 function GroupChat({ groupID }) {
   const [selectedGroupChat, setSelectedGroupChat] = useState("");
@@ -13,9 +17,14 @@ function GroupChat({ groupID }) {
   const [messageInput, setMessageInput] = useState("");
   const [showMembers, setShowMembers] = useState(false);
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
+  const placeholderAvatar = "https://via.placeholder.com/30";
+  const userAvatars = {};
+  
+
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user.id;
+
 
   const navigate = useNavigate();
 
@@ -174,81 +183,121 @@ function GroupChat({ groupID }) {
     })
   }
 
-  return (
-    <div className="groupChat-container">
-      <div className="groupChatHeader">
-        <div className="rightHeader">
-          <div className="privateTitleRight">
-            <h1 id="groupTitle">{selectedGroupChat.groupname}</h1>
-            <div className="userDetails" id="groupDescription">
-              {selectedGroupChat.description}
-            </div>
-          </div>
-          <div>
-            <button onClick={getMembers}>Show Group Members</button>
-            {showMembers && (
-              <div className="showMembersOverlay">
-                <ul>
-                  {groupMembers.map((member, index) => (
-                    <li
-                      key={index}
-                      onClick={
-                        member.id === userId
-                          ? null
-                          : () => navigate(`/otherProfile/${member.id}`)
-                      }
-                    >
-                      {member.id === userId ? "You" : member.username}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+const deleteMessage = (messageID) => {
+}
+
+const sendToToDo = (messageContent) => {
+
+}
+
+const editMessage = (messageID) => {
+}
+
+return (
+  <div className="groupChat-container">
+    <div className="groupChatHeader">
+      <div className="rightHeader">
+        <div className="privateTitleRight">
+          <h1 id="groupTitle">{selectedGroupChat.groupname}</h1>
+          <div className="userDetails" id="groupDescription">
+            {selectedGroupChat.description}
           </div>
         </div>
-        <img
-          src={photoURL}
-          alt="groupPicture"
-          style={{
-            width: "70px",
-            height: "70px",
-            borderRadius: "50%",
-            padding: "2vh",
-          }}
-        />
+        <div>
+          <button onClick={getMembers}>Show Group Members</button>
+          {showMembers && (
+            <div className="showMembersOverlay">
+              <ul>
+                {groupMembers.map((member, index) => (
+                  <li
+                    key={index}
+                    onClick={
+                      member.id === userId
+                        ? null
+                        : () => navigate(`/otherProfile/${member.id}`)
+                    }
+                  >
+                    {member.id === userId ? "You" : member.username}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="groupChatBody">
-        <div className="chatMessages">
-        {messages.map((message, index) => (
-  <div key={index} className="message">
-    <p>
-      {usernames[message.user_id]
-        ? message.user_id == 0
-          ? "DeletedUser"
-          : usernames[message.user_id].username + ": "
-        : ""}
-    </p>
-    <p>{message.content}</p>
-    <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+      <img
+        src={photoURL}
+        alt="groupPicture"
+        style={{
+          width: "70px",
+          height: "70px",
+          borderRadius: "50%",
+          padding: "2vh",
+        }}
+      />
+    </div>
+    <div className="groupChatBody">
+      <div className="chatMessages">
+      {messages.map((message, index) => (
+  <div
+    key={index}
+    className={`message ${message.user_id == userId ? "myMessage" : ""}`}
+  >
+    <img
+      src={userAvatars[message.user_id] || placeholderAvatar}
+      alt="Avatar"
+    />
+    <div className={`messageContent ${message.user_id == userId ? "myMessageContent" : ""}`}>
+      <p>
+        <span id="usernameStyling">
+        {usernames[message.user_id]
+          ? message.user_id === 0
+            ? "DeletedUser"
+            : usernames[message.user_id].username
+          : ""}
+        
+        </span>
+      </p>
+      
+      <p>{message.content}</p>
+      <time>{new Date(message.timestamp).toLocaleTimeString()}</time>
+    </div>
+    {message.user_id === userId && (
+      <button className="deleteButton" onClick={() => deleteMessage(message.id)}>
+        <FontAwesomeIcon icon={faTrashAlt} />
+      </button>
+    )}
+    {message.user_id === userId && (
+       <button className="editButton" onClick={() => editMessage(message.id)}>
+       <FontAwesomeIcon icon={faEdit} />
+       </button>
+    )}
+    {message.user_id !== userId && (
+      <button className="sendToToDoButton" onClick={() => sendToToDo(message.content)}>
+        <FontAwesomeIcon icon={faTasks} />
+      </button>
+    )}
   </div>
 ))}
-        </div>
-        <div className="chatFooter">
-          <div className="messageInput">
-            {groupID && (
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Type your message here..."
-              />
-            )}
-            {groupID && <button onClick={handleSendMessage}>Send</button>}
-          </div>
+      </div>
+      <div className="chatFooter">
+        <div className="messageInput">
+          {groupID && (
+            <input
+              type="text"
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+              placeholder="Type your message here..."
+            />
+          )}
+          {groupID && <button onClick={handleSendMessage}>Send</button>}
         </div>
       </div>
     </div>
-  );
-}
+  </div>
+);
 
+
+
+}
 export default GroupChat;

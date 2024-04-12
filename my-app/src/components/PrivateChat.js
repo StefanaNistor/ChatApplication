@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import "../components-style/PrivateChat.css";
 import axios from "axios";
 import io from "socket.io-client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTasks } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+
 
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
@@ -10,6 +15,10 @@ function PrivateChat({ chatID }) {
   const [otherUser, setOtherUser] = useState({});
   const [otherUserDetails, setOtherUserDetails] = useState({});
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
+
 
   useEffect(() => {
     if (chatID) {
@@ -193,29 +202,39 @@ function PrivateChat({ chatID }) {
     message.value = "";
   };
 
+  const deleteMessage = (messageID) => {
+  }
+
+  const editMessage = (messageID) => {
+  }
+
+  const sendToToDo = (messageContent) => {
+  }
+
+
+
   return (
     <div className="private-container">
-       <div className="privateChatHeader">
-      <div className="privateTitle">
-        <div className="privateTitleRight">
-        <h1>
-          {otherUserDetails && otherUserDetails.firstname}{" "}
-          {otherUserDetails && otherUserDetails.lastname}
-        </h1>
-
-        <div className="userDetails">
-          {otherUserDetails && otherUserDetails.about}
+      <div className="privateChatHeader">
+        <div className="privateTitle">
+          <div className="privateTitleRight">
+            <h1>
+              {otherUserDetails && otherUserDetails.firstname}{" "}
+              {otherUserDetails && otherUserDetails.lastname}
+            </h1>
+            <div className="userDetails">
+              {otherUserDetails && otherUserDetails.about}
+            </div>
+          </div>
         </div>
-        </div>
+        <img src={photoURL} alt='groupPicture' style={{width:'70px', height: '70px', borderRadius:'50%', padding:'2vh'}}/>
       </div>
-      <img src={photoURL} alt='groupPicture' style={{width:'70px', height: '70px', borderRadius:'50%', padding:'2vh'}}/>
-     
-      </div>
-
+  
       <div className="privateChatBody">
         <div className="chatMessages">
           {messages.map((message, index) => (
-            <div key={index} className="message">
+            <div key={index} className={`message ${message.user_id === userId ? "myMessage" : ""}`}>
+              <div className="messageContent">
               <p>
                 {usernames[message.user_id]
                   ? usernames[message.user_id].username + ": "
@@ -223,10 +242,28 @@ function PrivateChat({ chatID }) {
               </p>
               <p>{message.content}</p>
               <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+              
+              </div>
+              {message.user_id === userId && (
+                <div className="messageButtons">
+                  <button className="deleteButton" onClick={() => deleteMessage(message.id)}>
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                  </button>
+                  <button className="editButton" onClick={() => editMessage(message.id)}>
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                </div>
+              )}
+              {message.user_id !== userId && (
+                <button className="sendToToDoButton" onClick={() => sendToToDo(message.content)}>
+                  <FontAwesomeIcon icon={faTasks} />
+                </button>
+              )}
             </div>
           ))}
         </div>
       </div>
+  
       <div className="chatFooterPrivate">
         <div className="messageInput">
           {chatID && (
@@ -242,6 +279,9 @@ function PrivateChat({ chatID }) {
       </div>
     </div>
   );
+  
+  
+
 }
 
 export default PrivateChat;
