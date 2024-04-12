@@ -136,6 +136,7 @@ function ToDoList() {
   const handleSaveToDo = () => {
     const { id, title, content, flagID, start_date, end_date } = updatedToDo;
     const userID = user.id;
+  
     axios
       .put(
         "http://localhost:7979/toDoList/updateToDo",
@@ -156,7 +157,10 @@ function ToDoList() {
       )
       .then((res) => {
         console.log("To Do updated successfully!");
-        getToDoListItems();
+        const updatedList = toDoListItems.map((item) =>
+          item.id === id ? { ...item, title, content, flagID } : item
+        );
+        setToDoListItems(updatedList);
         setUpdatedToDo(null);
       })
       .catch((err) => {

@@ -339,3 +339,30 @@ input[type="date"] {
 #sortBtn:hover {
   background-color: #517fad;
 }
+
+/* Styles for input fields, textareas, and select dropdowns in edit mode */
+.to-do-item-content input,
+.to-do-item-content textarea,
+.to-do-item-content select {
+  padding: 10px;
+  border: 1px solid #eac3c5ff;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: calc(100% - 22px); /* Adjust width as needed */
+}
+
+/* Styles for buttons in edit mode */
+.to-do-buttons button {
+  width: 100px; /* Adjust width as needed */
+  margin: 5px;
+  padding: 10px;
+  background-color: #84a5c6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.to-do-buttons button:hover {
+  background-color: #517fad;
+}
