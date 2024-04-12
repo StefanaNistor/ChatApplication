@@ -115,7 +115,6 @@
     width: 7vw;
   }
   
-
   .message {
     display: flex;
     align-items: center;
@@ -167,12 +166,14 @@
     cursor: pointer;
     padding: 5px;
     transition: all 0.3s ease;
+    margin:5px;
+    
   }
   
   .message button:hover {
     transform: scale(1.2);
+    background-color: #fff;
   }
-  
   .message .deleteButton {
     color: #e74c3c;
   }

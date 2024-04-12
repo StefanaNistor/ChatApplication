@@ -9,6 +9,14 @@ const privateMsgSchema = mongoose.Schema({
   chat_id: Number,
   content: String,
   timestamp: Date,
+  is_edited: {
+    type: Boolean,
+    default: false,
+  },
+  is_deleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const PrivateMessage = mongoose.model("PrivateMessages", privateMsgSchema);

@@ -244,6 +244,7 @@ function PrivateChat({ chatID }) {
               <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
               
               </div>
+              <div className="messageButtons">
               {message.user_id === userId && (
                 <div className="messageButtons">
                   <button className="deleteButton" onClick={() => deleteMessage(message.id)}>
@@ -259,6 +260,7 @@ function PrivateChat({ chatID }) {
                   <FontAwesomeIcon icon={faTasks} />
                 </button>
               )}
+              </div>
             </div>
           ))}
         </div>

@@ -8,7 +8,15 @@ const groupMessage = mongoose.Schema({
     user_id: Number,
     group_id: Number,
     content: String,
-    timestamp: Date
+    timestamp: Date,
+    is_edited: {
+      type: Boolean,
+      default: false,
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    },
   });
 
 const GroupMessage = mongoose.model('GroupMessages', groupMessage);
