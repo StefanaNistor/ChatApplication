@@ -73,9 +73,10 @@ function OtherProfile() {
             <NavBar />
             <div className='main-user-container'>
                 <div className='profile-container'>
-                    <div className='profile=picture'>
+                    <div className='profile-picture'>
                     <div className='pic'>
-                        <img src={photoURL} alt="profile-pic" />
+                        <img src={photoURL} alt="profile-pic"  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}/>
+                        
                     </div>
                     </div>
 
