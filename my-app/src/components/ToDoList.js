@@ -4,6 +4,7 @@ import "../components-style/ToDoList.css";
 import axios from "axios";
 
 function ToDoList() {
+  //NEED TO DO SOME DATE DISPLAY FIXING HERE
   const [toDoListItems, setToDoListItems] = useState([]);
   const [initialToDoList, setInitialToDoList] = useState([]);
   const [flags, setFlags] = useState([]);
@@ -146,8 +147,8 @@ function ToDoList() {
           content,
           flag_id: flagID,
           user_id: userID,
-          start_date,
-          end_date,
+          start_date: start_date,
+          end_date : end_date
         },
         {
           headers: {
@@ -158,7 +159,7 @@ function ToDoList() {
       .then((res) => {
         console.log("To Do updated successfully!");
         const updatedList = toDoListItems.map((item) =>
-          item.id === id ? { ...item, title, content, flagID } : item
+          item.id === id ? { ...item, title, content, flagID, start_date, end_date } : item
         );
         setToDoListItems(updatedList);
         setUpdatedToDo(null);
@@ -406,6 +407,30 @@ function ToDoList() {
                         }
                         rows="4"
                       ></textarea>
+                      <div className="labelEndDate">Start date</div>
+                      <input
+                        type="date"
+                        value={updatedToDo.start_date}
+                        onChange={(e) =>
+                          setUpdatedToDo({
+                            ...updatedToDo,
+                            start_date: e.target.value,
+                          })
+                        }
+                        style={{ width: "93%" }}
+                      />
+                      <div className="labelEndDate">End date</div>
+                      <input
+                        type="date"
+                        value={updatedToDo.end_date}
+                        onChange={(e) =>
+                          setUpdatedToDo({
+                            ...updatedToDo,
+                            end_date: e.target.value,
+                          })
+                        }
+                        style={{ width: "93%" }}
+                      />
                       <select
                         value={updatedToDo.flagID}
                         onChange={(e) =>

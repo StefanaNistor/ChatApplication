@@ -66,7 +66,7 @@ function Calendar({todayDate}) {
   const getMonthData = () => {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; 
+    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
     const totalDays = daysInMonth(year, month);
     const monthData = [];
   
@@ -83,13 +83,17 @@ function Calendar({todayDate}) {
           const toDoItems = toDoList.filter((item) => {
             const startDate = new Date(new Date(item.start_date).getTime());
             const endDate = new Date(new Date(item.end_date).getTime());
+            const itemYear = startDate.getFullYear();
+            const itemMonth = startDate.getMonth();
+            const itemDay = startDate.getDate();
+            const itemEndYear = endDate.getFullYear();
+            const itemEndMonth = endDate.getMonth();
+            const itemEndDay = endDate.getDate();
+  
+          
             return (
-              startDate.getFullYear() === year &&
-              startDate.getMonth() === month &&
-              startDate.getDate() <= day &&
-              endDate.getFullYear() === year &&
-              endDate.getMonth() === month &&
-              endDate.getDate() >= day
+              new Date(year, month, day) >= startDate &&
+              new Date(year, month, day) <= endDate
             );
           });
           week.push({ day, month, year, toDoItems });
