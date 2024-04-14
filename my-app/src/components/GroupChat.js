@@ -3,7 +3,7 @@ import "../components-style/GroupChat.css";
 import axios from "axios";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-import OtherProfile from "./OtherProfile";
+import ToDoPopUp from "./ToDoPopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTasks } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,8 @@ function GroupChat({ groupID }) {
   const [usernames, setUsernames] = useState({});
   const [messageInput, setMessageInput] = useState("");
   const [showMembers, setShowMembers] = useState(false);
+  const [isToDoPopupOpen, setIsToDoPopupOpen] = useState(false);
+  const [toDoPopUpContent, setToDoPopUpContent] = useState("");
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
   const placeholderAvatar = "https://via.placeholder.com/30";
   const userAvatars = {};
@@ -212,9 +214,16 @@ const deleteMessage = (messageID) => {
     });
 }
 
+
+const toggleToDoPopup = () => {
+  setIsToDoPopupOpen(!isToDoPopupOpen);
+  
+};
+
 //TODODODODODO  sendToToDo
 const sendToToDo = (messageContent) => {
-
+  setToDoPopUpContent(messageContent);
+  toggleToDoPopup();
 }
 
 const editMessage = (messageID) => {
@@ -257,7 +266,13 @@ const editMessage = (messageID) => {
 
 
 return (
+
+  <div>
+  
   <div className="groupChat-container">
+  {isToDoPopupOpen && (
+       <ToDoPopUp toDoListContent={toDoPopUpContent} userID={userId} onClose={toggleToDoPopup} />
+      )}
     <div className="groupChatHeader">
       <div className="rightHeader">
         <div className="privateTitleRight">
@@ -332,6 +347,7 @@ return (
       )}
     </p>
     <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+
   
 </div>
       <div className="messageButtons">
@@ -374,6 +390,7 @@ return (
       </div>
 
     </div>
+  </div>
   </div>
 );
 

@@ -91,7 +91,7 @@ function UserMasterList(){
                                     <td>{user.username}</td>
                                     <td>{user.email}</td>
                                     <td>
-                                        <button className="chat-btn" onClick={() => handleClickUser(user.id)}>Start a private chat?</button>
+                                        <button className="chat-btn" onClick={() => handleClickUser(user.id)}>Start a private chat</button>
                                         <button className="view-profile-btn" onClick={() => navigate(`/otherProfile/${user.id}`)}>View profile</button>
                                     </td>
                                 </tr>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../components-style/PrivateChat.css";
+import ToDoPopUp from "./ToDoPopUp";
 import axios from "axios";
 import io from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +15,8 @@ function PrivateChat({ chatID }) {
   const [messageInput, setMessageInput] = useState("");
   const [otherUser, setOtherUser] = useState({});
   const [otherUserDetails, setOtherUserDetails] = useState({});
+  const [isToDoPopupOpen, setIsToDoPopupOpen] = useState(false);
+  const [toDoPopUpContent, setToDoPopUpContent] = useState("");
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -274,17 +277,21 @@ function PrivateChat({ chatID }) {
     });
   };
   
-//TODOODDODOOD
-  const sendToToDo = (messageContent) => {
-    const todoInput = document.getElementById("todoInput");
-    todoInput.value = messageContent;
+const toggleToDoPopup = () => {
+  setIsToDoPopupOpen(!isToDoPopupOpen);
+  
+};
 
-    const currentUserId = JSON.parse(localStorage.getItem("user")).id;
-    // TO DO
-  };
+const sendToToDo = (messageContent) => {
+  setToDoPopUpContent(messageContent);
+  toggleToDoPopup();
+}
 
   return (
     <div className="private-container">
+      {isToDoPopupOpen && (
+       <ToDoPopUp toDoListContent={toDoPopUpContent} userID={userId} onClose={toggleToDoPopup} />
+      )}
       <div className="privateChatHeader">
         <div className="privateTitle">
           <div className="privateTitleRight">
@@ -320,9 +327,11 @@ function PrivateChat({ chatID }) {
             >
               <div className="messageContent">
                 <p>
+                  <span id="usernameStyling">
                   {usernames[message.user_id]
                     ? usernames[message.user_id].username + ": "
                     : ""}
+                    </span>
                 </p>
                 <p id={`contentText-${message._id}`}>
                   {message.is_deleted
