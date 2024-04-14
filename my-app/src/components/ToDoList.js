@@ -433,8 +433,10 @@ function ToDoList() {
                         <p>{item.content}</p>
                       </div>
                       <div className="to-do-item-dates">
-                        <p>Start date: {item.start_date.slice(0, -14)}</p>
-                        <p>End date: {item.end_date.slice(0, -14)}</p>
+                      <div className="to-do-item-dates">
+                      <p>Start date: {item.start_date ? new Date(new Date(item.start_date).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 'N/A'}</p>
+                      <p>End date: {item.end_date ? new Date(new Date(item.end_date).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 'N/A'}</p>
+                    </div>
                       </div>
                       <div className="flag-container">
                         {" "}

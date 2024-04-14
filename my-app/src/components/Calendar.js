@@ -81,8 +81,8 @@ function Calendar({todayDate}) {
           break;
         } else {
           const toDoItems = toDoList.filter((item) => {
-            const startDate = new Date(item.start_date.slice(0, -14));
-            const endDate = new Date(item.end_date.slice(0, -14));
+            const startDate = new Date(new Date(item.start_date).getTime());
+            const endDate = new Date(new Date(item.end_date).getTime());
             return (
               startDate.getFullYear() === year &&
               startDate.getMonth() === month &&
