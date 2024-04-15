@@ -83,18 +83,21 @@ function Calendar({todayDate}) {
           const toDoItems = toDoList.filter((item) => {
             const startDate = new Date(new Date(item.start_date).getTime());
             const endDate = new Date(new Date(item.end_date).getTime());
-            const itemYear = startDate.getFullYear();
-            const itemMonth = startDate.getMonth();
-            const itemDay = startDate.getDate();
-            const itemEndYear = endDate.getFullYear();
-            const itemEndMonth = endDate.getMonth();
-            const itemEndDay = endDate.getDate();
+
+            // const itemYear = startDate.getFullYear();
+            // const itemMonth = startDate.getMonth();
+            // const itemDay = startDate.getDate();
+
+            // const itemEndYear = endDate.getFullYear();
+            // const itemEndMonth = endDate.getMonth();
+            // const itemEndDay = endDate.getDate();
   
           
             return (
               new Date(year, month, day) >= startDate &&
               new Date(year, month, day) <= endDate
             );
+
           });
           week.push({ day, month, year, toDoItems });
           day++;
@@ -117,6 +120,7 @@ function Calendar({todayDate}) {
   return (
     <div>
       <NavBar />
+
       <div className='calendar-container'>
       <h2>
         {date.toLocaleString("default", { month: "long", year: "numeric" })}

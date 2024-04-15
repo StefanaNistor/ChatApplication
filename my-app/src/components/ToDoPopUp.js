@@ -28,28 +28,42 @@ function ToDoList({ toDoListContent, userID, onClose }) {
     }
 
     const handleSave = () => {
-        const{title, content, endDate, flag} = getInputs();
-        const startDate = new Date();
-        console.log(title, content, endDate, flag);
-        axios.post( "http://localhost:7979/toDoList/addToDo", {
-            title: title,
-            content: content,
-            flag_id:flag,
-            user_id: userID,
-            start_date: startDate,
-            end_date: endDate,
-            
-        }, {
-            headers: {
-                'x-access-token': localStorage.getItem('token')
-            }
-        }).then((res) => {
-            console.log(res.data);
-            onClose();
-        }).catch((err) => {
-            console.log('ERROR ADDING TODO ITEM');
-        });
-    };
+      const { title, content, endDate, flag } = getInputs();
+      const startDate = new Date();
+  
+      if (!title || !content || !endDate) {
+          alert("Title, content, and end date are required!");
+          return;
+      }
+  
+      if (new Date() > new Date(endDate)) {
+          alert("End date must be in the future!");
+          return;
+      }
+  
+      axios.post(
+          "http://localhost:7979/toDoList/addToDo",
+          {
+              title: title,
+              content: content,
+              flag_id: flag,
+              user_id: userID,
+              start_date: startDate,
+              end_date: endDate,
+          },
+          {
+              headers: {
+                  'x-access-token': localStorage.getItem('token')
+              }
+          }
+      ).then((res) => {
+          console.log(res.data);
+          onClose();
+      }).catch((err) => {
+          console.log('ERROR ADDING TODO ITEM');
+      });
+  };
+  
 
 
     useEffect(() => {

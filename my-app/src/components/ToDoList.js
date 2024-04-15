@@ -77,7 +77,17 @@ function ToDoList() {
     e.preventDefault();
     const { title, content, flagID, endDate } = getToDoDataInputs();
     const userID = user.id;
-
+  
+    if (!title || !content || !endDate) {
+      alert("Title, content, and end date are required!");
+      return;
+    }
+  
+    if (new Date() > new Date(endDate)) {
+      alert("End date must be in the future!");
+      return;
+    }
+  
     const stardDate = new Date();
     axios
       .post(
@@ -103,7 +113,7 @@ function ToDoList() {
       .catch((err) => {
         console.log("ERROR ADD TODO FRONTEND!");
       });
-
+  
     const addBtn = document.getElementById("addBtn");
     addBtn.style.display = "block";
     setAreAddingToDo(false);
@@ -138,6 +148,17 @@ function ToDoList() {
     const { id, title, content, flagID, start_date, end_date } = updatedToDo;
     const userID = user.id;
   
+
+    if (!title || !content || !end_date) {
+      alert("Title, content, and end date are required!");
+      return;
+    }
+  
+    if (new Date() > new Date(end_date)) {
+      alert("End date must be in the future!");
+      return;
+    }
+  
     axios
       .put(
         "http://localhost:7979/toDoList/updateToDo",
@@ -148,7 +169,7 @@ function ToDoList() {
           flag_id: flagID,
           user_id: userID,
           start_date: start_date,
-          end_date : end_date
+          end_date: end_date,
         },
         {
           headers: {
@@ -159,7 +180,9 @@ function ToDoList() {
       .then((res) => {
         console.log("To Do updated successfully!");
         const updatedList = toDoListItems.map((item) =>
-          item.id === id ? { ...item, title, content, flagID, start_date, end_date } : item
+          item.id === id
+            ? { ...item, title, content, flagID, start_date, end_date }
+            : item
         );
         setToDoListItems(updatedList);
         setUpdatedToDo(null);
