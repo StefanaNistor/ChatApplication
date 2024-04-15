@@ -4,7 +4,8 @@ import "../components-style/ToDoList.css";
 import axios from "axios";
 
 function ToDoList() {
-  //NEED TO DO SOME DATE DISPLAY FIXING HERE
+
+  //BETTER DATE VALIDATION
   const [toDoListItems, setToDoListItems] = useState([]);
   const [initialToDoList, setInitialToDoList] = useState([]);
   const [flags, setFlags] = useState([]);
@@ -43,14 +44,16 @@ function ToDoList() {
         },
       })
       .then((res) => {
+        //atentie aici
         const items = res.data.map((item) => ({
           id: item.id,
           title: item.title,
           content: item.content,
           flagID: item.flag_id,
-          start_date: item.start_date,
-          end_date: item.end_date,
+          start_date: new Date(item.start_date).getTime() + 24 * 60 * 60 * 1000,
+          end_date: new Date(item.end_date).getTime() + 24 * 60 * 60 * 1000,
         }));
+
         setToDoListItems(items);
         setInitialToDoList(items); 
       })
@@ -82,7 +85,7 @@ function ToDoList() {
       alert("Title, content, and end date are required!");
       return;
     }
-  
+
     if (new Date() > new Date(endDate)) {
       alert("End date must be in the future!");
       return;
@@ -147,13 +150,30 @@ function ToDoList() {
   const handleSaveToDo = () => {
     const { id, title, content, flagID, start_date, end_date } = updatedToDo;
     const userID = user.id;
-  
 
+    const start = document.getElementById("editStartDate");
+    const endD = document.getElementById("editEndDate");
+
+    const startDValue = start.value ? start.value : null;
+    const endDValue = endD.value ? endD.value : null;
+
+  
+    console.log(new Date(start_date), new Date(end_date))
     if (!title || !content || !end_date) {
       alert("Title, content, and end date are required!");
       return;
     }
-  
+
+    if(!startDValue || !endDValue) {
+      alert("Start date and end date are required!");
+      return; 
+    }
+   
+    if(new Date(startDValue) > new Date(endDValue)) {
+      alert("Start date must be before end date!");
+      return;
+    }
+
     if (new Date() > new Date(end_date)) {
       alert("End date must be in the future!");
       return;
@@ -433,6 +453,7 @@ function ToDoList() {
                       <div className="labelEndDate">Start date</div>
                       <input
                         type="date"
+                        id="editStartDate"
                         value={updatedToDo.start_date}
                         onChange={(e) =>
                           setUpdatedToDo({
@@ -445,6 +466,7 @@ function ToDoList() {
                       <div className="labelEndDate">End date</div>
                       <input
                         type="date"
+                        id="editEndDate"
                         value={updatedToDo.end_date}
                         onChange={(e) =>
                           setUpdatedToDo({
@@ -482,8 +504,8 @@ function ToDoList() {
                       </div>
                       <div className="to-do-item-dates">
                       <div className="to-do-item-dates">
-                      <p>Start date: {item.start_date ? new Date(new Date(item.start_date).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 'N/A'}</p>
-                      <p>End date: {item.end_date ? new Date(new Date(item.end_date).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 'N/A'}</p>
+                      <p>Start date: {item.start_date ? new Date(new Date(item.start_date).getTime()).toISOString().split('T')[0] : 'N/A'}</p>
+                      <p>End date: {item.end_date ? new Date(new Date(item.end_date).getTime()).toISOString().split('T')[0] : 'N/A'}</p>
                     </div>
                       </div>
                       <div className="flag-container">
