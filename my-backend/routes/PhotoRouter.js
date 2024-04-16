@@ -192,5 +192,25 @@ try{
     }
 });
 
+photoRouter.get('/getAllProfilePhotos/:', async (req, res) => {
+try {
+  const profileIDs = req.params.profileIDs;
+  const gcs = storage.bucket("gs://licenta-chatapp");
+  const storagepath = `storage_folder/`;
+  const [files] = await gcs.getFiles({ prefix: storagepath });
+  const profilePicName = 'profilePic.jpg';
+  const urls = files.map((file) => {
+    if (file.name.includes(profilePicName) && profileIDs.includes(file.name[0])) {
+      return `https://storage.googleapis.com/${gcs.name}/${file.name}`;
+    }
+  });
+  res.status(200).json({ urls });
+} catch (error) {
+  console.log(error);
+  res.status(500).json({ error: error.message });
+}
+
+});
+
 
 module.exports = photoRouter;

@@ -158,6 +158,8 @@ function GroupChat({ groupID }) {
   }
 }
 
+// ACI function that gets all group photos based on members id  
+
   useEffect(() => {
     if (groupID === "") {
       return;
@@ -220,7 +222,7 @@ const toggleToDoPopup = () => {
   
 };
 
-//TODODODODODO  sendToToDo
+
 const sendToToDo = (messageContent) => {
   setToDoPopUpContent(messageContent);
   toggleToDoPopup();

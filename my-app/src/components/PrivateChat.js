@@ -67,6 +67,8 @@ function PrivateChat({ chatID }) {
     };
   }, [chatID]);
 
+  
+
   async function getUserProfilePhoto(otherID) {
     if (typeof otherID !== "number") {
       console.error("Invalid otherUserID:", otherID);
