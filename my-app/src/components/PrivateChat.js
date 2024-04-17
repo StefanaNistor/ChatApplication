@@ -4,10 +4,11 @@ import ToDoPopUp from "./ToDoPopUp";
 import axios from "axios";
 import io from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTasks } from "@fortawesome/free-solid-svg-icons";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
@@ -18,7 +19,7 @@ function PrivateChat({ chatID }) {
   const [isToDoPopupOpen, setIsToDoPopupOpen] = useState(false);
   const [toDoPopUpContent, setToDoPopUpContent] = useState("");
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
-
+  const socket = io("http://localhost:7979");
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user.id;
 
@@ -67,7 +68,6 @@ function PrivateChat({ chatID }) {
     };
   }, [chatID]);
 
-  
 
   async function getUserProfilePhoto(otherID) {
     if (typeof otherID !== "number") {
@@ -95,7 +95,6 @@ function PrivateChat({ chatID }) {
     }
   }
 
-  const socket = io("http://localhost:7979");
 
   async function getOtherUserDetails(userId) {
     try {
@@ -387,7 +386,31 @@ const sendToToDo = (messageContent) => {
           )}
           {chatID && <button onClick={handleSendMessage}>Send</button>}
         </div>
-        <div className="attachButtons"></div>
+        <div className="attachButtons"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '5px',
+          height: '5vh',
+        }}>
+
+        <button id='attachImage'
+        style={{
+          borderRadius: '50',
+          padding: '5px',
+          backgroundColor: '#dbcdf0',
+          marginLeft: '3px',
+          marginRight:'1vh'
+        }}
+        ><FontAwesomeIcon icon={faImage} style={{ fontSize:'2.2vh'}} /></button>
+        <button id='attachFile'
+        style={{
+          borderRadius: '50',
+          padding: '5px',
+          backgroundColor: '#f7d9c4'
+        }}
+        ><FontAwesomeIcon icon={faPaperclip} style={{ fontSize:'2.2vh'}}/></button>
+      </div>
       </div>
       <div className="variousPromptsText"></div>
     </div>

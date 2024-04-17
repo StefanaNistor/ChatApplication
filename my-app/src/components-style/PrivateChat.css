@@ -63,14 +63,13 @@ button:hover {
 
 .chatFooterPrivate {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
     bottom:0;
     position: fixed;
     width: 78vw;
     margin: 1.5vw;
     margin-left: 6.8vw;
-
 }
 
 .messageInput input{
@@ -147,4 +146,9 @@ button:hover {
   
   .editButton {
     background-color: #2ecc71;
+  }
+
+  .attachButtons button:hover {
+    transform: scale(1.2);
+    transition: transform 0.5s;
   }

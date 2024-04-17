@@ -89,14 +89,16 @@
   
   .chatFooter {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
     bottom: 0;
     position: fixed;
     width: 78vw;
     margin: 1.5vw;
+    margin-left: 6.8vw;
   }
   
+
   .messageInput input {
     width: 80%;
     padding: 10px;
