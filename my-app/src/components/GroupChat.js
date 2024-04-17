@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../components-style/GroupChat.css";
 import axios from "axios";
 import io from "socket.io-client";
@@ -25,14 +25,14 @@ function GroupChat({ groupID }) {
   const placeholderAvatar = "https://via.placeholder.com/30";
   const [userProfiles, setUserProfiles] = useState({});
   const [loadingProfiles, setLoadingProfiles] = useState(true);
-
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user.id;
-
   const isCurrentUserAdmin = user.isAdmin;
   const navigate = useNavigate();
-
   const socket = io("http://localhost:7979");
+  const fileInputRef = React.createRef();
+  const [attachedFile, setAttachedFile] = useState(null);
+
 
   useEffect(() => {
     getGroupProfilePhoto();
@@ -315,6 +315,20 @@ function GroupChat({ groupID }) {
     return userProfiles[userID] ? userProfiles[userID] : placeholderAvatar;
   };
 
+  const handleAttachedFile = (e) => {
+    e.preventDefault();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }
+  
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setAttachedFile(file);
+    console.log('FISIEEER :', file);
+    //AICI TO DO
+  }
+
   return (
     <div>
       {loadingProfiles ? (
@@ -485,12 +499,15 @@ function GroupChat({ groupID }) {
                       marginLeft: "3px",
                       marginRight: "1vh",
                     }}
+                    onClick={handleAttachedFile}
                   >
                     <FontAwesomeIcon
                       icon={faImage}
                       style={{ fontSize: "2.2vh" }}
                     />
                   </button>
+                  <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
+
                   <button
                     id="attachFile"
                     style={{
@@ -498,6 +515,7 @@ function GroupChat({ groupID }) {
                       padding: "5px",
                       backgroundColor: "#f7d9c4",
                     }}
+                    onClick={handleAttachedFile}
                   >
                     <FontAwesomeIcon
                       icon={faPaperclip}

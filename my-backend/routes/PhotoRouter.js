@@ -212,5 +212,10 @@ try {
 
 });
 
+// attaching images and files to messages area ;-;
+
+photoRouter.post('/uploadMessageAttachment/:messageID', upload.single('file'), async (req, res) => {
+
+});
 
 module.exports = photoRouter;

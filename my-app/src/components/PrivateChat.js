@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../components-style/PrivateChat.css";
 import ToDoPopUp from "./ToDoPopUp";
 import axios from "axios";
@@ -21,6 +21,8 @@ function PrivateChat({ chatID }) {
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
   const socket = io("http://localhost:7979");
   const user = JSON.parse(localStorage.getItem("user"));
+  const [attachedFile, setAttachedFile] = useState(null);
+  const fileInputRef = useRef(null);
   const userId = user.id;
 
   useEffect(() => {
@@ -288,6 +290,21 @@ const sendToToDo = (messageContent) => {
   toggleToDoPopup();
 }
 
+const handleAttachedFile = (e) => {
+  e.preventDefault();
+  if (fileInputRef.current) {
+    fileInputRef.current.click();
+  }
+}
+
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  setAttachedFile(file);
+  console.log('FISIEEER :', file);
+  //AICI TO DO
+}
+
   return (
     <div className="private-container">
       {isToDoPopupOpen && (
@@ -402,14 +419,19 @@ const sendToToDo = (messageContent) => {
           marginLeft: '3px',
           marginRight:'1vh'
         }}
+        onClick={handleAttachedFile}
         ><FontAwesomeIcon icon={faImage} style={{ fontSize:'2.2vh'}} /></button>
+        <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
+
         <button id='attachFile'
         style={{
           borderRadius: '50',
           padding: '5px',
           backgroundColor: '#f7d9c4'
         }}
-        ><FontAwesomeIcon icon={faPaperclip} style={{ fontSize:'2.2vh'}}/></button>
+        onClick={handleAttachedFile}
+        ><FontAwesomeIcon icon={faPaperclip} style={{ fontSize:'2.2vh'}} /></button>
+        
       </div>
       </div>
       <div className="variousPromptsText"></div>
