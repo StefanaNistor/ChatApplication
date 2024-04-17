@@ -29,8 +29,8 @@ function GroupChat({ groupID }) {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user.id;
-
-
+  
+  const isCurrentUserAdmin = user.isAdmin;
   const navigate = useNavigate();
 
   const socket = io("http://localhost:7979");
@@ -40,6 +40,7 @@ function GroupChat({ groupID }) {
     if (groupID) {
       socket.emit("join group chat", { roomId: groupID });
     }
+    console.log(user)
 
     socket.on("chat group client", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -312,9 +313,8 @@ const editMessage = (messageID) => {
 }
 
 const getUserProfilePhotoById = (userID) => {
-  console.log("Profileuri", userProfiles);
-
-  console.log("Linkul cel bun", userProfiles[userID]);
+  // console.log("Profileuri", userProfiles);
+  // console.log("Linkul cel bun", userProfiles[userID]);
   return userProfiles[userID] ? userProfiles[userID] : placeholderAvatar;
 }
 
@@ -431,7 +431,7 @@ return (
                   <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
                 </div>
                 <div className="messageButtons">
-                  {message.user_id === userId && !message.is_deleted && (
+                  {((message.user_id === userId && !message.is_deleted) || isCurrentUserAdmin) && !message.is_deleted &&    (
                     <button
                       className="deleteButton"
                       onClick={() => deleteMessage(message._id)}
