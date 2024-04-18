@@ -22,8 +22,20 @@ function PrivateChat({ chatID }) {
   const socket = io("http://localhost:7979");
   const user = JSON.parse(localStorage.getItem("user"));
   const [attachedFile, setAttachedFile] = useState(null);
+  const [attachedImage, setAttachedImage] = useState(null);
   const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
   const userId = user.id;
+
+  // trebuie sa fac urmatorul lucru:
+  //1. in urma preluarii mesajelor, sa fac un request catre google cloud storage
+  // preiau un array care are cheie si valoare
+  //cheia: numele fisierului
+  //valoarea: link-ul catre fisier
+
+  //2. in momentul in care afisez mesajele, daca gasesc un fisier atasat, il caut dupa nume in array-ul de mai sus
+  // afisez mic preview la nume si un buton de download(?)
+  
 
   useEffect(() => {
     if (chatID) {
@@ -191,12 +203,15 @@ function PrivateChat({ chatID }) {
     const timestamp = new Date().toISOString();
     const user_id = JSON.parse(localStorage.getItem("user")).id;
     const messageInput = document.getElementById("messageInput").value;
-
+    
     const messageObj = {
       user_id: user_id,
       chat_id: chatID,
       content: messageInput,
-      timestamp: timestamp,
+      timestamp: timestamp, 
+
+      fileName: attachedFile ? timestamp + attachedFile.name : null,
+      imageName: attachedImage ? timestamp + attachedImage.name : null,
     };
 
     console.log("Message:", messageObj);
@@ -296,6 +311,27 @@ const handleAttachedFile = (e) => {
     fileInputRef.current.click();
   }
 }
+
+const handleAttachedFileImage = (e) => {
+  e.preventDefault();
+  if (imageInputRef.current) {
+    imageInputRef.current.click();
+  }
+}
+
+const handleFileImageChange = (event) => {
+  const file = event.target.files[0];
+  if(file.type.split('/')[0] !== 'image') {
+    alert('Please select an image file');
+    return;
+  }
+ else {
+  setAttachedImage(file);
+  console.log('FISIEEER :', file);
+ 
+ }
+}
+
 
 
 const handleFileChange = (event) => {
@@ -419,9 +455,9 @@ const handleFileChange = (event) => {
           marginLeft: '3px',
           marginRight:'1vh'
         }}
-        onClick={handleAttachedFile}
+        onClick={handleAttachedFileImage}
         ><FontAwesomeIcon icon={faImage} style={{ fontSize:'2.2vh'}} /></button>
-        <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
+        <input type='file' ref = {imageInputRef} id='imageInput' style={{display:'none'}} onChange={handleFileImageChange}/>
 
         <button id='attachFile'
         style={{
@@ -431,8 +467,14 @@ const handleFileChange = (event) => {
         }}
         onClick={handleAttachedFile}
         ><FontAwesomeIcon icon={faPaperclip} style={{ fontSize:'2.2vh'}} /></button>
+        <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
         
       </div>
+      {(attachedFile || attachedImage) && (
+        <div id='attachedFile'>
+          <p>Attachement: {attachedFile ? attachedFile.name : attachedImage.name}</p>
+        </div>
+      )}
       </div>
       <div className="variousPromptsText"></div>
     </div>

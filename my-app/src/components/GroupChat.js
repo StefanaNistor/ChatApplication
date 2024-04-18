@@ -32,6 +32,8 @@ function GroupChat({ groupID }) {
   const socket = io("http://localhost:7979");
   const fileInputRef = React.createRef();
   const [attachedFile, setAttachedFile] = useState(null);
+  const imageInputRef = React.createRef();
+  const [attachedImage, setAttachedImage] = useState(null);
 
 
   useEffect(() => {
@@ -120,6 +122,8 @@ function GroupChat({ groupID }) {
       group_id: groupID,
       content: messageInput,
       timestamp: timestamp,
+      fileName: attachedFile ? timestamp+attachedFile.name : null,
+      imageName: attachedImage ? timestamp+attachedImage.name : null,
     };
 
     console.log("Message:", messageObj);
@@ -329,6 +333,26 @@ function GroupChat({ groupID }) {
     //AICI TO DO
   }
 
+  const handleAttachedFileImage = (e) => {
+    e.preventDefault();
+    if (imageInputRef.current) {
+      imageInputRef.current.click();
+    }
+  }
+  
+  const handleFileImageChange = (event) => {
+    const file = event.target.files[0];
+    if(file.type.split('/')[0] !== 'image') {
+      alert('Please select an image file');
+      return;
+    } else {
+      setAttachedImage(file);
+      console.log('FISIEEER :', file);
+    }
+   
+    //AICI TO DO
+  }
+
   return (
     <div>
       {loadingProfiles ? (
@@ -499,14 +523,14 @@ function GroupChat({ groupID }) {
                       marginLeft: "3px",
                       marginRight: "1vh",
                     }}
-                    onClick={handleAttachedFile}
+                    onClick={handleAttachedFileImage}
                   >
                     <FontAwesomeIcon
                       icon={faImage}
                       style={{ fontSize: "2.2vh" }}
                     />
                   </button>
-                  <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
+                  <input type='file' ref = {imageInputRef} id='imageInput' style={{display:'none'}} onChange={handleFileImageChange}/>
 
                   <button
                     id="attachFile"
@@ -522,7 +546,14 @@ function GroupChat({ groupID }) {
                       style={{ fontSize: "2.2vh" }}
                     />
                   </button>
+                  <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
                 </div>
+                {(attachedFile || attachedImage) && (
+        <div id='attachedFile'>
+      {attachedFile && <p>Attached file: {attachedFile.name}</p> }
+      {attachedImage && <p>Attached image: {attachedImage.name}</p> }
+        </div>
+      )}
 
                 <div className="variousPromptsText"></div>
               </div>

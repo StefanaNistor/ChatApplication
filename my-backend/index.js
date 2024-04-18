@@ -93,6 +93,9 @@ io.on("connection", (socket) => {
       timestamp,
       chat_id: request.chat_id,
       user_id: request.user_id,
+
+      fileName: request.fileName,
+      imageName: request.imageName,
     }
 
     if (chatRooms.roomId) {
@@ -135,6 +138,8 @@ io.on("connection", (socket) => {
           timestamp,
           group_id: request.group_id,
           user_id: request.user_id,
+          fileName: request.fileName,
+          imageName: request.imageName,
         };
 
         if (chatRooms.roomId) {

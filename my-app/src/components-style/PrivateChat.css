@@ -152,3 +152,15 @@ button:hover {
     transform: scale(1.2);
     transition: transform 0.5s;
   }
+
+  #attachedFile {
+    width: 15vw;
+    max-width: 15vw;
+    overflow-x: scroll;
+    height: 8vh;
+    margin-left:3px;
+  }
+
+  #attachedFile::-webkit-scrollbar {
+    display: none;
+  }

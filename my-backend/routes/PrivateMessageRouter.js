@@ -17,6 +17,8 @@ const privateMsgSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  fileName: String,
+  imageName: String,
 });
 
 const PrivateMessage = mongoose.model("PrivateMessages", privateMsgSchema);
@@ -62,7 +64,7 @@ privateMessageRouter.get("/getByCurrentUser/:id", verifyToken, async (req, res) 
 
 
 privateMessageRouter.post("/add", async (req, res) => {
-  const { user_id, content, timestamp, chat_id } = req.body;
+  const { user_id, content, timestamp, chat_id, fileName, imageName } = req.body;
   if (!user_id || !content || !timestamp || !chat_id) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -72,6 +74,8 @@ privateMessageRouter.post("/add", async (req, res) => {
       content,
       timestamp,
       chat_id,
+      fileName,
+      imageName,
     });
     await newPrivateMessage.save();
     res.status(201).json(newPrivateMessage);

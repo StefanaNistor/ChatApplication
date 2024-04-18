@@ -17,6 +17,8 @@ const groupMessage = mongoose.Schema({
       type: Boolean,
       default: false,
     },
+    fileName: String,
+  imageName: String,
   });
 
 const GroupMessage = mongoose.model('GroupMessages', groupMessage);
@@ -47,7 +49,7 @@ groupMessageRouter.get('/getByGroup/:id', verifyToken, async (req, res) => {
   });
 
 groupMessageRouter.post('/add', async (req, res) => {
-    const { user_id, group_id, content, timestamp } = req.body;
+    const { user_id, group_id, content, timestamp, fileName, imageName } = req.body;
     if (!user_id || !group_id || !content || !timestamp) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -57,6 +59,8 @@ groupMessageRouter.post('/add', async (req, res) => {
         group_id,
         content,
         timestamp,
+        fileName,
+        imageName,
       });
       await newGroupMessage.save();
       res.status(201).json(newGroupMessage);
