@@ -122,8 +122,8 @@ function GroupChat({ groupID }) {
       group_id: groupID,
       content: messageInput,
       timestamp: timestamp,
-      fileName: attachedFile ? timestamp+attachedFile.name : null,
-      imageName: attachedImage ? timestamp+attachedImage.name : null,
+      fileName: attachedFile ? user_id + timestamp+attachedFile.name : null,
+      imageName: attachedImage ? user_id + timestamp+attachedImage.name : null,
     };
 
     console.log("Message:", messageObj);

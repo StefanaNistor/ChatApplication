@@ -35,7 +35,7 @@ function PrivateChat({ chatID }) {
 
   //2. in momentul in care afisez mesajele, daca gasesc un fisier atasat, il caut dupa nume in array-ul de mai sus
   // afisez mic preview la nume si un buton de download(?)
-  
+
 
   useEffect(() => {
     if (chatID) {
@@ -210,8 +210,8 @@ function PrivateChat({ chatID }) {
       content: messageInput,
       timestamp: timestamp, 
 
-      fileName: attachedFile ? timestamp + attachedFile.name : null,
-      imageName: attachedImage ? timestamp + attachedImage.name : null,
+      fileName: attachedFile ? user_id + timestamp + attachedFile.name : null,
+      imageName: attachedImage ? user_id + timestamp + attachedImage.name : null,
     };
 
     console.log("Message:", messageObj);
