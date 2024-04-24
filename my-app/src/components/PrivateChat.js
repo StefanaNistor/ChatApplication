@@ -21,11 +21,13 @@ function PrivateChat({ chatID }) {
   const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/70");
   const socket = io("http://localhost:7979");
   const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
+  const isCurrentUserAdmin = user.isAdmin;
   const [attachedFile, setAttachedFile] = useState(null);
   const [attachedImage, setAttachedImage] = useState(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
-  const userId = user.id;
+ 
 
   // trebuie sa fac urmatorul lucru:
   //1. in urma preluarii mesajelor, sa fac un request catre google cloud storage
@@ -35,7 +37,6 @@ function PrivateChat({ chatID }) {
 
   //2. in momentul in care afisez mesajele, daca gasesc un fisier atasat, il caut dupa nume in array-ul de mai sus
   // afisez mic preview la nume si un buton de download(?)
-
 
   useEffect(() => {
     if (chatID) {
@@ -203,6 +204,11 @@ function PrivateChat({ chatID }) {
     const timestamp = new Date().toISOString();
     const user_id = JSON.parse(localStorage.getItem("user")).id;
     const messageInput = document.getElementById("messageInput").value;
+
+    if(!messageInput) {
+      alert('Please type a message');
+      return;
+    }
     
     const messageObj = {
       user_id: user_id,
@@ -216,12 +222,45 @@ function PrivateChat({ chatID }) {
 
     console.log("Message:", messageObj);
 
+    const formData = new FormData();
+    if(attachedFile) {
+      formData.append('file', attachedFile);
+      axios.post('http://localhost:7979/photos/uploadMessageAttachment/'+messageObj.fileName, formData, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        console.log('File uploaded successfully:', res.data);
+      })
+      .catch((error) => {
+        console.error('An error occurred while uploading the file:', error);
+      });
+
+    } else if(attachedImage) {
+      formData.append('file', attachedImage);
+      axios.post('http://localhost:7979/photos/uploadMessageAttachment/'+messageObj.imageName, formData, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        console.log('Image uploaded successfully:', res.data);
+      })
+      .catch((error) => {
+        console.error('An error occurred while uploading the image:', error);
+      });
+
+    } 
+
     socket.emit("chat private server", messageObj);
     setMessageInput("");
     //setMessages((prevMessages) => [...prevMessages, messageObj]);
 
     const message = document.getElementById("messageInput");
     message.value = "";
+    setAttachedFile(null);
+    setAttachedImage(null);
   };
 
   const deleteMessage = (messageID) => {
@@ -332,8 +371,6 @@ const handleFileImageChange = (event) => {
  }
 }
 
-
-
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   setAttachedFile(file);
@@ -401,28 +438,42 @@ const handleFileChange = (event) => {
               </div>
 
               <div className="messageButtons">
-                {message.user_id === userId && (message.is_deleted==false) && (
-                  <div className="messageButtons">
-                    <button
-                      className="deleteButton"
-                      onClick={() => deleteMessage(message._id)}
-                    >
-                      <FontAwesomeIcon icon={faTrashAlt} />
-                    </button>
-                    <button className="editButton" onClick={() => handleEditMessage(message._id)}>
-                    <FontAwesomeIcon icon={faEdit} />
-                    </button>
+                    {((message.user_id === userId && !message.is_deleted) ||
+                      isCurrentUserAdmin) &&
+                      !message.is_deleted && (
+                        <button
+                          className="deleteButton"
+                          onClick={() => deleteMessage(message._id)}
+                        >
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </button>
+                      )}
+                    {message.user_id === userId && !message.is_deleted && (
+                      <button
+                        className="editButton"
+                        onClick={() => editMessage(message._id)}
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    )}
+                    {message.user_id !== userId && !message.is_deleted && (
+                      <button
+                        className="sendToToDoButton"
+                        onClick={() => sendToToDo(message.content)}
+                      >
+                        <FontAwesomeIcon icon={faTasks} />
+                      </button>
+                    )}
                   </div>
-                )}
-                {message.user_id !== userId && (message.is_deleted==false) && (
-                  <button
-                    className="sendToToDoButton"
-                    onClick={() => sendToToDo(message.content)}
-                  >
-                    <FontAwesomeIcon icon={faTasks} />
-                  </button>
-                )}
-              </div>
+                  <div className="attachments">
+                    {message.fileName && (
+                       <p>  {message.fileName} </p>
+                    )}
+
+                    {message.imageName && (
+                      <p> {message.imageName}</p>
+                    )}
+                    </div>
             </div>
           ))}
         </div>

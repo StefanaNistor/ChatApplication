@@ -212,10 +212,39 @@ try {
 
 });
 
-// attaching images and files to messages area ;-;
+//works :D
+photoRouter.post('/uploadMessageAttachment/:fileName', upload.single('file'), async (req, res) => {
+  const { fileName } = req.params;
 
-photoRouter.post('/uploadMessageAttachment/:messageID', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      throw new Error('No file uploaded.');
+    }
 
+    const gcs = storage.bucket("gs://licenta-chatapp");
+    const storagepath = `storage_folder/${fileName}`; 
+    const blob = gcs.file(storagepath);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+
+    blobStream.on('error', (err) => {
+      console.error(err);
+      res.status(500).json({ error: 'An error occurred while uploading the file.' });
+    });
+
+    blobStream.on('finish', () => {
+      const publicUrl = `https://storage.googleapis.com/${gcs.name}/${blob.name}`;
+      res.status(200).send({ fileUrl: publicUrl });
+    });
+
+    blobStream.end(req.file.buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.toString() });
+  }
 });
 
 module.exports = photoRouter;

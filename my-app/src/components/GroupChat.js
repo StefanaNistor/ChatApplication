@@ -117,6 +117,12 @@ function GroupChat({ groupID }) {
     const timestamp = new Date().toISOString();
     const user_id = JSON.parse(localStorage.getItem("user")).id;
 
+    if(messageInput === "" ) {
+      alert('Please enter a message');
+      return;
+    }
+
+
     const messageObj = {
       user_id: user_id,
       group_id: groupID,
@@ -126,10 +132,44 @@ function GroupChat({ groupID }) {
       imageName: attachedImage ? user_id + timestamp+attachedImage.name : null,
     };
 
+    const formData = new FormData();
+    
+    if(attachedFile) {
+      formData.append('file', attachedFile);
+      axios.post('http://localhost:7979/photos/uploadMessageAttachment/'+messageObj.fileName, formData, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        console.log('File uploaded successfully:', res.data);
+      })
+      .catch((error) => {
+        console.error('An error occurred while uploading the file:', error);
+      });
+
+    } else if(attachedImage) {
+      formData.append('file', attachedImage);
+      axios.post('http://localhost:7979/photos/uploadMessageAttachment/'+messageObj.imageName, formData, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        console.log('Image uploaded successfully:', res.data);
+      })
+      .catch((error) => {
+        console.error('An error occurred while uploading the image:', error);
+      });
+
+    } 
+
     console.log("Message:", messageObj);
 
     socket.emit("chat group server", messageObj);
     setMessageInput("");
+    setAttachedFile(null);
+    setAttachedImage(null);
   };
 
   async function fetchUsernames() {
@@ -330,7 +370,6 @@ function GroupChat({ groupID }) {
     const file = event.target.files[0];
     setAttachedFile(file);
     console.log('FISIEEER :', file);
-    //AICI TO DO
   }
 
   const handleAttachedFileImage = (e) => {
@@ -350,7 +389,6 @@ function GroupChat({ groupID }) {
       console.log('FISIEEER :', file);
     }
    
-    //AICI TO DO
   }
 
   return (
@@ -491,6 +529,16 @@ function GroupChat({ groupID }) {
                       </button>
                     )}
                   </div>
+                  <div className="attachments">
+                    {message.fileName && (
+                       <p>  {message.fileName} </p>
+                    )}
+
+                    {message.imageName && (
+                      <p> {message.imageName}</p>
+                    )}
+                    </div>
+
                 </div>
               ))}
               <div className="chatFooter">
