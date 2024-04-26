@@ -247,4 +247,25 @@ photoRouter.post('/uploadMessageAttachment/:fileName', upload.single('file'), as
   }
 });
 
+// delete attached file by name 
+photoRouter.delete('/deleteMessageAttachment/:fileName', async (req, res) => {
+  const { fileName } = req.params;
+
+  try {
+    const gcs = storage.bucket("gs://licenta-chatapp");
+    const storagepath = `storage_folder/${fileName}`;
+    const file = gcs.file(storagepath);
+    const exists = await file.exists();
+    if (!exists[0]) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    await file.delete();
+    res.status(200).json({ message: "File deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = photoRouter;

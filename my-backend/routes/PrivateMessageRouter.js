@@ -3,6 +3,7 @@ const privateMessageRouter = express.Router();
 const { verifyToken } = require("../middleware");
 const clientMongoDB = require("../dbConfig");
 const mongoose = require("mongoose");
+const axios = require("axios");
 
 const privateMsgSchema = mongoose.Schema({
   user_id: Number,
@@ -127,6 +128,19 @@ privateMessageRouter.delete("/deleteMsg/:id", async (req, res) => {
   }
   try {
     const result = await PrivateMessage.findByIdAndUpdate(privateMessageID, { is_deleted: true });
+
+    // cloud deletion
+    const message = await PrivateMessage.findById(privateMessageID);
+    if(message.fileName){
+      axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.fileName}`)
+      await PrivateMessage.findByIdAndUpdate(privateMessageID, { fileName: "" });
+    }
+    if(message.imageName){
+      axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.imageName}`)
+      await PrivateMessage.findByIdAndUpdate(privateMessageID, { imageName: "" });
+    }
+
+
     res.status(200).json(result);
   } catch (error) {
     console.error("Error deleting private message:", error);

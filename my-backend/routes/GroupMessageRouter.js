@@ -3,6 +3,7 @@ const groupMessageRouter = express.Router();
 const { verifyToken } = require('../middleware');
 const clientMongoDB = require('../dbConfig');
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 const groupMessage = mongoose.Schema({
     user_id: Number,
@@ -107,6 +108,19 @@ groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
     }
     try {
       const result = await GroupMessage.findByIdAndUpdate(msgId, { is_deleted: true });
+
+      // cloud deletion
+      const message = await GroupMessage.findById(msgId);
+      if(message.fileName){
+        axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.fileName}`)
+        await GroupMessage.findByIdAndUpdate(msgId, { fileName: "" });
+      }
+      if(message.imageName){
+        axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.imageName}`)
+        await GroupMessage.findByIdAndUpdate(msgId, { imageName: "" })
+      }
+
+
       res.status(200).json(result);
     } catch (error) {
       console.error("Error deleting group messages:", error);
