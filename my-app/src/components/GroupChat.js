@@ -409,6 +409,15 @@ function GroupChat({ groupID }) {
     }
   };
 
+  const handlePhotoClick = (event) => {
+    const target = event.target;
+    const image = new Image();
+    image.src = target.src;
+    const w = window.open("");
+    w.document.write(image.outerHTML);
+  }
+  
+
   return (
     <div>
       {loadingProfiles ? (
@@ -527,7 +536,7 @@ function GroupChat({ groupID }) {
                         color: "#333",
                       }}
                     >
-                      {message.fileName && <p> {message.fileName} </p>}
+                    {message.fileName && <p style={{cursor:'pointer'}}> {message.fileName} </p>}
 
                       {message.imageName && (
                         <img
@@ -538,8 +547,10 @@ function GroupChat({ groupID }) {
                             height: "100px",
                             maxWidth: "300px",
                             maxHeight: "300px",
+                            cursor: "pointer",
                             borderRadius: "10px",
-                          }}
+                        }}
+                        onClick={handlePhotoClick}
                         ></img>
                       )}
                     </div>

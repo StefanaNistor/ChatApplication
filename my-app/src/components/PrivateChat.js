@@ -27,20 +27,16 @@ function PrivateChat({ chatID }) {
   const [attachedImage, setAttachedImage] = useState(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
+
+  const [loadingImages, setLoadingImages] = useState(true);
+  const [imageAttachments, setImageAttachments] = useState({});
  
 
-  // trebuie sa fac urmatorul lucru:
-  //1. in urma preluarii mesajelor, sa fac un request catre google cloud storage
-  // preiau un array care are cheie si valoare
-  //cheia: numele fisierului
-  //valoarea: link-ul catre fisier
-
-  //2. in momentul in care afisez mesajele, daca gasesc un fisier atasat, il caut dupa nume in array-ul de mai sus
-  // afisez mic preview la nume si un buton de download(?)
-
+  
   useEffect(() => {
     if (chatID) {
       getMessages(chatID);
+      setLoadingImages(true);
     }
     getOtherUser(chatID);
     //getUserProfilePhoto();
@@ -55,6 +51,7 @@ function PrivateChat({ chatID }) {
       })
       .then((res) => {
         console.log("Messages:", res.data);
+        getImageAttachments(res.data);
         setMessages(res.data);
       })
       .catch((err) => {
@@ -69,6 +66,7 @@ function PrivateChat({ chatID }) {
   useEffect(() => {
     if (chatID) {
       socket.emit("join private chat", { roomId: chatID });
+      
     }
 
     socket.on("chat private client", (message) => {
@@ -387,175 +385,226 @@ const handleAttachmentClick = (event) => {
   }
 }
 
+const handlePhotoClick = (event) => {
+  const target = event.target;
+  const image = new Image();
+  image.src = target.src;
+  const w = window.open("");
+  w.document.write(image.outerHTML);
+}
+
+
+async function promiseAll(messages) {
+  const promises = messages.map(async (message) => {
+    if(message.imageName) {
+      const response = await axios.get(`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+        responseType: 'blob',
+      });
+      const url = URL.createObjectURL(response.data);
+      imageAttachments[message._id] = url;
+    }
+  });
+  return Promise.all(promises);
+}
+
+
+async function getImageAttachments (messages)  {
+  const promise = await promiseAll(messages);
+  if(promise){
+    setLoadingImages(false);
+  }
+
+
+}
 
   return (
-    <div className="private-container">
-      {isToDoPopupOpen && (
-       <ToDoPopUp toDoListContent={toDoPopUpContent} userID={userId} onClose={toggleToDoPopup} />
-      )}
-      <div className="privateChatHeader">
-        <div className="privateTitle">
-          <div className="privateTitleRight">
-            <h1>
-              {otherUserDetails && otherUserDetails.firstname}{" "}
-              {otherUserDetails && otherUserDetails.lastname}
-            </h1>
-            <div className="userDetails">
-              {otherUserDetails && otherUserDetails.about}
-            </div>
+
+    <>
+    {loadingImages ? <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "90vh",
+            fontSize: "20px",
+          }}>Loading private messages...</div> :
+    ( <div className="private-container">
+    {isToDoPopupOpen && (
+     <ToDoPopUp toDoListContent={toDoPopUpContent} userID={userId} onClose={toggleToDoPopup} />
+    )}
+    <div className="privateChatHeader">
+      <div className="privateTitle">
+        <div className="privateTitleRight">
+          <h1>
+            {otherUserDetails && otherUserDetails.firstname}{" "}
+            {otherUserDetails && otherUserDetails.lastname}
+          </h1>
+          <div className="userDetails">
+            {otherUserDetails && otherUserDetails.about}
           </div>
         </div>
-        <img
-          src={photoURL}
-          alt="groupPicture"
-          style={{
-            width: "70px",
-            height: "70px",
-            borderRadius: "50%",
-            padding: "2vh",
-          }}
-        />
       </div>
+      <img
+        src={photoURL}
+        alt="groupPicture"
+        style={{
+          width: "70px",
+          height: "70px",
+          borderRadius: "50%",
+          padding: "2vh",
+        }}
+      />
+    </div>
 
-      <div className="privateChatBody">
-        <div className="chatMessages">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`message ${
-                message.user_id === userId ? "myMessage" : ""
-              }`}
-            >
-              <div className="messageContent">
-                <p>
-                  <span id="usernameStyling">
-                  {usernames[message.user_id]
-                    ? usernames[message.user_id].username + ": "
-                    : ""}
-                    </span>
-                </p>
-                <p id={`contentText-${message._id}`}>
-                  {message.is_deleted
-                    ? "Message has been deleted"
-                    : message.content}
-                  {message.is_edited && (
-                    <span className="edited-indicator">
-                      <FontAwesomeIcon icon={faPencilAlt} />
-                    </span>
-                  )}
-                </p>
-                <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
-                <div
-                      className="attachments"
-                      onClick={handleAttachmentClick}
-                      style={{
-                        margin: "5px 0",
-                        fontWeight: "bold",
-                        color: "#333",
-                      }}
-                    >
-                      {message.fileName && <p> {message.fileName} </p>}
+    <div className="privateChatBody">
+      <div className="chatMessages">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`message ${
+              message.user_id === userId ? "myMessage" : ""
+            }`}
+          >
+            <div className="messageContent">
+              <p>
+                <span id="usernameStyling">
+                {usernames[message.user_id]
+                  ? usernames[message.user_id].username + ": "
+                  : ""}
+                  </span>
+              </p>
+              <p id={`contentText-${message._id}`}>
+                {message.is_deleted
+                  ? "Message has been deleted"
+                  : message.content}
+                {message.is_edited && (
+                  <span className="edited-indicator">
+                    <FontAwesomeIcon icon={faPencilAlt} />
+                  </span>
+                )}
+              </p>
+              <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+              <div
+                    className="attachments"
+                    onClick={handleAttachmentClick}
+                    style={{
+                      margin: "5px 0",
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    {message.fileName && <p style={{cursor:'pointer'}}> {message.fileName} </p>}
 
-                      {message.imageName && (
-                        <img
-                          src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
-                          alt="attachedImage"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            maxWidth: "300px",
-                            maxHeight: "300px",
-                            borderRadius: "10px",
-                          }}
-                        ></img>
-                      )}
-                    </div>
-              </div>
-
-              <div className="messageButtons">
-                    {((message.user_id === userId && !message.is_deleted) ||
-                      isCurrentUserAdmin) &&
-                      !message.is_deleted && (
-                        <button
-                          className="deleteButton"
-                          onClick={() => deleteMessage(message._id)}
-                        >
-                          <FontAwesomeIcon icon={faTrashAlt} />
-                        </button>
-                      )}
-                    {message.user_id === userId && !message.is_deleted && (
-                      <button
-                        className="editButton"
-                        onClick={() => editMessage(message._id)}
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                    )}
-                    {message.user_id !== userId && !message.is_deleted && (
-                      <button
-                        className="sendToToDoButton"
-                        onClick={() => sendToToDo(message.content)}
-                      >
-                        <FontAwesomeIcon icon={faTasks} />
-                      </button>
+                    {message.imageName && (
+                      <img
+                        src= {imageAttachments[message._id]}
+                        alt="attachedImage"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          maxWidth: "300px",
+                          maxHeight: "300px",
+                          borderRadius: "10px",
+                          cursor: "pointer",
+                        }}
+                        onClick={handlePhotoClick}
+                      ></img>
                     )}
                   </div>
-                  
             </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="chatFooterPrivate">
-        <div className="messageInput">
-          {chatID && (
-            <input
-              type="text"
-              id="messageInput"
-              placeholder="Type your message here..."
-            />
-          )}
-          {chatID && <button onClick={handleSendMessage}>Send</button>}
-        </div>
-        <div className="attachButtons"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          padding: '5px',
-          height: '5vh',
-        }}>
-
-        <button id='attachImage'
-        style={{
-          borderRadius: '50',
-          padding: '5px',
-          backgroundColor: '#dbcdf0',
-          marginLeft: '3px',
-          marginRight:'1vh'
-        }}
-        onClick={handleAttachedFileImage}
-        ><FontAwesomeIcon icon={faImage} style={{ fontSize:'2.2vh'}} /></button>
-        <input type='file' ref = {imageInputRef} id='imageInput' style={{display:'none'}} onChange={handleFileImageChange}/>
-
-        <button id='attachFile'
-        style={{
-          borderRadius: '50',
-          padding: '5px',
-          backgroundColor: '#f7d9c4'
-        }}
-        onClick={handleAttachedFile}
-        ><FontAwesomeIcon icon={faPaperclip} style={{ fontSize:'2.2vh'}} /></button>
-        <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
-        
+            <div className="messageButtons">
+                  {((message.user_id === userId && !message.is_deleted) ||
+                    isCurrentUserAdmin) &&
+                    !message.is_deleted && (
+                      <button
+                        className="deleteButton"
+                        onClick={() => deleteMessage(message._id)}
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                      </button>
+                    )}
+                  {message.user_id === userId && !message.is_deleted && (
+                    <button
+                      className="editButton"
+                      onClick={() => editMessage(message._id)}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                  )}
+                  {message.user_id !== userId && !message.is_deleted && (
+                    <button
+                      className="sendToToDoButton"
+                      onClick={() => sendToToDo(message.content)}
+                    >
+                      <FontAwesomeIcon icon={faTasks} />
+                    </button>
+                  )}
+                </div>
+                
+          </div>
+        ))}
       </div>
-      {(attachedFile || attachedImage) && (
-        <div id='attachedFile'>
-          <p>Attachement: {attachedFile ? attachedFile.name : attachedImage.name}</p>
-        </div>
-      )}
-      </div>
-      <div className="variousPromptsText"></div>
     </div>
+
+    <div className="chatFooterPrivate">
+      <div className="messageInput">
+        {chatID && (
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Type your message here..."
+          />
+        )}
+        {chatID && <button onClick={handleSendMessage}>Send</button>}
+      </div>
+      <div className="attachButtons"
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '5px',
+        height: '5vh',
+      }}>
+
+      <button id='attachImage'
+      style={{
+        borderRadius: '50',
+        padding: '5px',
+        backgroundColor: '#dbcdf0',
+        marginLeft: '3px',
+        marginRight:'1vh'
+      }}
+      onClick={handleAttachedFileImage}
+      ><FontAwesomeIcon icon={faImage} style={{ fontSize:'2.2vh'}} /></button>
+      <input type='file' ref = {imageInputRef} id='imageInput' style={{display:'none'}} onChange={handleFileImageChange}/>
+
+      <button id='attachFile'
+      style={{
+        borderRadius: '50',
+        padding: '5px',
+        backgroundColor: '#f7d9c4'
+      }}
+      onClick={handleAttachedFile}
+      ><FontAwesomeIcon icon={faPaperclip} style={{ fontSize:'2.2vh'}} /></button>
+      <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
+      
+    </div>
+    {(attachedFile || attachedImage) && (
+      <div id='attachedFile'>
+        <p>Attachement: {attachedFile ? attachedFile.name : attachedImage.name}</p>
+      </div>
+    )}
+    </div>
+    <div className="variousPromptsText"></div>
+  </div>)
+  
+  }
+
+   
+
+    </>
   );
 }
 
