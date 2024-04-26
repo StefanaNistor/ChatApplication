@@ -35,7 +35,6 @@ function GroupChat({ groupID }) {
   const imageInputRef = React.createRef();
   const [attachedImage, setAttachedImage] = useState(null);
 
-
   useEffect(() => {
     getGroupProfilePhoto();
     if (groupID) {
@@ -117,52 +116,63 @@ function GroupChat({ groupID }) {
     const timestamp = new Date().toISOString();
     const user_id = JSON.parse(localStorage.getItem("user")).id;
 
-    if(messageInput === "" ) {
-      alert('Please enter a message');
+    if (messageInput === "") {
+      alert("Please enter a message");
       return;
     }
-
 
     const messageObj = {
       user_id: user_id,
       group_id: groupID,
       content: messageInput,
       timestamp: timestamp,
-      fileName: attachedFile ? user_id + timestamp+attachedFile.name : null,
-      imageName: attachedImage ? user_id + timestamp+attachedImage.name : null,
+      fileName: attachedFile ? user_id + timestamp + attachedFile.name : null,
+      imageName: attachedImage
+        ? user_id + timestamp + attachedImage.name
+        : null,
     };
 
     const formData = new FormData();
-    
-    if(attachedFile) {
-      formData.append('file', attachedFile);
-      axios.post('http://localhost:7979/photos/uploadMessageAttachment/'+messageObj.fileName, formData, {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        console.log('File uploaded successfully:', res.data);
-      })
-      .catch((error) => {
-        console.error('An error occurred while uploading the file:', error);
-      });
 
-    } else if(attachedImage) {
-      formData.append('file', attachedImage);
-      axios.post('http://localhost:7979/photos/uploadMessageAttachment/'+messageObj.imageName, formData, {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        console.log('Image uploaded successfully:', res.data);
-      })
-      .catch((error) => {
-        console.error('An error occurred while uploading the image:', error);
-      });
-
-    } 
+    if (attachedFile) {
+      formData.append("file", attachedFile);
+      axios
+        .post(
+          "http://localhost:7979/photos/uploadMessageAttachment/" +
+            messageObj.fileName,
+          formData,
+          {
+            headers: {
+              "x-access-token": localStorage.getItem("token"),
+            },
+          }
+        )
+        .then((res) => {
+          console.log("File uploaded successfully:", res.data);
+        })
+        .catch((error) => {
+          console.error("An error occurred while uploading the file:", error);
+        });
+    } else if (attachedImage) {
+      formData.append("file", attachedImage);
+      axios
+        .post(
+          "http://localhost:7979/photos/uploadMessageAttachment/" +
+            messageObj.imageName,
+          formData,
+          {
+            headers: {
+              "x-access-token": localStorage.getItem("token"),
+            },
+          }
+        )
+        .then((res) => {
+          console.log("Image uploaded successfully:", res.data);
+        })
+        .catch((error) => {
+          console.error("An error occurred while uploading the image:", error);
+        });
+    }
 
     console.log("Message:", messageObj);
 
@@ -364,41 +374,40 @@ function GroupChat({ groupID }) {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-  }
-  
+  };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setAttachedFile(file);
-    console.log('FISIEEER :', file);
-  }
+    console.log("FISIEEER :", file);
+  };
 
   const handleAttachedFileImage = (e) => {
     e.preventDefault();
     if (imageInputRef.current) {
       imageInputRef.current.click();
     }
-  }
-  
+  };
+
   const handleFileImageChange = (event) => {
     const file = event.target.files[0];
-    if(file.type.split('/')[0] !== 'image') {
-      alert('Please select an image file');
+    if (file.type.split("/")[0] !== "image") {
+      alert("Please select an image file");
       return;
     } else {
       setAttachedImage(file);
-      console.log('FISIEEER :', file);
+      console.log("FISIEEER :", file);
     }
-   
-  }
+  };
 
   const handleAttachmentClick = (event) => {
     const target = event.target;
-    if(target.tagName === 'P') {
+    if (target.tagName === "P") {
       const fileName = target.innerText;
       const fileURL = `http://localhost:7979/photos/getMessageAttachment/${fileName}`;
-      window.open(fileURL, '_blank');
+      window.open(fileURL, "_blank");
     }
-  }
+  };
 
   return (
     <div>
@@ -412,7 +421,7 @@ function GroupChat({ groupID }) {
             fontSize: "20px",
           }}
         >
-          Loading user profiles...
+          Loading group messages...
         </div>
       ) : (
         <div className="groupChat-container">
@@ -509,7 +518,33 @@ function GroupChat({ groupID }) {
                       )}
                     </p>
                     <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+                    <div
+                      className="attachments"
+                      onClick={handleAttachmentClick}
+                      style={{
+                        margin: "5px 0",
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      {message.fileName && <p> {message.fileName} </p>}
+
+                      {message.imageName && (
+                        <img
+                          src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
+                          alt="attachedImage"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                          }}
+                        ></img>
+                      )}
+                    </div>
                   </div>
+
                   <div className="messageButtons">
                     {((message.user_id === userId && !message.is_deleted) ||
                       isCurrentUserAdmin) &&
@@ -538,16 +573,6 @@ function GroupChat({ groupID }) {
                       </button>
                     )}
                   </div>
-                  <div className="attachments" onClick={handleAttachmentClick}>
-                    {message.fileName && (
-                       <p>  {message.fileName} </p>
-                    )}
-
-                    {message.imageName && (
-                      <p> {message.imageName}</p>
-                    )}
-                    </div>
-
                 </div>
               ))}
               <div className="chatFooter">
@@ -587,7 +612,13 @@ function GroupChat({ groupID }) {
                       style={{ fontSize: "2.2vh" }}
                     />
                   </button>
-                  <input type='file' ref = {imageInputRef} id='imageInput' style={{display:'none'}} onChange={handleFileImageChange}/>
+                  <input
+                    type="file"
+                    ref={imageInputRef}
+                    id="imageInput"
+                    style={{ display: "none" }}
+                    onChange={handleFileImageChange}
+                  />
 
                   <button
                     id="attachFile"
@@ -603,14 +634,22 @@ function GroupChat({ groupID }) {
                       style={{ fontSize: "2.2vh" }}
                     />
                   </button>
-                  <input type='file' ref = {fileInputRef} id='fileInput' style={{display:'none'}} onChange={handleFileChange}/>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    id="fileInput"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
                 </div>
                 {(attachedFile || attachedImage) && (
-        <div id='attachedFile'>
-      {attachedFile && <p>Attached file: {attachedFile.name}</p> }
-      {attachedImage && <p>Attached image: {attachedImage.name}</p> }
-        </div>
-      )}
+                  <div id="attachedFile">
+                    {attachedFile && <p>Attached file: {attachedFile.name}</p>}
+                    {attachedImage && (
+                      <p>Attached image: {attachedImage.name}</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="variousPromptsText"></div>
               </div>

@@ -445,6 +445,31 @@ const handleAttachmentClick = (event) => {
                   )}
                 </p>
                 <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+                <div
+                      className="attachments"
+                      onClick={handleAttachmentClick}
+                      style={{
+                        margin: "5px 0",
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      {message.fileName && <p> {message.fileName} </p>}
+
+                      {message.imageName && (
+                        <img
+                          src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
+                          alt="attachedImage"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                          }}
+                        ></img>
+                      )}
+                    </div>
               </div>
 
               <div className="messageButtons">
@@ -475,15 +500,7 @@ const handleAttachmentClick = (event) => {
                       </button>
                     )}
                   </div>
-                  <div className="attachments" onClick={handleAttachmentClick}>
-                    {message.fileName && (
-                       <p>  {message.fileName} </p>
-                    )}
-
-                    {message.imageName && (
-                      <p> {message.imageName}</p>
-                    )}
-                    </div>
+                  
             </div>
           ))}
         </div>
