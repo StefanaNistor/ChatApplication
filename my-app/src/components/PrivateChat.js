@@ -410,18 +410,15 @@ async function promiseAll(messages) {
   return Promise.all(promises);
 }
 
-
 async function getImageAttachments (messages)  {
   const promise = await promiseAll(messages);
   if(promise){
     setLoadingImages(false);
   }
 
-
 }
 
   return (
-
     <>
     {loadingImages ? <div style={{
             display: "flex",
@@ -499,7 +496,7 @@ async function getImageAttachments (messages)  {
 
                     {message.imageName && (
                       <img
-                        src= {imageAttachments[message._id]}
+                      src={imageAttachments[message._id] ? imageAttachments[message._id] : attachedImage}
                         alt="attachedImage"
                         style={{
                           width: "100px",
@@ -543,7 +540,6 @@ async function getImageAttachments (messages)  {
                     </button>
                   )}
                 </div>
-                
           </div>
         ))}
       </div>
@@ -601,8 +597,6 @@ async function getImageAttachments (messages)  {
   </div>)
   
   }
-
-   
 
     </>
   );

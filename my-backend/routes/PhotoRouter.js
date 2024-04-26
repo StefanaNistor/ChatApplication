@@ -268,7 +268,6 @@ photoRouter.delete('/deleteMessageAttachment/:fileName', async (req, res) => {
   }
 });
 
-
 // get fiiiiilelelele
 photoRouter.get('/getMessageAttachment/:fileName', async (req, res) => {
   const { fileName } = req.params;
@@ -281,7 +280,9 @@ photoRouter.get('/getMessageAttachment/:fileName', async (req, res) => {
       return res.status(404).json({ error: "File not found" });
     }
 
-    res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+
+    res.setHeader('Content-Type', 'application/octet-stream'); 
+
     file.createReadStream().pipe(res);
   } catch (error) {
     console.error(error);
