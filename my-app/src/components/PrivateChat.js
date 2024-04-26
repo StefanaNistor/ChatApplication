@@ -396,7 +396,7 @@ const handlePhotoClick = (event) => {
 
 async function promiseAll(messages) {
   const promises = messages.map(async (message) => {
-    if(message.imageName) {
+    if(message.imageName && !message.is_deleted) {
       const response = await axios.get(`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
