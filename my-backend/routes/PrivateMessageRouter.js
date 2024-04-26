@@ -118,9 +118,6 @@ privateMessageRouter.get("/getByChat/:id", verifyToken, async (req, res) => {
   }
 });
 
-
-
-
 privateMessageRouter.delete("/deleteMsg/:id", async (req, res) => {
   const privateMessageID = req.params.id;
   if (!privateMessageID) {
