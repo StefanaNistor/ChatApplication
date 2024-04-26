@@ -391,6 +391,15 @@ function GroupChat({ groupID }) {
    
   }
 
+  const handleAttachmentClick = (event) => {
+    const target = event.target;
+    if(target.tagName === 'P') {
+      const fileName = target.innerText;
+      const fileURL = `http://localhost:7979/photos/getMessageAttachment/${fileName}`;
+      window.open(fileURL, '_blank');
+    }
+  }
+
   return (
     <div>
       {loadingProfiles ? (
@@ -529,7 +538,7 @@ function GroupChat({ groupID }) {
                       </button>
                     )}
                   </div>
-                  <div className="attachments">
+                  <div className="attachments" onClick={handleAttachmentClick}>
                     {message.fileName && (
                        <p>  {message.fileName} </p>
                     )}
