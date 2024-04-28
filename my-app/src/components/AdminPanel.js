@@ -272,19 +272,38 @@ const handleChangeUserDetails = () => {
           console.log('Error updating isAdmin:', err);
       });
   }
+  // add validation for date of birth to not be in the future, under 18 years old or over 100 years old
 
-  if (newBirthday) {
-      axios.put(`http://localhost:7979/userDetails/updateDateOfBirth/${editedUserID}`, { dateOfBirth: newBirthday }, {
-          headers: {
-              "x-access-token": localStorage.getItem('token'),
-          },
-      }).then((res) => {
-          console.log('Date of Birth updated:', res.data);
-          displayMessage('new-birthday-message', 'Date of Birth updated');
-      }).catch((err) => {
-          console.log('Error updating date of birth:', err);
-      });
-  }
+  if(newBirthday && new Date(newBirthday) > new Date() || new Date().getFullYear() - new Date(newBirthday).getFullYear() < 18 || new Date().getFullYear() - new Date(newBirthday).getFullYear() > 100){
+        displayMessage('new-birthday-message', 'Invalid Date of Birth');
+        return;
+    } else {
+        axios.put(`http://localhost:7979/userDetails/updateDateOfBirth/${editedUserID}`, { dateOfBirth: newBirthday }, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+        }).then((res) => {
+            console.log('Date of Birth updated:', res.data);
+            displayMessage('new-birthday-message', 'Date of Birth updated');
+        }).catch((err) => {
+            console.log('Error updating date of birth:', err);
+        });
+
+    }
+
+
+//   if (newBirthday) {
+//       axios.put(`http://localhost:7979/userDetails/updateDateOfBirth/${editedUserID}`, { dateOfBirth: newBirthday }, {
+//           headers: {
+//               "x-access-token": localStorage.getItem('token'),
+//           },
+//       }).then((res) => {
+//           console.log('Date of Birth updated:', res.data);
+//           displayMessage('new-birthday-message', 'Date of Birth updated');
+//       }).catch((err) => {
+//           console.log('Error updating date of birth:', err);
+//       });
+//   }
 
   window.location.reload();
 };
@@ -362,7 +381,6 @@ const handleChangeUserDetails = () => {
         });
     };
     
-
     // ------------------------------------------delete group--------------------------------------------------
 
     const handleDeleteClick = () => {
