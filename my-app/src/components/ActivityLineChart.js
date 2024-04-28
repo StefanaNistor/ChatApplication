@@ -10,9 +10,71 @@ import {
     Legend,
   } from 'chart.js';
   import { Line } from 'react-chartjs-2';
- 
+    import { useState, useEffect } from "react";
+    import axios from "axios";
 
-function ActivityLineChart(dataPrivateGroup, dataGroupChat){
+
+function ActivityLineChart(){
+
+    const [messagesPrivate, setMessagesPrivate] = useState([]);
+    const [messagesGroup, setMessagesGroup] = useState([]);
+    const[dataPrivateChat, setDataPrivateChat] = useState([]);
+    const[dataGroupChat, setDataGroupChat] = useState([]);
+
+
+
+    
+    useEffect(() => {
+        getPrivateMessages();
+        getGroupMessages();
+        
+    }, []);
+
+
+    
+    const getPrivateMessages = async () => {
+        try {
+            const response = await axios.get("http://localhost:7979/privateMessages", {
+                headers: {
+                    "x-access-token": localStorage.getItem("token"),
+                },
+            });
+            setMessagesPrivate(response.data);
+            console.log("STATISTICS pr mess", response.data);
+        } catch (error) {
+            console.error("ERROR GETTING PRIVATE MESSAGES", error);
+        }
+    };
+    
+    const getGroupMessages = async () => {
+        try {
+            const response = await axios.get("http://localhost:7979/groupMessages", {
+                headers: {
+                    "x-access-token": localStorage.getItem("token"),
+                },
+            });
+            setMessagesGroup(response.data);
+            //console.log("STATISTICS gr mess", response.data);
+        } catch (error) {
+            console.error("ERROR GETTING GROUP MESSAGES", error);
+        }
+    };
+    
+    function manipulateMessageData(messages) {
+        let data = new Array(24).fill(0);
+        messages.forEach((message) => {
+            let date = new Date(message.timestamp);
+            data[date.getHours()]++;
+        });
+        return data;
+    }
+    
+    useEffect(() => {
+        setDataPrivateChat(manipulateMessageData(messagesPrivate));
+        setDataGroupChat(manipulateMessageData(messagesGroup));
+    }
+    , [messagesPrivate, messagesGroup]);
+
 
     const options = {
         responsive: true,
@@ -33,7 +95,7 @@ function ActivityLineChart(dataPrivateGroup, dataGroupChat){
         datasets: [
             {
                 label: 'Private Chat Activity by Hour',
-                data: dataPrivateGroup,
+                data: dataPrivateChat,
                 backgroundColor: 'rgba(75, 192, 192, 0.6)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
