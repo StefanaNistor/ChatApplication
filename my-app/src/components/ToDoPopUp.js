@@ -4,7 +4,7 @@ import '../components-style/ToDoPopUp.css';
 import axios from "axios";
 
 
-function ToDoList({ toDoListContent, userID, onClose }) {
+function ToDoPopUp({ toDoListContent, userID, onClose }) {
     const [flags, setFlags] = useState([]);
 
     const setItemsInPoPuP = () => {
@@ -136,4 +136,4 @@ function ToDoList({ toDoListContent, userID, onClose }) {
   );
 }
 
-export default ToDoList;
+export default ToDoPopUp;

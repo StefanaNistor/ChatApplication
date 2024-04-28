@@ -3,17 +3,28 @@ import NavBar from "./NavBar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../components-style/Calendar.css";
+import CalendarPopUp from "./CalendarPopUp";
+
 
 function Calendar({todayDate}) {
   const [date, setDate] = useState(new Date());
   const [toDoList, setToDoList] = useState([]);
+  const [isToDoPopupOpen, setIsToDoPopupOpen] = useState(false);
+  const [toDoPopUpContent, setToDoPopUpContent] = useState("");
+
 
   const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
 
   useEffect(() => {
     getToDoListItems();
 
   }, []);
+
+  const toggleToDoPopup = () => {
+    setIsToDoPopupOpen(!isToDoPopupOpen);
+  };
+
 
   const getToDoListItems = () => {
     const userID = user.id;
@@ -117,9 +128,19 @@ function Calendar({todayDate}) {
     setDate(new Date(date.getFullYear(), date.getMonth() + 1));
   };
 
+
+  const handleToDoClick = (item) => {
+    console.log("Clicked on ToDo Item:", item);
+    setToDoPopUpContent(item);
+    toggleToDoPopup();
+  }
+
   return (
     <div>
       <NavBar />
+      {isToDoPopupOpen && (
+     <CalendarPopUp toDoListInfo={toDoPopUpContent}  onClose={toggleToDoPopup} />
+    )}
 
       <div className='calendar-container'>
       <h2>
@@ -176,8 +197,12 @@ function Calendar({todayDate}) {
                           opacity: "1",
 
                         }}
+
+                        onClick={() => { handleToDoClick(item); }}
                       >
                         {item.title}
+
+                        
                       </div>
                     ))}
                 </td>
