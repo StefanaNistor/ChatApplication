@@ -12,6 +12,9 @@ function AdminPanel() {
     const [selectedFileNew, setSelectedFileNew] = useState(null);
     const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/50");
     const [photoURLNew, setPhotoURLNew] = useState("https://via.placeholder.com/50");
+    const [groupMembers, setGroupMembers] = useState([]);
+    const [selectedGroup, setSelectedGroup] = useState(null);
+
 
     //-------------------------CHECKBOX FOR CREATE  -------------------------
     const [isChecked, setIsChecked] = useState(false);
@@ -80,6 +83,27 @@ function AdminPanel() {
             console.error('An error occurred while getting groups!', error);
         }
     }
+
+    async function getGroupMembers(groupID) {
+        try {
+            const response = await axios.get(`http://localhost:7979/groupChat/members/${groupID}`, {
+                headers: {
+                    "x-access-token": localStorage.getItem('token'),
+                },
+            });
+            console.log('MEMBEEEERS', response.data)
+            setGroupMembers(response.data || []); 
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function handleGroupChange(event) {
+        const groupID = event.target.value;
+        setSelectedGroup(groupID);
+        getGroupMembers(groupID);
+    }
+
 
     // --------------------------------------- create user ---------------------------------------
 
@@ -381,8 +405,8 @@ const handleChangeUserDetails = () => {
     // ------------------------------------------add and remove user from group--------------------------------------------------
 
     const handleAddUserGroup = () => {
-        const userID = document.getElementById("add-remove-user-dropdown").value;
-        const groupID = document.getElementById("add-remove-group-dropdown").value;
+        const userID = document.getElementById("add-user-dropdown").value;
+        const groupID = document.getElementById("add-group-dropdown").value;
 
         axios.post(`http://localhost:7979/groupChat/addMember`, { groupID, userID }, {
             headers: {
@@ -412,26 +436,27 @@ const handleChangeUserDetails = () => {
     }
 
     const handleRemoveUserGroup = () => {
-        const userID = document.getElementById("add-remove-user-dropdown").value;
-        const groupID = document.getElementById("add-remove-group-dropdown").value;
+        const userID = document.getElementById("remove-user-dropdown").value;
+        const groupID = document.getElementById("remove-group-dropdown").value;
 
         axios.delete(`http://localhost:7979/groupChat/removeMember`, {
-        headers: {
-            "x-access-token": localStorage.getItem('token'),
-        },
-        data: {
-            groupID: groupID,
-            userID: userID
-        }
-    }).then((res) => {
-            //console.log('User removed from group:', res.data);
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+            data: {
+                groupID: groupID,
+                userID: userID
+            }
+        }).then((res) => {
+           
             const message = document.createElement('p');
             message.textContent = 'User has been removed from group!';
             document.querySelector('.add-remove-user-section').appendChild(message);
-
+            
             setTimeout(() => {
                 message.remove();
             }, 3000);
+
 
             window.location.reload();
 
@@ -447,10 +472,7 @@ const handleChangeUserDetails = () => {
     }
 
     // ------------------------------------------change group details--------------------------------------------------
-    // MASIVE TO DO HERE !!!
-    // UPDATE groupname and description individually so that the user can update only one or neither or both
-    // fix the photo upload so that it works properly
-
+  
     const handleChangeGroupDetails = () => {
         const editedGroupID = document.getElementById("change-group-dropdown").value;
         const newGroupName = document.getElementById("new-group-name").value;
@@ -700,22 +722,44 @@ const handleChangeUserDetails = () => {
           </div>
 
           <div className="add-remove-user-section">
-            <h2>Add/Remove User from Group</h2>
-            <select id="add-remove-user-dropdown">
+          <h2>Add User to Group</h2>
+
+            <select id="add-group-dropdown">
+            {allGroups.map((group) => (
+                    <option value={group.id}>{group.groupname}</option>
+                ))}
+            </select>
+            <div className= "user-in-group">
+            <select id="add-user-dropdown">
               {allUsers.map((user) => (
                   <option value={user.id}>{user.username}</option>
               ))}
             </select>
+            </div>
 
-            <select id="add-remove-group-dropdown">
+            <button id="add-user-group-btn" onClick={handleAddUserGroup}>Add User to Group</button>
+        
+            <h2>Remove User from Group</h2>
+            <select id="remove-group-dropdown" onChange={handleGroupChange}>
+                <option value="">Select a Group</option>
                 {allGroups.map((group) => (
-                    <option value={group.id}>{group.groupname}</option>
+                    <option key={group.id} value={group.id}>{group.groupname}</option>
                 ))}
             </select>
+            {selectedGroup && (
+                <div className="user-in-group">
+                    <select id="remove-user-dropdown">
+                        <option value="">Select a User</option>
+                        {groupMembers.map((user) => (
+                            <option key={user.id} value={user.id}>{user.username}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
 
-            <button id="add-user-btn" onClick={handleAddUserGroup}>Add User</button>
-            <button id="remove-user-btn" onClick={handleRemoveUserGroup}>Remove User</button>
-          </div>
+           
+            <button id="remove-user-group-btn" onClick={handleRemoveUserGroup}>Remove User from Group</button>
+        </div>
 
           <div className="change-group-details-section">
             <h2>Change Group Details</h2>
@@ -754,7 +798,7 @@ const handleChangeUserDetails = () => {
           </div>
         </div>
 
-        <div class="statistics-section">
+        <div className="statistics-section">
           <h2>Statistics</h2>
         </div>
       </div>
