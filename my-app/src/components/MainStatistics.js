@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 
 import axios from "axios";
 import StatisticsActivity from "./StatisticsActivity";
+import StatisticsProductivity from "./StatisticsProductivity";
 import NavBar from "./NavBar";
 
 function MainStatistics() {
 
     const [activityStat, setActivityStat] = useState(false);
+    const [productivityStat, setProductivityStat] = useState(false);
 
     return (
         <div>
@@ -17,11 +19,19 @@ function MainStatistics() {
                 marginTop:'12vh'
             }}> 
 
-           {activityStat ? <StatisticsActivity onClose={setActivityStat} /> : 
-           <div className="statistics-container">
-           <h1>View Statistics</h1>
-              <button onClick={() => setActivityStat(true)}>Activity Statistics</button>
-            </div>}
+            {
+                activityStat ? 
+                <StatisticsActivity onClose={setActivityStat} /> : 
+                productivityStat ? 
+                <StatisticsProductivity onClose={setProductivityStat} /> :
+                <div className='statistics-main'>
+                    <h1>General Statistics</h1>
+                    <button onClick={() => setActivityStat(true)} style={{margin:'5px'}}>Activity Statistics</button>
+                    <button onClick={() => setProductivityStat(true)} style={{margin:'5px'}}>Productivity Statistics</button>
+                </div>
+            }
+
+
 
         </div>
         </div>
