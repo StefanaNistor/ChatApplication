@@ -12,8 +12,8 @@ function DepartmentBarChart() {
     useEffect(() => {
         getUsers();
         getMessages();
-        console.log('ACtivity per user',users);
-        console.log('ACtivity per user',messages);
+        //console.log('ACtivity per user',users);
+        //console.log('ACtivity per user',messages);
         if(users.length > 0 && messages.length > 0){
             setData(true);
         }
@@ -41,7 +41,7 @@ function DepartmentBarChart() {
             },
         })
         .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             allMessages.push(...res.data);
                 return axios.get("http://localhost:7979/groupMessages", {
                 headers: {
@@ -50,7 +50,7 @@ function DepartmentBarChart() {
             });
         })
         .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             allMessages.push(...res.data);
             setMessages(allMessages);
             setData(true); 
