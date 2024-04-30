@@ -8,6 +8,7 @@ import Calendar from './components/Calendar';
 import UserMasterList from './components/UserMasterList';
 import OtherProfile from './components/OtherProfile';
 import AdminPanel from './components/AdminPanel';
+import MainStatistics from './components/MainStatistics';
 
 import React from 'react';
 
@@ -26,6 +27,8 @@ function App() {
         <Route path='user-master-list' element={<UserMasterList/>}/>
         <Route path="/otherProfile/:otherUserID" element={<OtherProfile />} />
         <Route path='admin' element={<AdminPanel/>}/>
+        <Route path='/statistics' element={<MainStatistics/>}/>
+
 
       </Routes>
   </Router>

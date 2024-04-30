@@ -2,7 +2,7 @@ import { React, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../components-style/AdminPanel.css";
 import NavBar from "./NavBar";
-import Statistics from "./Statistics";
+import StatisticsActivity from "./StatisticsActivity";
 
 function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
@@ -817,9 +817,6 @@ const handleChangeUserDetails = () => {
           </div>
         </div>
 
-        <div className="statistics-section">
-          <Statistics />
-        </div>
       </div>
     </div>
   );

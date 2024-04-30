@@ -1,8 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ActivityLineChart from "./ActivityLineChart";
-import DepartmentBarChart from "./DepartmentBarChart";
+import ActivityLineChart from "./statistics_activity/ActivityLineChart";
+import DepartmentBarChart from "./statistics_activity/DepartmentBarChart";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -17,6 +17,7 @@ import {
     ArcElement,
 } from 'chart.js';
 import ToDoFlagPieChart from "./ToDoFlagPieChart";
+import NavBar from "./NavBar";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -32,13 +33,19 @@ ChartJS.register(
 
 
 
-function Statistics() {
-
-
+function StatisticsActivity({onClose }) {
 
     return (
         <div>
-            <h1>Statistics</h1>
+            <NavBar />
+            <div className="statistics-activity-container"
+            style={{
+                marginTop:'8vh',
+                overflowY: 'scroll',
+                height: '90vh'
+            }}>
+            <h1>Activity Statistics</h1>
+            <button onClick={() => onClose (false)}>Back</button>
             <div className="statistics-container">
             
             <div className="line-chart-staistic">
@@ -51,16 +58,13 @@ function Statistics() {
                 <DepartmentBarChart />
             </div>
 
-            <div className="pie-chart-statistic">
-            <h2> Distribution of flags for To-Do Items </h2>
-            <ToDoFlagPieChart />
-            </div>
-
 
             </div>
 
         </div>
+        
+        </div>
     );
 }
 
-export default Statistics;
+export default StatisticsActivity;

@@ -228,7 +228,7 @@ function Profile() {
                 <img
                   src={URL.createObjectURL(selectedFile)}
                   alt="Selected File"
-                  style={{ maxWidth: "480px", maxHeight: "580px" }}
+                  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
                 />
               ) : (
                 <img

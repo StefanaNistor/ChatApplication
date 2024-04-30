@@ -45,6 +45,12 @@ function NavBar(){
         console.log('admin');
         navigate('/admin');
     }
+
+    const handleStatisticsClick = () => {
+        console.log('statistics');
+        navigate('/statistics');
+    }
+    
     
     return(
         <div className='navbar-container'>
@@ -55,6 +61,7 @@ function NavBar(){
                 <li onClick={handleToDoListClick}>To Do List</li>
                 <li onClick={handleCalendarClick}>Calendar</li>
                 {isAdmin && <li onClick={handleAdminClick}>Admin</li>}
+                {isAdmin && <li onClick={handleStatisticsClick}>Statistics</li>}
                 <li><button id="logoutBtn" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} /></button></li>
             </ul>
         </div>
