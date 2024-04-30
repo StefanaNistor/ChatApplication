@@ -38,7 +38,7 @@ function DepartmentBarChart() {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setGroups(res.data);
       })
       .catch((err) => {
@@ -54,7 +54,7 @@ function DepartmentBarChart() {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setMessages(res.data);
       })
       .catch((err) => {
@@ -76,7 +76,7 @@ function DepartmentBarChart() {
             : 0) + 1,
       };
     });
-    console.log(newData);
+    //console.log(newData);
     return newData;
   };
 

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ActivityLineChart from "./statistics_activity/ActivityLineChart";
 import DepartmentBarChart from "./statistics_activity/DepartmentBarChart";
+import UserBarChart from "./statistics_activity/UserBarChart";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -44,7 +45,7 @@ function StatisticsActivity({onClose }) {
                 overflowY: 'scroll',
                 height: '90vh'
             }}>
-            <h1>Activity Statistics</h1>
+            <h1>General Activity Statistics</h1>
             <button onClick={() => onClose (false)}>Back</button>
             <div className="statistics-container">
             
@@ -58,11 +59,16 @@ function StatisticsActivity({onClose }) {
                 <DepartmentBarChart />
             </div>
 
+            <div className="bar-chart-statistic">
+            <h2>Most Active User by Number of Messages</h2>
+            <UserBarChart />
+            </div>
+
 
             </div>
 
         </div>
-        
+
         </div>
     );
 }
