@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import StatisticsActivity from "./StatisticsActivity";
 import StatisticsProductivity from "./StatisticsProductivity";
+import StatisticsMessages from "./StatisticsMessages";
 import NavBar from "./NavBar";
 import "../components-style/Statistics.css";
 
 function MainStatistics() {
   const [activityStat, setActivityStat] = useState(false);
   const [productivityStat, setProductivityStat] = useState(false);
+  const [messageStat, setMessageStat] = useState(false);
 
   return (
     <div>
@@ -24,7 +26,10 @@ function MainStatistics() {
           <StatisticsActivity onClose={setActivityStat} />
         ) : productivityStat ? (
           <StatisticsProductivity onClose={setProductivityStat} />
-        ) : (
+        ) : messageStat ? (
+          <StatisticsMessages onClose={setMessageStat} />
+        ) :
+        (
           <div className="statistics-main">
             <h1>General Statistics</h1>
             <button
@@ -45,6 +50,16 @@ function MainStatistics() {
             >
               Productivity Statistics
             </button>
+            <button
+              onClick={() => setMessageStat(true)}
+              style={{
+                margin: "10px",
+                width: "12vw",
+              }}
+            >
+              Message Statistics
+            </button>
+            
           </div>
         )}
       </div>
