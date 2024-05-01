@@ -5,6 +5,7 @@ import axios from "axios";
 import StatisticsActivity from "./StatisticsActivity";
 import StatisticsProductivity from "./StatisticsProductivity";
 import StatisticsMessages from "./StatisticsMessages";
+import StatisticsUsers from "./StatisticsUsers";
 import NavBar from "./NavBar";
 import "../components-style/Statistics.css";
 
@@ -12,6 +13,7 @@ function MainStatistics() {
   const [activityStat, setActivityStat] = useState(false);
   const [productivityStat, setProductivityStat] = useState(false);
   const [messageStat, setMessageStat] = useState(false);
+  const [userStat, setUserStat] = useState(false);
 
   return (
     <div>
@@ -28,38 +30,59 @@ function MainStatistics() {
           <StatisticsProductivity onClose={setProductivityStat} />
         ) : messageStat ? (
           <StatisticsMessages onClose={setMessageStat} />
-        ) :
-        (
+        ) : userStat ? (
+          <StatisticsUsers onClose={setUserStat} />
+        ) : (
           <div className="statistics-main">
             <h1>General Statistics</h1>
-            <button
-              onClick={() => setActivityStat(true)}
+            <div
+              className="statistics-buttons"
               style={{
-                margin: "10px",
-                width: "12vw",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "54%",
+                margin: "auto",
               }}
             >
-              Activity Statistics
-            </button>
-            <button
-              onClick={() => setProductivityStat(true)}
-              style={{
-                margin: "10px",
-                width: "12vw",
-              }}
-            >
-              Productivity Statistics
-            </button>
-            <button
-              onClick={() => setMessageStat(true)}
-              style={{
-                margin: "10px",
-                width: "12vw",
-              }}
-            >
-              Message Statistics
-            </button>
-            
+              <button
+                onClick={() => setActivityStat(true)}
+                style={{
+                  margin: "10px",
+                  width: "12vw",
+                }}
+              >
+                Activity Statistics
+              </button>
+              <button
+                onClick={() => setProductivityStat(true)}
+                style={{
+                  margin: "10px",
+                  width: "12vw",
+                }}
+              >
+                Productivity Statistics
+              </button>
+              <button
+                onClick={() => setMessageStat(true)}
+                style={{
+                  margin: "10px",
+                  width: "12vw",
+                }}
+              >
+                Message Statistics
+              </button>
+
+              <button
+                onClick={() => setUserStat(true)}
+                style={{
+                  margin: "10px",
+                  width: "12vw",
+                }}
+              >
+                User Statistics
+              </button>
+            </div>
           </div>
         )}
       </div>

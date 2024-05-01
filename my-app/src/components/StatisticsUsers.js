@@ -17,8 +17,6 @@ import {
 } from 'chart.js';
 
 import NavBar from "./NavBar";
-import MessageTypePieChart from "./statistics_message_content/MessageTypePieChart";
-import MessageLengthHorizontalBarChart from "./statistics_message_content/MessageLengthHorizontalBarChart";
 
 ChartJS.register(
     CategoryScale,
@@ -33,7 +31,7 @@ ChartJS.register(
     Legend,
 );
 
-function StatisticsMessages({onClose }) {
+function StatisticsUsers({onClose }) {
 
     return (
         <div>
@@ -44,23 +42,15 @@ function StatisticsMessages({onClose }) {
                 overflowY: 'scroll',
                 height: '90vh'
             }}>
-            <h1>General Message Statistics</h1>
+            <h1>General User Statistics</h1>
             <button style={{
                 margin: '10px',
                 width: '12vw'
             }} onClick={() => onClose (false)}>Back</button>
             <div className="statistics-container">
 
-            <div className="pie-chart-statistic">
-                <h2>Distribution of message types</h2>
-                <MessageTypePieChart />
-            </div>
+          
 
-            <div className="bar-chart-staistic">
-                <h2> Average length of message per Department </h2>
-                <MessageLengthHorizontalBarChart />
-
-            </div>
 
             </div>
 
@@ -70,4 +60,4 @@ function StatisticsMessages({onClose }) {
     );
 }
 
-export default StatisticsMessages;
+export default StatisticsUsers;
