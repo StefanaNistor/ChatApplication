@@ -107,7 +107,7 @@ function MessageLengthHorizontalBarChart() {
                 ],
             };
             setChartData(chartData);
-            console.log('ChartD', chartData)
+            //console.log('ChartD', chartData)
         }
       }, [groups, messages]);
 
