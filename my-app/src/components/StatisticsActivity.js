@@ -17,7 +17,7 @@ import {
     LineElement,
     ArcElement,
 } from 'chart.js';
-import ToDoFlagPieChart from "./ToDoFlagPieChart";
+import ToDoFlagPieChart from "./statistics_productivity/ToDoFlagPieChart";
 import NavBar from "./NavBar";
 ChartJS.register(
     CategoryScale,
@@ -47,7 +47,6 @@ function StatisticsActivity({onClose }) {
             style={{
                 margin: '10px',
                 width: '12vw'
-                
             }}
             onClick={() => onClose (false)
             }>Back</button>

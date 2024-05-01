@@ -58,4 +58,13 @@ toDoRouter.delete('/deleteToDo/:id', verifyToken, async (req, res) => {
     });
 });
 
+toDoRouter.get('/', verifyToken, async (req, res) => {
+    db.query('SELECT * FROM todo_list', (err, result) => {
+        if (!err) {
+            res.status(200).json(result.rows);
+        } else {
+            res.status(500).json({ message: "ERROR BACKEND" });
+        }
+    });
+});
 module.exports = toDoRouter;

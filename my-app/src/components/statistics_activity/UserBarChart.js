@@ -8,6 +8,7 @@ function DepartmentBarChart() {
     const [users, setUsers] = useState([]);
     const [messages, setMessages] = useState([]);
     const [getData, setData] = useState(false);
+   
 
     function generateARandomColor() { 
         return `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.6)`;
