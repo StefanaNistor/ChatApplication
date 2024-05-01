@@ -12,16 +12,22 @@ function DepartmentBarChart() {
     getMessages();
   }, []);
 
+  function generateARandomColor() { 
+    return `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.6)`;
+}
+
+
   useEffect(() => {
     if (groups.length > 0 && messages.length > 0) {
       const newData = splitDataByGroup(messages, groups);
       const newChartData = {
         labels: Object.values(newData).map((entry) => entry.groupname),
+
         datasets: [
           {
             label: "Number of messages per department",
             data: Object.values(newData).map((entry) => entry.messageCount),
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            backgroundColor: Object.values(newData).map(() => generateARandomColor()),
             borderWidth: 1,
           },
         ],
@@ -84,13 +90,17 @@ function DepartmentBarChart() {
 
   return (
     <div
-      style={{
-        width: "50%",
-        height: "50%",
-        margin: "auto",
-        marginTop: "10vh",
-        marginBottom: "10vh",
-      }}
+    style={{
+      width: "50%",
+      height: "50%",
+      margin: "auto",
+      marginTop: "2vh",
+      marginBottom: "2vh",
+      backgroundColor: "white",
+      padding: "20px",
+      borderRadius: '25px',
+      boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+    }}
     >
       <Bar data={chartData} />
     </div>

@@ -133,8 +133,12 @@ function ActivityLineChart() {
         width: "50%",
         height: "50%",
         margin: "auto",
-        marginTop: "10vh",
-        marginBottom: "10vh",
+        marginTop: "2vh",
+        marginBottom: "2vh",
+        backgroundColor: "white",
+        padding: "20px",
+        borderRadius: '25px',
+        boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
       }}
     >
       <Line options={options} data={chartData} />

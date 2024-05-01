@@ -32,10 +32,7 @@ ChartJS.register(
     Legend,
 );
 
-
-
 function StatisticsActivity({onClose }) {
-
     return (
         <div>
             <NavBar />
@@ -46,7 +43,14 @@ function StatisticsActivity({onClose }) {
                 height: '90vh'
             }}>
             <h1>General Activity Statistics</h1>
-            <button onClick={() => onClose (false)}>Back</button>
+            <button   
+            style={{
+                margin: '10px',
+                width: '12vw'
+                
+            }}
+            onClick={() => onClose (false)
+            }>Back</button>
             <div className="statistics-container">
             
             <div className="line-chart-staistic">

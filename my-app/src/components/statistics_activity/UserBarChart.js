@@ -9,6 +9,11 @@ function DepartmentBarChart() {
     const [messages, setMessages] = useState([]);
     const [getData, setData] = useState(false);
 
+    function generateARandomColor() { 
+        return `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.6)`;
+    }
+
+
     useEffect(() => {
         getUsers();
         getMessages();
@@ -66,8 +71,12 @@ function DepartmentBarChart() {
             width: "50%",
             height: "50%",
             margin: "auto",
-            marginTop: "10vh",
-            marginBottom: "10vh",
+            marginTop: "2vh",
+            marginBottom: "2vh",
+            backgroundColor: "white",
+            padding: "20px",
+            borderRadius: '25px',
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
           }}>
 
             {getData ? (
@@ -76,9 +85,9 @@ function DepartmentBarChart() {
                      labels: users.map((user) => user.username),
                      datasets: [
                          {
-                             label: "Number of messages per user",
+                             label: "Number of messages sent by user",
                              data: users.map((user) => messages.filter((message) => message.user_id === user.id).length),
-                             backgroundColor: "rgba(75, 192, 192, 0.6)",
+                             backgroundColor: users.map(() => generateARandomColor()),
                              borderWidth: 1,
                          },
                      ],
