@@ -3,11 +3,11 @@ import { Bar } from "react-chartjs-2";
 import axios from "axios";
 
 
-function UserBarChart() {
+function UserToDoBarChart() {
 
     const [users, setUsers] = useState([]);
-    const [messages, setMessages] = useState([]);
-    const [getData, setData] = useState(false);
+    const [todos, setTodos] = useState([]);
+   
    
 
     function generateARandomColor() { 
@@ -17,12 +17,8 @@ function UserBarChart() {
 
     useEffect(() => {
         getUsers();
-        getMessages();
-        //console.log('ACtivity per user',users);
-        //console.log('ACtivity per user',messages);
-        if(users.length > 0 && messages.length > 0){
-            setData(true);
-        }
+        getToDos();
+       
     }, []);
 
     const getUsers = () => {
@@ -31,40 +27,27 @@ function UserBarChart() {
                 "x-access-token": localStorage.getItem("token"),
             },
         }).then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             setUsers(res.data);
         }).catch((err) => {
             console.log("An error occurred while getting users!");
         });
     };
 
-    const getMessages = () => {
-        const allMessages = [];
-    
-        axios.get("http://localhost:7979/privateMessages", {
+    const getToDos = () => {
+        axios.get(`http://localhost:7979/toDoList/`, {
             headers: {
                 "x-access-token": localStorage.getItem("token"),
             },
-        })
-        .then((res) => {
+        }).then((res) => {
             //console.log(res.data);
-            allMessages.push(...res.data);
-                return axios.get("http://localhost:7979/groupMessages", {
-                headers: {
-                    "x-access-token": localStorage.getItem("token"),
-                },
-            });
-        })
-        .then((res) => {
-            //console.log(res.data);
-            allMessages.push(...res.data);
-            setMessages(allMessages);
-            setData(true); 
-        })
-        .catch((error) => {
-            console.error("Eroare mesage user barchart", error);
+            setTodos(res.data);
+        }
+        ).catch((err) => {
+            console.log("todo bar chart err !");
         });
-    };
+
+    }
 
     return (
         <div
@@ -80,14 +63,14 @@ function UserBarChart() {
             boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
           }}>
 
-            {getData ? (
+         
                  <Bar
                  data={{
                      labels: users.map((user) => user.username),
                      datasets: [
                          {
-                             label: "Number of messages sent by user",
-                             data: users.map((user) => messages.filter((message) => message.user_id === user.id).length),
+                             label: "Number of todo items per user",
+                             data: users.map((user) => todos.filter((todo)=> todo.user_id === user.id).length),
                              backgroundColor: users.map(() => generateARandomColor()),
                              borderWidth: 1,
                          },
@@ -104,13 +87,11 @@ function UserBarChart() {
                      },
                  }}
              /> 
-            ) : (
-                <p>Loading data...</p>
-            )}
+          
         </div>
     );
 
 }
 
 
-export default UserBarChart;
+export default UserToDoBarChart;

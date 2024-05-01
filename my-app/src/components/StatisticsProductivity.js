@@ -17,6 +17,8 @@ import {
 } from 'chart.js';
 import ToDoFlagPieChart from "./statistics_productivity/ToDoFlagPieChart";
 import NavBar from "./NavBar";
+import UserToDoBarChart from "./statistics_productivity/UserToDoBarChart";
+import CompletedToDoHorizontalBarChart from "./statistics_productivity/CompletedToDoHorizontalBarChart";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -50,12 +52,14 @@ function StatisticsProductivity({onClose }) {
 
 
             <div className = "bar-chart-staistic">
-                <h2>Engagement Level by User (all todos)</h2>
+                <h2>Engagement level for tasks by User (all todos)</h2>
+                <UserToDoBarChart />
                 
             </div>
 
             <div className = "bar-chart-staistic">
                 <h2>Productivity Level by User(completed todos)</h2>
+                <CompletedToDoHorizontalBarChart />
                 
             </div>
             

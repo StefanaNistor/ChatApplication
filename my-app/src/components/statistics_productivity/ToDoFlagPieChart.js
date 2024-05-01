@@ -43,7 +43,7 @@ function ToDoFlagPieChart() {
             };
         });
 
-        console.log(flagData);
+        //console.log(flagData);
 
         const chartData = {
             labels: flagData.map(data => data.label),
@@ -55,7 +55,7 @@ function ToDoFlagPieChart() {
             ],
         };
 
-        console.log(chartData);
+        //console.log(chartData);
         setChartData(chartData);
 
         if(toDoItems.length > 0 && flags.length > 0) {
