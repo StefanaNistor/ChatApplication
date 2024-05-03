@@ -53,19 +53,46 @@ function StatisticsProductivity({onClose }) {
 
             <div className = "bar-chart-staistic">
                 <h2>Engagement level for tasks by User (all todos)</h2>
+                <div className="container-for-charts">
                 <UserToDoBarChart />
+                <div className="label-statistic-text">
+                <p>
+                    The bar chart above shows the engagement level for tasks by user. The x-axis represents the users and the y-axis represents the number of tasks. 
+                    Thus, the chart shows the number of tasks assigned to each user. Every user will appear, even if they have no tasks assigned to them.
+                    Used to determine the workload of each user, and to ensure that tasks are evenly distributed among users.
+                </p>
+            </div>
+                </div>
                 
             </div>
 
             <div className = "bar-chart-staistic">
+                
                 <h2>Productivity Level by User(completed todos)</h2>
+                <div className="container-for-charts">
                 <CompletedToDoHorizontalBarChart />
+                <div className="label-statistic-text">
+                <p>
+                    The bar chart above shows the productivity level by user. The x-axis represents the users and the y-axis represents the number of tasks. 
+                    Thus, the chart shows the number of tasks completed by each user. Every user will appear, even if they have not completed any tasks.
+                    Used to determine the productivity of each user, and to ensure that tasks are being completed in a timely manner.
+                </p>
+                </div>
+                </div>
                 
             </div>
             
             <div className="pie-chart-staistic">    
                 <h2>Distribution of flags for user tasks</h2>
+                < div className = "container-for-charts" >
                 <ToDoFlagPieChart />
+                <div className="label-statistic-text">
+                <p>
+                    The pie chart above shows the distribution of flags for user tasks. Each color represents a different flag, and the size of the slice represents the number of tasks with that flag.
+                    Used to determine the distribution of flags among user tasks, and to ensure that tasks are being flagged appropriately.
+                </p>
+                </div>
+                </div>
             </div>
 
 
