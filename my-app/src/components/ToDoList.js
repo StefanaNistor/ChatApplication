@@ -124,6 +124,7 @@ function ToDoList() {
 
   const handleToDoEdit = (toDoId) => {
     const todoItem = toDoListItems.find((item) => item.id === toDoId);
+  
     setUpdatedToDo({
       id: toDoId,
       title: todoItem.title,
@@ -150,34 +151,10 @@ function ToDoList() {
   const handleSaveToDo = () => {
     const { id, title, content, flagID, start_date, end_date } = updatedToDo;
     const userID = user.id;
-
-    const start = document.getElementById("editStartDate");
-    const endD = document.getElementById("editEndDate");
-
-    const startDValue = start.value ? start.value : null;
-    const endDValue = endD.value ? endD.value : null;
-
   
-    console.log(new Date(start_date), new Date(end_date))
-    if (!title || !content || !end_date) {
-      alert("Title, content, and end date are required!");
-      return;
-    }
-
-    if(!startDValue || !endDValue) {
-      alert("Start date and end date are required!");
-      return; 
-    }
-   
-    if(new Date(startDValue) > new Date(endDValue)) {
-      alert("Start date must be before end date!");
-      return;
-    }
-
-    if (new Date() > new Date(end_date)) {
-      alert("End date must be in the future!");
-      return;
-    }
+    // need to do this!!
+    const formattedStartDate = new Date(start_date).toISOString().split('T')[0];
+    const formattedEndDate = new Date(end_date).toISOString().split('T')[0];
   
     axios
       .put(
@@ -188,8 +165,8 @@ function ToDoList() {
           content,
           flag_id: flagID,
           user_id: userID,
-          start_date: start_date,
-          end_date: end_date,
+          start_date: formattedStartDate,
+          end_date: formattedEndDate,
         },
         {
           headers: {
@@ -201,14 +178,21 @@ function ToDoList() {
         console.log("To Do updated successfully!");
         const updatedList = toDoListItems.map((item) =>
           item.id === id
-            ? { ...item, title, content, flagID, start_date, end_date }
+            ? {
+                ...item,
+                title: title || item.title,
+                content: content || item.content,
+                flagID: flagID || item.flagID,
+                start_date: start_date || item.start_date,
+                end_date: end_date || item.end_date,
+              }
             : item
         );
         setToDoListItems(updatedList);
         setUpdatedToDo(null);
       })
       .catch((err) => {
-        console.log("ERROR UPDATE TODO FRONTEND!");
+        console.log("ERROR UPDATE TODO FRONTEND!", err);
       });
   };
 
