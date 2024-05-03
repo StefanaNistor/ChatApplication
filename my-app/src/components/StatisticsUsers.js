@@ -17,6 +17,7 @@ import {
 } from 'chart.js';
 
 import NavBar from "./NavBar";
+import UserActivityLineChart from "./statistics_users/UserActivityLineChart";
 
 ChartJS.register(
     CategoryScale,
@@ -49,7 +50,10 @@ function StatisticsUsers({onClose }) {
             }} onClick={() => onClose (false)}>Back</button>
             <div className="statistics-container">
 
-          
+          <div className = "line-chart-staistic">
+            <h2>Peak Chat Activity for each user by hour </h2>
+                <UserActivityLineChart />
+            </div>
 
 
             </div>
