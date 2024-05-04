@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import '../components-style/Profile.css';
 
+
 function Profile() {
   const[userAbout, setUserAbout] = useState({});
   const [userID, setUserID] = useState('');
@@ -14,6 +15,7 @@ function Profile() {
   const [isEditable, setIsEditable] = useState(false);
   const [photoURL, setPhotoURL] =  useState("https://via.placeholder.com/300");
   const fileInputRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
 
 
    useEffect(() => {
@@ -205,6 +207,9 @@ function Profile() {
     }).then((res) => {
       const url = URL.createObjectURL(res.data);
       setPhotoURL(url);
+      if(url){
+        setIsLoading(false);
+      }
     }).catch((err)=>{
       console.log(err);
     })
@@ -221,61 +226,63 @@ function Profile() {
     <div>
         <NavBar />
         <div className='main-user-container'>
-            <div className='profile-container'>
-            <div className='profile-picture'>
-            <div className='pic'>
-              {selectedFile ? (
-                <img
-                  src={URL.createObjectURL(selectedFile)}
-                  alt="Selected File"
-                  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
-                />
-              ) : (
-                <img
-                  src= {photoURL}
-                  alt="Placeholder"
-                  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
-                />
-              )}
-            </div>
-            <input type='file' ref={fileInputRef} id='fileForProfile' onChange={handleFileChange} style = {{display :'none'}}/>
-            <button id='uploadBtn' onClick={handleUpdatePhoto}>Upload photo</button>
-              </div>
-                <div className='profile-about'>
-                  <div className='profile-about-header'>
-                  <h1>Personal Information</h1>
-                  </div>
-                  
-                   <div className='profile-about-details'>
-                    <div className='profile-about-details-container'>
-                    <div id='firstname'>
-                    <p>First Name:</p> <div id="firstname_value">{userAbout.firstname}</div>
-                    </div>
-                    <div id='lastname'>
-                      <p>Last Name:</p> <div id="lastname_value">{userAbout.lastname}</div>
-                    </div>
-                    <div id='email_profile'>
-                      <p>E-mail:</p> <div id="email_value">{userEmail}</div>
-                    </div>
-                    <div id='date_of_birth'>
-                      <p>Birthday: </p> <div id="date_of_birth_value">{userAbout.date_of_birth}</div>
-                    </div>
-                    <div id='phone'>
-                      <p>Phone:</p> <div id="phone_value" className={isEditable ? "editable" : ""}>{userAbout.phone}</div>
-                    </div>
-                    <div id='hobby'>
-                      <p>Hobby: </p> <div id="hobby_value" className={isEditable ? "editable" : ""}>{userAbout.hobby}</div>
-                    </div>
-                    <div id='about'>
-                      <p style={{marginRight:'3vw'}}>About:</p>  <div id="about_value" className={isEditable ? "editable" : ""}>{userAbout.about}</div>
-                    </div>
-                    
-                <button id='editBtn' onClick={handleEditing}>Edit</button>
-                <button id='saveBtn' onClick={handleSave} style={{display:'none'}}> Save </button>
-                </div>
-                </div>
-            </div>
-        </div>
+       {isLoading ? <h1>Loading profile info...</h1> : (
+             <div className='profile-container'>
+             <div className='profile-picture'>
+             <div className='pic'>
+               {selectedFile ? (
+                 <img
+                   src={URL.createObjectURL(selectedFile)}
+                   alt="Selected File"
+                   style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
+                 />
+               ) : (
+                 <img
+                   src= {photoURL}
+                   alt="Placeholder"
+                   style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}
+                 />
+               )}
+             </div>
+             <input type='file' ref={fileInputRef} id='fileForProfile' onChange={handleFileChange} style = {{display :'none'}}/>
+             <button id='uploadBtn' onClick={handleUpdatePhoto}>Upload photo</button>
+               </div>
+                 <div className='profile-about'>
+                   <div className='profile-about-header'>
+                   <h1>Personal Information</h1>
+                   </div>
+                   
+                    <div className='profile-about-details'>
+                     <div className='profile-about-details-container'>
+                     <div id='firstname'>
+                     <p>First Name:</p> <div id="firstname_value">{userAbout.firstname}</div>
+                     </div>
+                     <div id='lastname'>
+                       <p>Last Name:</p> <div id="lastname_value">{userAbout.lastname}</div>
+                     </div>
+                     <div id='email_profile'>
+                       <p>E-mail:</p> <div id="email_value">{userEmail}</div>
+                     </div>
+                     <div id='date_of_birth'>
+                       <p>Birthday: </p> <div id="date_of_birth_value">{userAbout.date_of_birth}</div>
+                     </div>
+                     <div id='phone'>
+                       <p>Phone:</p> <div id="phone_value" className={isEditable ? "editable" : ""}>{userAbout.phone}</div>
+                     </div>
+                     <div id='hobby'>
+                       <p>Hobby: </p> <div id="hobby_value" className={isEditable ? "editable" : ""}>{userAbout.hobby}</div>
+                     </div>
+                     <div id='about'>
+                       <p style={{marginRight:'3vw'}}>About:</p>  <div id="about_value" className={isEditable ? "editable" : ""}>{userAbout.about}</div>
+                     </div>
+                     
+                 <button id='editBtn' onClick={handleEditing}>Edit</button>
+                 <button id='saveBtn' onClick={handleSave} style={{display:'none'}}> Save </button>
+                 </div>
+                 </div>
+             </div>
+         </div>
+       )}
         </div>
     </div>
   );

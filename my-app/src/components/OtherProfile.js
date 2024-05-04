@@ -8,7 +8,7 @@ function OtherProfile() {
 
     const { otherUserID } = useParams();
     const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/300");
-
+    const [isLoading, setIsLoading] = useState(true);
     const [userAbout, setUserAbout] = useState({});
     const [userEmail, setUserEmail] = useState('');
 
@@ -63,6 +63,9 @@ function OtherProfile() {
         }).then((res) => {
           const url = URL.createObjectURL(res.data);
           setPhotoURL(url);
+          if(url){
+            setIsLoading(false);
+          }
         }).catch((err)=>{
           console.log(err);
         })
@@ -72,49 +75,51 @@ function OtherProfile() {
         <div>
             <NavBar />
             <div className='main-user-container'>
-                <div className='profile-container'>
-                    <div className='profile-picture'>
-                    <div className='pic'>
-                        <img src={photoURL} alt="profile-pic"  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}/>
-                        
-                    </div>
-                    </div>
+               {isLoading ? <h1>Loading profile info...</h1> :(
+                 <div className='profile-container'>
+                 <div className='profile-picture'>
+                 <div className='pic'>
+                     <img src={photoURL} alt="profile-pic"  style={{ width: "300px", height: "300px", borderRadius: "50%", margin: 'auto'}}/>
+                     
+                 </div>
+                 </div>
 
-                    <div className='profile-abour'>
-                    <div className='profile-about-header'>
-                  <h1>{userAbout.firstname}'s Information</h1>
-                  </div>
+                 <div className='profile-abour'>
+                 <div className='profile-about-header'>
+               <h1>{userAbout.firstname}'s Information</h1>
+               </div>
 
-                  <div className='profile-about-details'>
-                        <div className='profile-about-details-container'>
-                        <div id='firstname'>
-                    <p>First Name:</p> <div id="firstname_value">{userAbout.firstname}</div>
-                    </div>
-                    <div id='lastname'>
-                      <p>Last Name:</p> <div id="lastname_value">{userAbout.lastname}</div>
-                    </div>
-                    <div id='email_profile'>
-                      <p>E-mail:</p> <div id="email_value">{userEmail}</div>
-                    </div>
-                    <div id='date_of_birth'>
-                      <p>Birthday: </p> <div id="date_of_birth_value">{userAbout.date_of_birth}</div>
-                    </div>
-                    <div id='phone'>
-                      <p>Phone:</p> <div id="phone_value" >{userAbout.phone}</div>
-                    </div>
-                    <div id='hobby'>
-                      <p>Hobby: </p> <div id="hobby_value" >{userAbout.hobby}</div>
-                    </div>
-                    <div id='about'>
-                      <p style={{marginRight:'3vw'}}>About:</p>  <div id="about_value" >{userAbout.about}</div>
-                    </div>
-                        </div>
-                    </div>
+               <div className='profile-about-details'>
+                     <div className='profile-about-details-container'>
+                     <div id='firstname'>
+                 <p>First Name:</p> <div id="firstname_value">{userAbout.firstname}</div>
+                 </div>
+                 <div id='lastname'>
+                   <p>Last Name:</p> <div id="lastname_value">{userAbout.lastname}</div>
+                 </div>
+                 <div id='email_profile'>
+                   <p>E-mail:</p> <div id="email_value">{userEmail}</div>
+                 </div>
+                 <div id='date_of_birth'>
+                   <p>Birthday: </p> <div id="date_of_birth_value">{userAbout.date_of_birth}</div>
+                 </div>
+                 <div id='phone'>
+                   <p>Phone:</p> <div id="phone_value" >{userAbout.phone}</div>
+                 </div>
+                 <div id='hobby'>
+                   <p>Hobby: </p> <div id="hobby_value" >{userAbout.hobby}</div>
+                 </div>
+                 <div id='about'>
+                   <p style={{marginRight:'3vw'}}>About:</p>  <div id="about_value" >{userAbout.about}</div>
+                 </div>
+                     </div>
+                 </div>
 
-                    </div>
+                 </div>
 
-                   
-                </div>
+                
+             </div>
+               )}
             </div>
         </div>
     )
