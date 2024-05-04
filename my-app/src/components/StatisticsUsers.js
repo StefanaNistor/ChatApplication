@@ -69,7 +69,6 @@ function StatisticsUsers({onClose }) {
             <div className = "sentient-chart-staistic"> 
             <h2>User sentinent analysis based on their sent messages</h2>
             <div className="container-for-charts">
-                <h1>TO BE ADDED</h1>
                 <UserSentimentAnalysis />
                 <div className="label-statistic-text">
                     <p>
