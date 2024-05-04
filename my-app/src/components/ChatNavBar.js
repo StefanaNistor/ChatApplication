@@ -130,10 +130,47 @@ function ChatNavBar({ onPrivateChatRoomClick, onGroupChatRoomClick }) {
     ));
   };
 
+  const handleSearch = (e) => {
+    const searchedChat = e.target.value.toLowerCase();
+    const privateChats = document.getElementsByClassName("privateChat");
+    const groupChats = document.getElementsByClassName("groupChat");
+
+    for (let i = 0; i < privateChats.length; i++) {
+      const chat = privateChats[i];
+      const chatName = chat.innerText.toLowerCase();
+      if (chatName.includes(searchedChat)) {
+        chat.style.display = "block";
+      } else {
+        chat.style.display = "none";
+      }
+    }
+
+    for (let i = 0; i < groupChats.length; i++) {
+      const chat = groupChats[i];
+      const chatName = chat.innerText.toLowerCase();
+      if (chatName.includes(searchedChat)) {
+        chat.style.display = "block";
+      } else {
+        chat.style.display = "none";
+      }
+    }
+
+    if (searchedChat === "") {
+      for (let i = 0; i < privateChats.length; i++) {
+        privateChats[i].style.display = "block";
+      }
+
+      for (let i = 0; i < groupChats.length; i++) {
+        groupChats[i].style.display = "block";
+      }
+    }
+    
+  }
+
   return (
     <div className="chatNavBar-container">
       <div className="chatNavBar">
-        <input type="text" placeholder="Search..." id="searchBar" />
+        <input type="text" placeholder="Search..." id="searchBar" onChange={handleSearch}/>
         <div id="chatOptions">
           <div className="dropdownPrivate">
             <button
