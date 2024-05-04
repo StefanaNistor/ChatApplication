@@ -18,6 +18,7 @@ import {
 
 import NavBar from "./NavBar";
 import UserActivityLineChart from "./statistics_users/UserActivityLineChart";
+import UserSentimentAnalysis from "./statistics_users/UserSentimentAnalysis";
 
 ChartJS.register(
     CategoryScale,
@@ -69,10 +70,12 @@ function StatisticsUsers({onClose }) {
             <h2>User sentinent analysis based on their sent messages</h2>
             <div className="container-for-charts">
                 <h1>TO BE ADDED</h1>
+                <UserSentimentAnalysis />
                 <div className="label-statistic-text">
                     <p>
-                        The pie chart above shows the sentiment analysis of the messages sent by each user. The chart shows the percentage of positive, negative and neutral messages sent by each user.
-                        The sentiment analysis is based on the content of the messages.
+                        User sentiment analysis based on their sent messages.
+                        The sentiment analysis is performed on the messages sent by the user and the overall sentiment is displayed.
+
                     </p>
                 </div>
              </div>
