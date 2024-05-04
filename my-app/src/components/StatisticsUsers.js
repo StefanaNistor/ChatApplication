@@ -75,6 +75,8 @@ function StatisticsUsers({onClose }) {
                     <p>
                         User sentiment analysis based on their sent messages.
                         The sentiment analysis is performed on the messages sent by the user and the overall sentiment is displayed.
+                        Possible sentiments are: positive, negative, neutral.
+                        Messages are analyzed for the last 2 months.
 
                     </p>
                 </div>

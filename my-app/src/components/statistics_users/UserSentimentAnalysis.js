@@ -111,9 +111,13 @@ console.log('User ID:', userId);
     }
 
     const manipulateMessageData = (messages) => {
-        //console.log('Messages:',messages);
+        // select messages from the last 2 months 
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+        const newMessages = messages.filter((message) => new Date(message.timestamp) > twoMonthsAgo);
+     
         const userMessages = {};
-        messages.forEach((message) => {
+        newMessages.forEach((message) => {
             if (!userMessages[message.user_id]) {
                 userMessages[message.user_id] = [];
             }
