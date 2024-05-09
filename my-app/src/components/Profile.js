@@ -212,7 +212,7 @@ function Profile() {
       }
     }).catch((err)=>{
       console.log(err);
-    })
+    }) 
   }
 
    const handleUpdatePhoto = (e) => {

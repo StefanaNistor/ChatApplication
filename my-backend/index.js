@@ -86,11 +86,11 @@ io.on("connection", (socket) => {
   // sending the message
   socket.on('chat private server', (request) => {
     console.log(request);
-    let timestamp = new Date();
+    //let timestamp = new Date();
 
     const messageObj = {
       content: request.content,
-      timestamp,
+      timestamp: request.timestamp,
       chat_id: request.chat_id,
       user_id: request.user_id,
 
@@ -132,10 +132,10 @@ io.on("connection", (socket) => {
   socket.on("chat group server", (request) => {
     console.log(request);
 
-    let timestamp = new Date();
+    //let timestamp = new Date();
         const messageObj = {
           content: request.content,
-          timestamp,
+          timestamp: request.timestamp,
           group_id: request.group_id,
           user_id: request.user_id,
           fileName: request.fileName,

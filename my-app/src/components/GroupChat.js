@@ -400,14 +400,24 @@ function GroupChat({ groupID }) {
     }
   };
 
-  const handleAttachmentClick = (event) => {
-    const target = event.target;
-    if (target.tagName === "P") {
-      const fileName = target.innerText;
-      const fileURL = `http://localhost:7979/photos/getMessageAttachment/${fileName}`;
-      window.open(fileURL, "_blank");
-    }
+  const handleAttachmentClick = (userID, timestamp) => {
+    return (event) => {
+      const target = event.target;
+      if (target.tagName === "P") {
+        const fileName = target.innerText;
+        const newFileName = userID + timestamp + fileName;
+  
+        console.log("New Filename:", newFileName); // Check newFileName value
+  
+        const fileURL = `http://localhost:7979/photos/getMessageAttachment/${newFileName}`;
+  
+        console.log("File URL:", fileURL); // Check fileURL value
+  
+        window.open(fileURL, "_blank");
+      }
+    };
   };
+  
 
   const handlePhotoClick = (event) => {
     const target = event.target;
@@ -415,6 +425,18 @@ function GroupChat({ groupID }) {
     image.src = target.src;
     const w = window.open("");
     w.document.write(image.outerHTML);
+  }
+  
+
+  const parseFileName = (fileName, userID, timestamp) => {
+    //  userid + timestamp of the message + filename
+  
+  
+    // console.log('FILENAME:', fileName);
+    // console.log('USERID:', userID);
+    // console.log('TIMESTAMP:', timestamp);
+    const split = fileName.split(userID + timestamp);
+    return split[1];
   }
   
 
@@ -529,14 +551,14 @@ function GroupChat({ groupID }) {
                     <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
                     <div
                       className="attachments"
-                      onClick={handleAttachmentClick}
+                      onClick={handleAttachmentClick(message.user_id, message.timestamp)}
                       style={{
                         margin: "5px 0",
                         fontWeight: "bold",
                         color: "#333",
                       }}
                     >
-                    {message.fileName && <p style={{cursor:'pointer'}}> {message.fileName} </p>}
+                    {message.fileName && <p style={{cursor:'pointer'}}> {parseFileName(message.fileName, message.user_id, message.timestamp)} </p>}
 
                       {message.imageName && (
                         <img
