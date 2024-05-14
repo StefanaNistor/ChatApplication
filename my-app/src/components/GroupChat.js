@@ -130,6 +130,7 @@ function GroupChat({ groupID }) {
       imageName: attachedImage
         ? user_id + timestamp + attachedImage.name
         : null,
+      imageObject: attachedImage
     };
 
     const formData = new FormData();
@@ -438,6 +439,14 @@ function GroupChat({ groupID }) {
     const split = fileName.split(userID + timestamp);
     return split[1];
   }
+
+  function arrayBufferToDataURL(arrayBuffer, mimeType) {
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const blob = new Blob([uint8Array], { type: mimeType });
+    const urlCreator = window.URL || window.webkitURL;
+    console.log('URL:', urlCreator.createObjectURL(blob));
+    return urlCreator.createObjectURL(blob);
+}
   
 
   return (
@@ -560,21 +569,37 @@ function GroupChat({ groupID }) {
                     >
                     {message.fileName && <p style={{cursor:'pointer'}}> {parseFileName(message.fileName, message.user_id, message.timestamp)} </p>}
 
-                      {message.imageName && (
-                        <img
-                          src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
-                          alt="attachedImage"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            maxWidth: "300px",
-                            maxHeight: "300px",
-                            cursor: "pointer",
-                            borderRadius: "10px",
-                        }}
-                        onClick={handlePhotoClick}
-                        ></img>
-                      )}
+                    {message.imageObject && (
+  <img
+    src={arrayBufferToDataURL(message.imageObject, message.imageObject.contentType)}
+    alt="attachedImage"
+    style={{
+      width: "100px",
+      height: "100px",
+      maxWidth: "300px",
+      maxHeight: "300px",
+      borderRadius: "10px",
+      cursor: "pointer",
+    }}
+    onClick={handlePhotoClick}
+  />
+)}
+
+{!message.imageObject && message.imageName && (
+  <img
+    src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
+    alt="attachedImage"
+    style={{
+      width: "100px",
+      height: "100px",
+      maxWidth: "300px",
+      maxHeight: "300px",
+      borderRadius: "10px",
+      cursor: "pointer",
+    }}
+    onClick={handlePhotoClick}
+  />
+)}
                     </div>
                   </div>
 

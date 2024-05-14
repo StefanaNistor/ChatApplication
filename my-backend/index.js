@@ -96,14 +96,27 @@ io.on("connection", (socket) => {
 
       fileName: request.fileName,
       imageName: request.imageName,
+      imageObject: request.imageObject,
     }
 
     if (chatRooms.roomId) {
       socket.emit('chat private server', messageObj);
       io.to(chatRooms.roomId).emit('chat private client', messageObj);
 
+
+      const goodObj = {
+        content: request.content,
+        timestamp: request.timestamp,
+        chat_id: request.chat_id,
+        user_id: request.user_id,
+  
+        fileName: request.fileName,
+        imageName: request.imageName,
+        
+      }
+
       // add message to database using axios
-      axios.post('http://localhost:7979/privateMessages/add', messageObj)
+      axios.post('http://localhost:7979/privateMessages/add', goodObj)
       .then((res) => {
           console.log('Message added to database:', res.data);
       })
@@ -140,14 +153,25 @@ io.on("connection", (socket) => {
           user_id: request.user_id,
           fileName: request.fileName,
           imageName: request.imageName,
+          imageObject: request.imageObject,
         };
 
         if (chatRooms.roomId) {
           socket.emit('chat group server',messageObj);
           io.to(chatRooms.roomId).emit("chat group client", messageObj);
 
+          const goodObj = {
+            content: request.content,
+          timestamp: request.timestamp,
+          group_id: request.group_id,
+          user_id: request.user_id,
+          fileName: request.fileName,
+          imageName: request.imageName,
+            
+          }
+
           // add message to database using axios
-          axios.post('http://localhost:7979/groupMessages/add', messageObj)
+          axios.post('http://localhost:7979/groupMessages/add', goodObj)
           .then((res) => {
               console.log('Message added to database:', res.data);
           })

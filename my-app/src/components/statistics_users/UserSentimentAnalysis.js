@@ -61,7 +61,7 @@ function UserSentimentAnalysis() {
             });
         })
         .then((res) => {
-            //console.log(res.data);
+            console.log("GROUP",res.data);
             allMessages.push(...res.data);
             //console.log(allMessages);
             setMessages(manipulateMessageData(allMessages));
@@ -99,7 +99,7 @@ console.log('User ID:', userId);
         const userMessages = messages[userId];
         if (!userMessages || userMessages.length === 0) {
             console.log('No messages found for the selected user.');
-            alert('No messages found for the selected user.');
+            alert('No messages found for the selected user in the last 2 months.');
             return;
         }
         const userText = userMessages.map((message) => message.content).join(" ");
@@ -111,11 +111,13 @@ console.log('User ID:', userId);
     }
 
     const manipulateMessageData = (messages) => {
+
         // select messages from the last 2 months 
         const twoMonthsAgo = new Date();
         twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
         const newMessages = messages.filter((message) => new Date(message.timestamp) > twoMonthsAgo);
-     
+
+   
         const userMessages = {};
         newMessages.forEach((message) => {
             if (!userMessages[message.user_id]) {

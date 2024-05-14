@@ -71,6 +71,7 @@ function PrivateChat({ chatID }) {
 
     socket.on("chat private client", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
+      console.log("Message received:", message);
     });
 
     return () => {
@@ -198,6 +199,14 @@ function PrivateChat({ chatID }) {
     setUsernames(usernamesMap);
   }
 
+  function arrayBufferToDataURL(arrayBuffer, mimeType) {
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const blob = new Blob([uint8Array], { type: mimeType });
+    const urlCreator = window.URL || window.webkitURL;
+    console.log('URL:', urlCreator.createObjectURL(blob));
+    return urlCreator.createObjectURL(blob);
+}
+
   const handleSendMessage = () => {
     const timestamp = new Date().toISOString();
     const user_id = JSON.parse(localStorage.getItem("user")).id;
@@ -216,9 +225,11 @@ function PrivateChat({ chatID }) {
 
       fileName: attachedFile ? user_id + timestamp + attachedFile.name : null,
       imageName: attachedImage ? user_id + timestamp + attachedImage.name : null,
+      imageObject: attachedImage,
     };
 
     console.log("Message:", messageObj);
+    console.log("Message image", messageObj.imageObject)
 
     const formData = new FormData();
     if(attachedFile) {
@@ -373,7 +384,6 @@ const handleFileChange = (event) => {
   const file = event.target.files[0];
   setAttachedFile(file);
   console.log('FISIEEER :', file);
-  //AICI TO DO
 }
 
 const handleAttachmentClick = (userID, timestamp) => {
@@ -514,22 +524,38 @@ const parseFileName = (fileName, userID, timestamp) => {
                     }}
                   >
                     {message.fileName && <p style={{cursor:'pointer'}}> {parseFileName(message.fileName, message.user_id, message.timestamp)} </p>}
+                    {message.imageObject && (
+  <img
+    src={arrayBufferToDataURL(message.imageObject, message.imageObject.contentType)}
+    alt="attachedImage"
+    style={{
+      width: "100px",
+      height: "100px",
+      maxWidth: "300px",
+      maxHeight: "300px",
+      borderRadius: "10px",
+      cursor: "pointer",
+    }}
+    onClick={handlePhotoClick}
+  />
+)}
 
-                    {message.imageName && (
-                      <img
-                      src={imageAttachments[message._id] ? imageAttachments[message._id] : attachedImage}
-                        alt="attachedImage"
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          maxWidth: "300px",
-                          maxHeight: "300px",
-                          borderRadius: "10px",
-                          cursor: "pointer",
-                        }}
-                        onClick={handlePhotoClick}
-                      ></img>
-                    )}
+{!message.imageObject && message.imageName && (
+  <img
+    src={imageAttachments[message._id] ? imageAttachments[message._id] : "https://via.placeholder.com/70"}
+    alt="attachedImage"
+    style={{
+      width: "100px",
+      height: "100px",
+      maxWidth: "300px",
+      maxHeight: "300px",
+      borderRadius: "10px",
+      cursor: "pointer",
+    }}
+    onClick={handlePhotoClick}
+  />
+)}
+
                   </div>
             </div>
 
