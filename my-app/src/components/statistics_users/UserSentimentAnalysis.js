@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+
 function UserSentimentAnalysis() {
     const [text, setText] = useState("");
     const [users, setUsers] = useState([]);
@@ -138,14 +139,14 @@ console.log('User ID:', userId);
 
     return (
         <div>
-        <h3>Select the user you want to perform sentiment analysis upon:</h3>
+        <h3 id="sentiment-analysis-heading">Select the user you want to perform sentiment analysis upon:</h3>
         <select id='user-sentiment-dropdown' onChange={handleUserChange}>
     {users.map((user) => (
         <option key={user.id} value={user.id}>{user.username}</option>
     ))}
 </select>
-        <button onClick={getUserMessages}>Click to Analyze Sentiment</button>
-        <div className="sentiment-result"> {isLoading ? "Click to load your data analysis!" : typeof sentiment === 'undefined' ? 'Please click again :)!' : 'Overall sentiment: ' + sentiment} </div>
+        <button onClick={getUserMessages} id='analyze-sentiment'>Click to Analyze Sentiment</button>
+        <div className="sentiment-result" id='sent-analysis-result'> {isLoading ? "Click to load your data analysis!" : typeof sentiment === 'undefined' ? 'Please click again :)!' : 'Overall sentiment: ' + sentiment} </div>
         </div>
     );
 }

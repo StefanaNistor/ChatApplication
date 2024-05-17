@@ -33,7 +33,13 @@ function MainStatistics() {
         ) : userStat ? (
           <StatisticsUsers onClose={setUserStat} />
         ) : (
-          <div className="statistics-main">
+          <div className="statistics-main"style={{
+            overflowY: "scroll",
+            height: "90vh",
+            
+
+          }}>
+            
             <h1>General Statistics</h1>
             <div
               className="statistics-buttons"
@@ -82,6 +88,51 @@ function MainStatistics() {
               >
                 User Statistics
               </button>
+            </div>
+
+            <h2 id="info-header"> Information About the Statistics Categories </h2>
+
+            <div className="statistics-main-text" id="statistics-main-txt"
+            style={{
+              width: "90%",
+            maxWidth: "90%",
+            margin: "auto",
+            }}
+            >
+             
+              <div className="activity-stat-description">
+                <h3>Activity Statistics</h3>
+                <p>
+                  This section provides information about the general activity
+                  of the users in the chat application. It includes the peak
+                  chat activity by hour and the chat activity by department and
+                  things regarding.
+                </p>
+              </div>
+
+              <div className="productivity-stat-description">
+                <h3>Productivity Statistics</h3>
+                <p>
+                  This section provides information about the productivity of
+                  the users in the chat application.
+                </p>
+              </div>
+
+              <div className="message-stat-description">
+                <h3>Message Statistics</h3>
+                <p>
+                  This section provides information about the messages sent by
+                  the users in the chat application.
+                </p>
+              </div>
+
+              <div className="user-stat-description">
+                <h3>User Statistics</h3>
+                <p>
+                  This section provides information about the users in the chat
+                  application.
+                </p>
+              </div>
             </div>
           </div>
         )}

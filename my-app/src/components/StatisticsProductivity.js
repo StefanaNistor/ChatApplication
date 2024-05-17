@@ -68,7 +68,7 @@ function StatisticsProductivity({onClose }) {
 
             <div className = "bar-chart-staistic">
                 
-                <h2>Productivity Level by User(completed todos)</h2>
+                <h2>Productivity Level by User</h2>
                 <div className="container-for-charts">
                 <CompletedToDoHorizontalBarChart />
                 <div className="label-statistic-text">
