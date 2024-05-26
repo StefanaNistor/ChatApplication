@@ -207,9 +207,7 @@ function Profile() {
     }).then((res) => {
       const url = URL.createObjectURL(res.data);
       setPhotoURL(url);
-      if(url){
-        setIsLoading(false);
-      }
+    
     }).catch((err)=>{
       console.log(err);
     }) 
@@ -226,7 +224,7 @@ function Profile() {
     <div>
         <NavBar />
         <div className='main-user-container'>
-       {isLoading ? <h1>Loading profile info...</h1> : (
+       (
              <div className='profile-container'>
              <div className='profile-picture'>
              <div className='pic'>
@@ -282,7 +280,7 @@ function Profile() {
                  </div>
              </div>
          </div>
-       )}
+       )
         </div>
     </div>
   );
