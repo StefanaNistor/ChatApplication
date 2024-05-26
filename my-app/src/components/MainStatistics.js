@@ -1,7 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
-
-import axios from "axios";
+import React, { useState } from "react";
 import StatisticsActivity from "./StatisticsActivity";
 import StatisticsProductivity from "./StatisticsProductivity";
 import StatisticsMessages from "./StatisticsMessages";
@@ -10,36 +7,37 @@ import NavBar from "./NavBar";
 import "../components-style/Statistics.css";
 
 function MainStatistics() {
-  const [activityStat, setActivityStat] = useState(false);
-  const [productivityStat, setProductivityStat] = useState(false);
-  const [messageStat, setMessageStat] = useState(false);
-  const [userStat, setUserStat] = useState(false);
+  const [activeStat, setActiveStat] = useState("");
+
+  const handleOpenStat = (statType) => {
+    setActiveStat(statType);
+  };
+
+  const handleCloseStat = () => {
+    setActiveStat("");
+  };
 
   return (
     <div>
       <NavBar />
-      <div
-        className="statistics-main-container"
-        style={{
-          marginTop: "12vh",
-        }}
-      >
-        {activityStat ? (
-          <StatisticsActivity onClose={setActivityStat} />
-        ) : productivityStat ? (
-          <StatisticsProductivity onClose={setProductivityStat} />
-        ) : messageStat ? (
-          <StatisticsMessages onClose={setMessageStat} />
-        ) : userStat ? (
-          <StatisticsUsers onClose={setUserStat} />
-        ) : (
-          <div className="statistics-main"style={{
-            overflowY: "scroll",
-            height: "90vh",
-            
-
-          }}>
-            
+      <div className="statistics-main-container" style={{ marginTop: "12vh" }}>
+        {activeStat === "activity" && (
+          <StatisticsActivity onClose={handleCloseStat} />
+        )}
+        {activeStat === "productivity" && (
+          <StatisticsProductivity onClose={handleCloseStat} />
+        )}
+        {activeStat === "messages" && (
+          <StatisticsMessages onClose={handleCloseStat} />
+        )}
+        {activeStat === "users" && (
+          <StatisticsUsers onClose={handleCloseStat} />
+        )}
+        {!activeStat && (
+          <div
+            className="statistics-main"
+            style={{ overflowY: "scroll", height: "90vh" }}
+          >
             <h1>General Statistics</h1>
             <div
               className="statistics-buttons"
@@ -52,7 +50,7 @@ function MainStatistics() {
               }}
             >
               <button
-                onClick={() => setActivityStat(true)}
+                onClick={() => handleOpenStat("activity")}
                 style={{
                   margin: "10px",
                   width: "12vw",
@@ -61,7 +59,7 @@ function MainStatistics() {
                 Activity Statistics
               </button>
               <button
-                onClick={() => setProductivityStat(true)}
+                onClick={() => handleOpenStat("productivity")}
                 style={{
                   margin: "10px",
                   width: "12vw",
@@ -70,7 +68,7 @@ function MainStatistics() {
                 Productivity Statistics
               </button>
               <button
-                onClick={() => setMessageStat(true)}
+                onClick={() => handleOpenStat("messages")}
                 style={{
                   margin: "10px",
                   width: "12vw",
@@ -78,9 +76,8 @@ function MainStatistics() {
               >
                 Message Statistics
               </button>
-
               <button
-                onClick={() => setUserStat(true)}
+                onClick={() => handleOpenStat("users")}
                 style={{
                   margin: "10px",
                   width: "12vw",
@@ -90,48 +87,73 @@ function MainStatistics() {
               </button>
             </div>
 
-            <h2 id="info-header"> Information About the Statistics Categories </h2>
+            <h2 id="info-header">Information About the Statistics Categories</h2>
 
-            <div className="statistics-main-text" id="statistics-main-txt"
-            style={{
-              width: "90%",
-            maxWidth: "90%",
-            margin: "auto",
-            }}
+            <div
+              className="statistics-main-text"
+              id="statistics-main-txt"
+              style={{
+                width: "90%",
+                maxWidth: "90%",
+                margin: "auto",
+              }}
             >
-             
-              <div className="activity-stat-description">
+              <div className="stat-description">
                 <h3>Activity Statistics</h3>
                 <p>
-                  This section provides information about the general activity
-                  of the users in the chat application. It includes the peak
-                  chat activity by hour and the chat activity by department and
-                  things regarding.
+                  This section offers a comprehensive overview of user activity
+                  within the chat application. It highlights peak chat times for
+                  both group and private conversations, providing insights into
+                  the most active hours of the day. Additionally, it details the
+                  message volume across different departments and identifies the
+                  top users based on their message count.
                 </p>
+                <button onClick={() => handleOpenStat("activity")}>
+                  Explore Activity Statistics
+                </button>
               </div>
 
-              <div className="productivity-stat-description">
+              <div className="stat-description">
                 <h3>Productivity Statistics</h3>
                 <p>
-                  This section provides information about the productivity of
-                  the users in the chat application.
+                  This section offers insights into user productivity within the
+                  chat application. It displays the number of tasks assigned to
+                  each user, along with the count of completed tasks for each
+                  individual. Additionally, it provides an overview of the
+                  distribution of flags for the tasks assigned to each user.
                 </p>
+                <button onClick={() => handleOpenStat("productivity")}>
+                  Explore Productivity Statistics
+                </button>
               </div>
 
-              <div className="message-stat-description">
+              <div className="stat-description">
                 <h3>Message Statistics</h3>
                 <p>
-                  This section provides information about the messages sent by
-                  the users in the chat application.
+                  The message statistics illustrate the distribution of
+                  different message types, including text-only messages,
+                  messages containing images, and those with attached files.
+                  Additionally, this section examines the average length of sent
+                  messages across various departments.
                 </p>
+                <button onClick={() => handleOpenStat("messages")}>
+                  Explore Message Statistics
+                </button>
               </div>
 
-              <div className="user-stat-description">
+              <div className="stat-description">
                 <h3>User Statistics</h3>
                 <p>
-                  This section provides information about the users in the chat
-                  application.
+                  The user statistics reveal the peak chat activity for each
+                  user, identifying the times of day when they are most active.
+                  Additionally, this section includes a user sentiment analysis,
+                  which indicates the overall tone of the messages sent by
+                  users, providing insights into their general attitude towards
+                  colleagues.
                 </p>
+                <button onClick={() => handleOpenStat("users")}>
+                  Explore User Statistics
+                </button>
               </div>
             </div>
           </div>

@@ -102,3 +102,44 @@
     font-weight: 600;
     width: 100%;
 }
+
+
+.stat-description {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stat-description button {
+    margin-top: 10px;
+    background-color: #e74c3c;
+  }
+  
+  .stat-description button:hover {
+    background-color: #c0392b;
+  }
+  
+  .statistics-main-text {
+    width: 90%;
+    max-width: 90%;
+    margin: auto;
+  }
+
+  .statistics-main button {
+    background-color: #e74c3c;
+  }
+
+    .statistics-main button:hover {
+        background-color: #c0392b;
+    }
+
+    .statistics-activity-container button {
+        background-color: #e74c3c;
+    }
+
+    .statistics-activity-container button:hover {
+        background-color: #c0392b;
+    }

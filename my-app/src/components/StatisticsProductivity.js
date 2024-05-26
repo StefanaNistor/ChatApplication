@@ -52,7 +52,7 @@ function StatisticsProductivity({onClose }) {
 
 
             <div className = "bar-chart-staistic">
-                <h2>Engagement level for tasks by User (all todos)</h2>
+                <h2>Engagement level for tasks by User</h2>
                 <div className="container-for-charts">
                 <UserToDoBarChart />
                 <div className="label-statistic-text">
