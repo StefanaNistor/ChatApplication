@@ -54,6 +54,7 @@ function NavBar(){
     
     return(
         <div className='navbar-container'>
+            <div className='navlist-container'>
             <ul id='navList'>
                 <li onClick={handleHomeClick}>Home</li>
                 <li onClick={handleProfileClick}>Profile</li>
@@ -64,6 +65,7 @@ function NavBar(){
                 {isAdmin && <li onClick={handleStatisticsClick}>Statistics</li>}
                 <li><button id="logoutBtn" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} /></button></li>
             </ul>
+            </div>
         </div>
 
     )
