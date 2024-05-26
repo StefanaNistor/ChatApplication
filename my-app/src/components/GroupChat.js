@@ -11,6 +11,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
 function GroupChat({ groupID }) {
   const [selectedGroupChat, setSelectedGroupChat] = useState("");
@@ -130,7 +131,7 @@ function GroupChat({ groupID }) {
       imageName: attachedImage
         ? user_id + timestamp + attachedImage.name
         : null,
-      imageObject: attachedImage
+      imageObject: attachedImage,
     };
 
     const formData = new FormData();
@@ -407,18 +408,17 @@ function GroupChat({ groupID }) {
       if (target.tagName === "P") {
         const fileName = target.innerText;
         const newFileName = userID + timestamp + fileName;
-  
+
         console.log("New Filename:", newFileName); // Check newFileName value
-  
+
         const fileURL = `http://localhost:7979/photos/getMessageAttachment/${newFileName}`;
-  
+
         console.log("File URL:", fileURL); // Check fileURL value
-  
+
         window.open(fileURL, "_blank");
       }
     };
   };
-  
 
   const handlePhotoClick = (event) => {
     const target = event.target;
@@ -426,28 +426,45 @@ function GroupChat({ groupID }) {
     image.src = target.src;
     const w = window.open("");
     w.document.write(image.outerHTML);
-  }
-  
+  };
 
   const parseFileName = (fileName, userID, timestamp) => {
     //  userid + timestamp of the message + filename
-  
-  
+
     // console.log('FILENAME:', fileName);
     // console.log('USERID:', userID);
     // console.log('TIMESTAMP:', timestamp);
     const split = fileName.split(userID + timestamp);
     return split[1];
-  }
+  };
 
   function arrayBufferToDataURL(arrayBuffer, mimeType) {
     const uint8Array = new Uint8Array(arrayBuffer);
     const blob = new Blob([uint8Array], { type: mimeType });
     const urlCreator = window.URL || window.webkitURL;
-    console.log('URL:', urlCreator.createObjectURL(blob));
+    console.log("URL:", urlCreator.createObjectURL(blob));
     return urlCreator.createObjectURL(blob);
-}
-  
+  }
+
+  const handleSpeechToText = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      alert("Speak now! :) Click on ok to view the message in the input field.");
+    };
+
+    recognition.start();
+
+    recognition.onresult = (event) => {
+      const message = event.results[0][0].transcript;
+      console.log("Message:", message);
+      setMessageInput(message);
+    };
+  };
 
   return (
     <div>
@@ -560,46 +577,61 @@ function GroupChat({ groupID }) {
                     <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
                     <div
                       className="attachments"
-                      onClick={handleAttachmentClick(message.user_id, message.timestamp)}
+                      onClick={handleAttachmentClick(
+                        message.user_id,
+                        message.timestamp
+                      )}
                       style={{
                         margin: "5px 0",
                         fontWeight: "bold",
                         color: "#333",
                       }}
                     >
-                    {message.fileName && <p style={{cursor:'pointer'}}> {parseFileName(message.fileName, message.user_id, message.timestamp)} </p>}
+                      {message.fileName && (
+                        <p style={{ cursor: "pointer" }}>
+                          {" "}
+                          {parseFileName(
+                            message.fileName,
+                            message.user_id,
+                            message.timestamp
+                          )}{" "}
+                        </p>
+                      )}
 
-                    {message.imageObject && (
-  <img
-    src={arrayBufferToDataURL(message.imageObject, message.imageObject.contentType)}
-    alt="attachedImage"
-    style={{
-      width: "100px",
-      height: "100px",
-      maxWidth: "300px",
-      maxHeight: "300px",
-      borderRadius: "10px",
-      cursor: "pointer",
-    }}
-    onClick={handlePhotoClick}
-  />
-)}
+                      {message.imageObject && (
+                        <img
+                          src={arrayBufferToDataURL(
+                            message.imageObject,
+                            message.imageObject.contentType
+                          )}
+                          alt="attachedImage"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={handlePhotoClick}
+                        />
+                      )}
 
-{!message.imageObject && message.imageName && (
-  <img
-    src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
-    alt="attachedImage"
-    style={{
-      width: "100px",
-      height: "100px",
-      maxWidth: "300px",
-      maxHeight: "300px",
-      borderRadius: "10px",
-      cursor: "pointer",
-    }}
-    onClick={handlePhotoClick}
-  />
-)}
+                      {!message.imageObject && message.imageName && (
+                        <img
+                          src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
+                          alt="attachedImage"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={handlePhotoClick}
+                        />
+                      )}
                     </div>
                   </div>
 
@@ -654,6 +686,18 @@ function GroupChat({ groupID }) {
                     height: "5vh",
                   }}
                 >
+                  <button id="speechToText"
+              style={{
+                borderRadius: "50",
+                padding: "5px",
+                backgroundColor: "#b5e7a0",
+                marginLeft: "3px",
+                marginRight: "1vh",
+              }}
+              onClick={handleSpeechToText}
+              >
+                <FontAwesomeIcon icon={faMicrophone} style={{ fontSize: "2.2vh" }} />
+              </button>
                   <button
                     id="attachImage"
                     style={{
