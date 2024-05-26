@@ -8,7 +8,10 @@ const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000", 
     methods: ["GET", "POST"]
-  }
+  },
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000
 });
 const cors = require('cors');
 const mongoose = require('mongoose');

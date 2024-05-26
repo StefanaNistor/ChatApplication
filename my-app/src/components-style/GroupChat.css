@@ -7,6 +7,12 @@
     height: 100vh;
     margin-top: 8vh;
   }
+
+  @media (max-width: 900px) {
+    .groupChat-container {
+      margin-left: 22vw;
+    }
+  }
   
   .groupChatHeader {
     display: flex;
@@ -20,6 +26,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  @media (max-width: 900px) {
+    .groupChatBody {
+      max-height: 40vh;
+      height: 40vh;
+      margin-top:2.2vh;
+    }
   }
   
   #groupTitle {
@@ -39,10 +53,11 @@
   .groupChatBody {
     overflow-y: scroll;
     max-height: 55vh;
-    height: 55vh;
+    height: 53vh;
     padding: 10px;
     border: 2px solid #ccc;
     border-radius: 5px;
+    margin-top: 2vh;
   }
   
   ul {

@@ -8,6 +8,12 @@
     margin-top: 8vh;
 }
 
+@media (max-width: 900px) {
+    .private-container {
+      margin-left: 22vw;
+    }
+}
+
 .privateChatHeader {
     display: flex;
     justify-content: space-between;
@@ -23,13 +29,13 @@
 }
 
 .userDetails {
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 5px;
-    font-size: 15px;
-    width: 50vw;
-    max-height: 7.5vh;
-    overflow-y: scroll;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 15px;
+  width: 50vw;
+  max-height: 6.7vh;
+  overflow-y: scroll;
 }
 
 .privateTitle h1 {
@@ -89,6 +95,12 @@ button:hover {
 
 .messageInput button {
     width: 7vw;
+}
+
+@media (max-width: 900px) {
+    .messageInput button {
+      width: 10vw;
+    }
 }
 
 .message.myMessage {
