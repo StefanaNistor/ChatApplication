@@ -9,6 +9,7 @@ import UserMasterList from './components/UserMasterList';
 import OtherProfile from './components/OtherProfile';
 import AdminPanel from './components/AdminPanel';
 import MainStatistics from './components/MainStatistics';
+import AccessDenied from './components/AccessDenied';
 
 import React from 'react';
 
@@ -16,20 +17,28 @@ function App() {
   
   const today = new Date();
 
+  const token = localStorage.getItem('token');
+
+  const checkIfLoggedIn = () => {
+    if (!token) {
+      return false;
+    }
+    return true;
+  }
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login/>} />
-        <Route path="/main" element={<MainPage />} />
-        <Route path='todo-list' element={<ToDoList/>}/>
-        <Route path='profile' element={<Profile/>}/>
-        <Route path='calendar' element={<Calendar todayDate={today}/>}/>
-        <Route path='user-master-list' element={<UserMasterList/>}/>
-        <Route path="/otherProfile/:otherUserID" element={<OtherProfile />} />
-        <Route path='admin' element={<AdminPanel/>}/>
-        <Route path='/statistics' element={<MainStatistics/>}/>
-
-
+        <Route path='/' element={<Login />} />
+        <Route path='/main' element={<MainPage />} />
+        <Route path='/todo-list' element={checkIfLoggedIn() ? <ToDoList /> : <AccessDenied />} />
+        <Route path='/profile' element={checkIfLoggedIn() ? <Profile /> : <AccessDenied />} />
+        <Route path='/calendar' element={checkIfLoggedIn() ? <Calendar /> : <AccessDenied />} />
+        <Route path='/user-master-list' element={checkIfLoggedIn() ? <UserMasterList /> : <AccessDenied />} />
+        <Route path='/other-profile' element={checkIfLoggedIn() ? <OtherProfile /> : <AccessDenied />} />
+        <Route path='/admin' element={checkIfLoggedIn() ? <AdminPanel /> : <AccessDenied />} />
+        <Route path='/statistics' element={checkIfLoggedIn() ? <MainStatistics /> : <AccessDenied />} />
+        <Route path='*' element={<h1>Not Found</h1>} />
       </Routes>
   </Router>
   
