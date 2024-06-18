@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import MainPage from './components/MainPage';
 import ToDoList from './components/ToDoList';
@@ -10,38 +10,39 @@ import OtherProfile from './components/OtherProfile';
 import AdminPanel from './components/AdminPanel';
 import MainStatistics from './components/MainStatistics';
 import AccessDenied from './components/AccessDenied';
-
+import { useState, useEffect } from 'react';
 import React from 'react';
 
 function App() {
-  
   const today = new Date();
 
-  const token = localStorage.getItem('token');
+  const [tokenExists, setTokenExists] = useState(false);
 
-  const checkIfLoggedIn = () => {
-    if (!token) {
-      return false;
-    }
-    return true;
-  }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setTokenExists(!!token);
+  }, []);
+
+  const ProtectedRoute = ({ element }) => {
+    return tokenExists ? element : <Navigate to="/access-denied" />;
+  };
 
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Login />} />
-        <Route path='/main' element={<MainPage />} />
-        <Route path='/todo-list' element={checkIfLoggedIn() ? <ToDoList /> : <AccessDenied />} />
-        <Route path='/profile' element={checkIfLoggedIn() ? <Profile /> : <AccessDenied />} />
-        <Route path='/calendar' element={checkIfLoggedIn() ? <Calendar /> : <AccessDenied />} />
-        <Route path='/user-master-list' element={checkIfLoggedIn() ? <UserMasterList /> : <AccessDenied />} />
-        <Route path='/other-profile' element={checkIfLoggedIn() ? <OtherProfile /> : <AccessDenied />} />
-        <Route path='/admin' element={checkIfLoggedIn() ? <AdminPanel /> : <AccessDenied />} />
-        <Route path='/statistics' element={checkIfLoggedIn() ? <MainStatistics /> : <AccessDenied />} />
+        <Route path='/' element={<Login setTokenExists={setTokenExists} />} />
+        <Route path='/main' element={<ProtectedRoute element={<MainPage />} />} />
+        <Route path='/todo-list' element={<ProtectedRoute element={<ToDoList />} />} />
+        <Route path='/profile' element={<ProtectedRoute element={<Profile />} />} />
+        <Route path='/calendar' element={<ProtectedRoute element={<Calendar todayDate={today} />} />} />
+        <Route path='/user-master-list' element={<ProtectedRoute element={<UserMasterList />} />} />
+        <Route path='/otherProfile/:id' element={<ProtectedRoute element={<OtherProfile />} />} />
+        <Route path='/admin' element={<ProtectedRoute element={<AdminPanel />} />} />
+        <Route path='/statistics' element={<ProtectedRoute element={<MainStatistics />} />} />
+        <Route path='/access-denied' element={<AccessDenied />} />
         <Route path='*' element={<h1>Not Found</h1>} />
       </Routes>
-  </Router>
-  
+    </Router>
   );
 }
 
