@@ -6,15 +6,15 @@ import { useParams } from "react-router-dom";
 
 function OtherProfile() {
 
-    const { otherUserID } = useParams();
+    const { id } = useParams();
     const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/300");
     const [isLoading, setIsLoading] = useState(true);
     const [userAbout, setUserAbout] = useState({});
     const [userEmail, setUserEmail] = useState('');
 
     useEffect(() => {
-        getUserDetails(otherUserID);
-        getUserEmail(otherUserID);
+        getUserDetails(id);
+        getUserEmail(id);
     }, [userAbout]);
 
     useEffect(() => {
@@ -54,8 +54,8 @@ function OtherProfile() {
 
       function getUserProfilePhoto(){
         const user = JSON.parse(localStorage.getItem('user'));
-        const filename = otherUserID + 'profilePic.jpg';
-        axios.get(`http://localhost:7979/photos/getPhoto/${otherUserID}?filename=${filename}`, {
+        const filename = id + 'profilePic.jpg';
+        axios.get(`http://localhost:7979/photos/getPhoto/${id}?filename=${filename}`, {
           headers: {
             "x-access-token": localStorage.getItem('token'),
           },
@@ -75,7 +75,7 @@ function OtherProfile() {
         <div>
             <NavBar />
             <div className='main-user-container'>
-               {isLoading ? <h1>Loading profile info...</h1> :(
+             
                  <div className='profile-container'>
                  <div className='profile-picture'>
                  <div className='pic'>
@@ -119,7 +119,7 @@ function OtherProfile() {
 
                 
              </div>
-               )}
+              
             </div>
         </div>
     )
