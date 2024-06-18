@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import axios from 'axios';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Chart } from 'chart.js';
 
 function ToDoFlagPieChart() {
     const [toDoItems, setToDoItems] = useState([]);
@@ -32,9 +34,7 @@ function ToDoFlagPieChart() {
         }
       };
 
-
     useEffect(() => {
-
         const flagData = flags.map(flag => {
             return {
                 label: flag.name,
@@ -42,8 +42,6 @@ function ToDoFlagPieChart() {
                 backgroundColor: generateColorForToDo(flag.id),
             };
         });
-
-        //console.log(flagData);
 
         const chartData = {
             labels: flagData.map(data => data.label),
@@ -55,18 +53,13 @@ function ToDoFlagPieChart() {
             ],
         };
 
-        //console.log(chartData);
         setChartData(chartData);
 
-        if(toDoItems.length > 0 && flags.length > 0) {
+        if (toDoItems.length > 0 && flags.length > 0) {
             setLoadingData(false);
         }
-
-
     }, [toDoItems, flags]);
 
-
-    
     const getToDoItems = () => {
         axios
             .get("http://localhost:7979/toDoList/", {
@@ -119,7 +112,25 @@ function ToDoFlagPieChart() {
                     options={{
                         responsive: true,
                         maintainAspectRatio: false,
+                        plugins: {
+                            datalabels: {
+                                formatter: (value, context) => {
+                                    const dataset = context.chart.data.datasets[0];
+                                    const total = dataset.data.reduce((acc, curr) => acc + curr, 0);
+                                    const percentage = ((value / total) * 100).toFixed(2) + '%';
+                                    return percentage;
+                                },
+                                color: '#fff',
+                                anchor: 'end',
+                                align: 'start',
+                                offset: -10,
+                                borderRadius: 4,
+                                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                padding: 4,
+                            }
+                        }
                     }}
+                    plugins={[ChartDataLabels]}
                 />
             )}
         </div>
@@ -127,4 +138,3 @@ function ToDoFlagPieChart() {
 }
 
 export default ToDoFlagPieChart;
-
