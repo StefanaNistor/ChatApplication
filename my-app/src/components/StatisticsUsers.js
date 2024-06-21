@@ -18,7 +18,7 @@ import {
 
 import NavBar from "./NavBar";
 import UserActivityLineChart from "./statistics_users/UserActivityLineChart";
-import UserSentimentAnalysis from "./statistics_users/UserSentimentAnalysis";
+
 
 ChartJS.register(
     CategoryScale,
@@ -66,23 +66,7 @@ function StatisticsUsers({onClose }) {
                 </div>
             </div>
 
-            <div className = "sentient-chart-staistic"> 
-            <h2>User sentinent analysis based on their sent messages</h2>
-            <div className="container-for-charts">
-                <UserSentimentAnalysis />
-                <div className="label-statistic-text">
-                    <p>
-                        User sentiment analysis based on their sent messages.
-                        The sentiment analysis is performed on the messages sent by the user and the overall sentiment is displayed.
-                        Possible sentiments are: positive, negative, neutral.
-                        Messages are analyzed for the last 2 months.
-
-                    </p>
-                </div>
-             </div>
-            
-            </div>
-
+       
 
             </div>
 

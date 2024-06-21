@@ -10,6 +10,7 @@ import OtherProfile from './components/OtherProfile';
 import AdminPanel from './components/AdminPanel';
 import MainStatistics from './components/MainStatistics';
 import AccessDenied from './components/AccessDenied';
+import Feedback from './components/Feedback';
 import { useState, useEffect } from 'react';
 import React from 'react';
 
@@ -39,6 +40,7 @@ function App() {
         <Route path='/otherProfile/:id' element={<ProtectedRoute element={<OtherProfile />} />} />
         <Route path='/admin' element={<ProtectedRoute element={<AdminPanel />} />} />
         <Route path='/statistics' element={<ProtectedRoute element={<MainStatistics />} />} />
+        <Route path='/feedback' element={<ProtectedRoute element={<Feedback />} />} />
         <Route path='/access-denied' element={<AccessDenied />} />
         <Route path='*' element={<h1>Not Found</h1>} />
       </Routes>

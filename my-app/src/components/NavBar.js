@@ -51,6 +51,11 @@ function NavBar(){
         navigate('/statistics');
     }
     
+    const handleFeedbackClick = () => {
+        console.log('feedback');
+        navigate('/feedback');
+    }
+
     
     return(
         <div className='navbar-container'>
@@ -61,6 +66,7 @@ function NavBar(){
                 <li onClick={handleUserMasterListClick}>User Master List</li>
                 <li onClick={handleToDoListClick}>To Do List</li>
                 <li onClick={handleCalendarClick}>Calendar</li>
+                <li onClick={handleFeedbackClick}>Feedback</li>
                 {isAdmin && <li onClick={handleAdminClick}>Admin</li>}
                 {isAdmin && <li onClick={handleStatisticsClick}>Statistics</li>}
                 <li><button id="logoutBtn" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} /></button></li>

@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const http = require('http')
 const { Server } = require("socket.io");
-const db = require('./dbConfig');
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -16,6 +16,7 @@ const io = new Server(server, {
 const cors = require('cors');
 const mongoose = require('mongoose');
 const axios = require('axios');
+const db = require('./dbConfig');
 
 // --- Mongoose Connection ---
 async function connectWithMongoose(){
@@ -39,6 +40,7 @@ const privateChatRouter = require('./routes/PrivateChatRouter');
 const privateMessageRouter = require('./routes/PrivateMessageRouter');
 const groupMessageRouter = require('./routes/GroupMessageRouter');
 const photoRouter = require('./routes/PhotoRouter');
+const feedbackRouter = require('./routes/FeedbackRouter');
 
 // --- Postgress Connection ---
 db.connect((err) => {
@@ -66,6 +68,7 @@ app.use('/privateChat', privateChatRouter)
 app.use('/privateMessages', privateMessageRouter);
 app.use('/groupMessages', groupMessageRouter);
 app.use('/photos', photoRouter);
+app.use('/feedback', feedbackRouter); 
 
 // --- Socket.io ---
 let chatRooms = {};
@@ -134,7 +137,6 @@ io.on("connection", (socket) => {
   socket.on("join group chat", (roomObject) => {
     console.log("Join", roomObject);
     if (chatRooms.roomId) {
-      // socket.removeAllListeners()
       socket.leave(chatRooms.roomId);
     }
     chatRooms = {
