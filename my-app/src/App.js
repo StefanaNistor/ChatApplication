@@ -18,15 +18,21 @@ function App() {
   const today = new Date();
 
   const [tokenExists, setTokenExists] = useState(false);
+  const [isCheckingToken, setIsCheckingToken] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     setTokenExists(!!token);
+    setIsCheckingToken(false); // Token check complete
   }, []);
 
   const ProtectedRoute = ({ element }) => {
     return tokenExists ? element : <Navigate to="/access-denied" />;
   };
+
+  if (isCheckingToken) {
+    return <div>Loading...</div>; // or a loading spinner
+  }
 
   return (
     <Router>
