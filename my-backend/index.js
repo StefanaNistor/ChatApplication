@@ -133,6 +133,13 @@ io.on("connection", (socket) => {
     }
   })
 
+  
+  socket.on("edit private message", ( newContent, chatID, timestamp) => {
+   console.log('Edit',newContent, chatID, timestamp);
+   io.to(chatRooms.roomId).emit("edit private message", newContent, chatID, timestamp);
+  });
+
+
   // joining
   socket.on("join group chat", (roomObject) => {
     console.log("Join", roomObject);

@@ -11,6 +11,7 @@ import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
+
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
   const [usernames, setUsernames] = useState({});
@@ -72,6 +73,25 @@ function PrivateChat({ chatID }) {
       console.log("Message received:", message);
     });
 
+    socket.on("edit private message", (newContent, chatID, timestamp) => {
+      console.log('Edit sent from server', newContent, chatID, timestamp);
+    
+      // Update messages state
+      setMessages(prevMessages => {
+        return prevMessages.map((message) => {
+          if (message.timestamp === timestamp) {
+            return {
+              ...message,
+              content: newContent,
+              is_edited: true,
+            };
+          }
+          return message;
+        });
+      });
+      console.log('Messages after edit:', messages);
+    });
+
     return () => {
       if (chatID) {
         socket.emit("leave chat", { roomId: chatID });
@@ -105,6 +125,22 @@ function PrivateChat({ chatID }) {
       setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
     }
   }
+
+  //listen for the emitting of the edited message from the server and update the messages array
+
+  useEffect(() => {
+    // socket.on("edit private message", (message) => {
+    //   // find the message in the messages array and update it, making sure to keep the rest of the messages the same
+    //   const updatedMessages = messages.map((msg) => {
+    //     if (msg._id === message._id) {
+    //       return message;
+    //     }
+    //     return msg;
+    //   });
+    //   setMessages(updatedMessages);
+    // });
+  },);
+
 
   async function getOtherUserDetails(userId) {
     try {
@@ -302,14 +338,12 @@ function PrivateChat({ chatID }) {
       });
   };
 
-  const handleEditMessage = (messageID) => {
-    console.log("Editing message:", messageID);
-    editMessage(messageID);
-  };
+ 
 
-  const editMessage = (messageID) => {
-    const editedMessage = messages.find((msg) => msg.id === messageID);
-    const contentText = document.getElementById(`contentText-${messageID}`);
+  const editMessage = (messageContent, messageChatID, messageTimestamp) => {
+  
+    const editedMessage = messages.find( (message) => message.content === messageContent && message.chat_id === messageChatID && message.timestamp === messageTimestamp);
+    const contentText = document.getElementById(`contentText-${messageTimestamp} - ${messageChatID}`);
     contentText.contentEditable = true;
     contentText.focus();
 
@@ -319,9 +353,11 @@ function PrivateChat({ chatID }) {
         const newContent = contentText.innerText;
         console.log("New content:", newContent);
 
+        const chatID = editedMessage.chat_id;
+        const timestamp = editedMessage.timestamp;
         axios
           .put(
-            `http://localhost:7979/privateMessages/edit/${messageID}`,
+            `http://localhost:7979/privateMessages/edit/${chatID}/${timestamp}`,
             {
               content: newContent,
             },
@@ -333,6 +369,8 @@ function PrivateChat({ chatID }) {
           )
           .then((res) => {
             console.log("Message updated:", res.data);
+            // emit the edited message to the server
+            socket.emit("edit private message", newContent, chatID, timestamp);
             const prompt = document.querySelector(".variousPromptsText");
             prompt.innerText = "Message updated successfully!";
             setTimeout(() => {
@@ -533,7 +571,7 @@ function PrivateChat({ chatID }) {
                           : ""}
                       </span>
                     </p>
-                    <p id={`contentText-${message._id}`}>
+                    <p id={`contentText-${message.timestamp} - ${message.chat_id}`}>
                       {message.is_deleted
                         ? "Message has been deleted"
                         : message.content}
@@ -621,7 +659,7 @@ function PrivateChat({ chatID }) {
                     {message.user_id === userId && !message.is_deleted && (
                       <button
                         className="editButton"
-                        onClick={() => editMessage(message._id)}
+                        onClick={() => editMessage(message.content, message.chat_id, message.timestamp)}
                       >
                         <FontAwesomeIcon icon={faEdit} />
                       </button>

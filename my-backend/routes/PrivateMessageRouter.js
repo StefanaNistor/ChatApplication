@@ -159,19 +159,22 @@ privateMessageRouter.delete("/deleteByUser/:id", async (req, res) => {
   }
 });
 
-privateMessageRouter.put("/edit/:id", async (req, res) => {
-  const privateMessageID = req.params.id;
-  const { content } = req.body;
-  if (!privateMessageID || !content) {
-    return res.status(400).json({ message: "Private message ID and content are required" });
+privateMessageRouter.put("/edit/:chatID/:timestamp", async (req, res) => {
+  const chatID = req.params.chatID;
+  const timestamp = req.params.timestamp;
+  const newContent = req.body.content;
+  if (!chatID || !timestamp || !newContent) {
+    return res.status(400).json({ message: "All fields are required" });
   }
   try {
-    const result = await PrivateMessage.findByIdAndUpdate(privateMessageID, { content, is_edited: true });
+    const result = await PrivateMessage.findOneAndUpdate({ chat_id: chatID, timestamp: timestamp }, { content: newContent, is_edited: true });
     res.status(200).json(result);
   } catch (error) {
     console.error("Error editing private message:", error);
     res.status(500).json({ error: "EROARE BACKEND" });
   }
+  
+
 });
 
 module.exports = privateMessageRouter;
