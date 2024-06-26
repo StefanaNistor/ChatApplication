@@ -204,6 +204,10 @@ io.on("connection", (socket) => {
       io.to(chatRooms.roomId).emit("edit group message", newContent, chatID, timestamp);
      });
    
+      socket.on("delete group message", (userID, timestamp, chatID) => {
+        console.log('Delete',userID, timestamp, chatID);
+        io.to(chatRooms.roomId).emit("delete group message", userID, timestamp, chatID);
+      });
     
    
     socket.on("disconnect", (request) => {

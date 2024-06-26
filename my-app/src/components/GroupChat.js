@@ -47,6 +47,22 @@ function GroupChat({ groupID }) {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
+    socket.on("delete group message", (userID, timestamp, groupID) => {
+      console.log("Delete sent from server", userID, timestamp, groupID);
+      setMessages((prevMessages) => {
+        return prevMessages.map((message) => {
+          if (message.user_id === userID && message.timestamp === timestamp) {
+            return {
+              ...message,
+              is_deleted: true,
+            };
+          }
+          return message;
+        });
+      });
+      console.log("Messages after delete:", messages);
+    });
+
      socket.on("edit group message", (newContent, chatID, timestamp) => {
       console.log('Edit sent from server', newContent, chatID, timestamp);
     
@@ -307,15 +323,16 @@ function GroupChat({ groupID }) {
       });
   }
 
-  const deleteMessage = (messageID) => {
+  const deleteMessage = (messageUserID, messageTimestamp, messageGroupID) => {
     axios
-      .delete(`http://localhost:7979/groupMessages/deleteMsg/${messageID}`, {
+      .delete(`http://localhost:7979/groupMessages/deleteMsg/${messageUserID}/${messageTimestamp}/${messageGroupID}`, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
       })
       .then((res) => {
         if (res.status === 200) {
+          socket.emit("delete group message", messageUserID, messageTimestamp, messageGroupID);
           const prompt = document.querySelector(".variousPromptsText");
           prompt.innerText = "Message deleted successfully!";
           setTimeout(() => {
@@ -662,7 +679,7 @@ function GroupChat({ groupID }) {
                       !message.is_deleted && (
                         <button
                           className="deleteButton"
-                          onClick={() => deleteMessage(message._id)}
+                          onClick={() => deleteMessage(message.user_id, message.timestamp, message.group_id)}
                         >
                           <FontAwesomeIcon icon={faTrashAlt} />
                         </button>

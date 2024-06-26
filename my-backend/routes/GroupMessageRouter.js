@@ -101,16 +101,24 @@ groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
     }
   });
 
-  groupMessageRouter.delete('/deleteMsg/:id', async (req, res) => {
-    const msgId = req.params.id;
-    if (!msgId) {
-      return res.status(400).json({ message: "Message ID is required" });
+  groupMessageRouter.delete('/deleteMsg/:userID/:timestamp/:groupID', async (req, res) => {
+    const userID = req.params.userID;
+    const timestamp = req.params.timestamp;
+    const groupID = req.params.groupID;
+    if (!userID || !timestamp || !groupID) {
+      return res.status(400).json({ message: "User ID, timestamp and group ID are required" });
     }
     try {
-      const result = await GroupMessage.findByIdAndUpdate(msgId, { is_deleted: true });
+      
+      const result = await GroupMessage.findOneAndUpdate({ user_id: userID, timestamp, group_id: groupID }, { is_deleted: true });
 
       // cloud deletion
-      const message = await GroupMessage.findById(msgId);
+      const message = await GroupMessage.findOne({ user_id: userID, timestamp, group_id: groupID });
+      if (!message) {
+        return res.status(404).json({ message: "Message not found" });
+      }
+      const msgId = message._id;
+
       if(message.fileName){
         axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.fileName}`)
         await GroupMessage.findByIdAndUpdate(msgId, { fileName: "" });
