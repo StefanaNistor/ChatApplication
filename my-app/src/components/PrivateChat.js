@@ -73,6 +73,22 @@ function PrivateChat({ chatID }) {
       console.log("Message received:", message);
     });
 
+    socket.on("delete private message", (messageUserID, messageTimestamp, messageChatID) => {
+      console.log("Message deleted:", messageUserID, messageTimestamp, messageChatID);
+      setMessages((prevMessages) => {
+        return prevMessages.map((message) => {
+          if (message.user_id === messageUserID && message.timestamp === messageTimestamp && message.chat_id === messageChatID) {
+            return {
+              ...message,
+              is_deleted: true,
+            };
+          }
+          return message;
+        });
+      });
+      console.log("Messages after delete:", messages);
+    });
+
     socket.on("edit private message", (newContent, chatID, timestamp) => {
       console.log('Edit sent from server', newContent, chatID, timestamp);
     
@@ -125,8 +141,6 @@ function PrivateChat({ chatID }) {
       setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
     }
   }
-
-
 
 
   async function getOtherUserDetails(userId) {
@@ -303,9 +317,9 @@ function PrivateChat({ chatID }) {
     setAttachedImage(null);
   };
 
-  const deleteMessage = (messageID) => {
+  const deleteMessage = (messageUserID, messageTimestamp, messageChatID) => {
     axios
-      .delete(`http://localhost:7979/privateMessages/deleteMsg/${messageID}`, {
+      .delete(`http://localhost:7979/privateMessages/deleteMsg/${messageUserID}/${messageTimestamp}/${messageChatID}`, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -313,6 +327,7 @@ function PrivateChat({ chatID }) {
       .then((res) => {
         console.log("Message deleted:", res.data);
         getMessages(chatID);
+        socket.emit("delete private message", messageUserID, messageTimestamp, messageChatID);
 
         const prompt = document.querySelector(".variousPromptsText");
         prompt.innerText = "Message deleted successfully!";
@@ -638,7 +653,7 @@ function PrivateChat({ chatID }) {
                       !message.is_deleted && (
                         <button
                           className="deleteButton"
-                          onClick={() => deleteMessage(message._id)}
+                          onClick={() => deleteMessage(message.user_id, message.timestamp, message.chat_id)}
                         >
                           <FontAwesomeIcon icon={faTrashAlt} />
                         </button>

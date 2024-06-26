@@ -139,6 +139,11 @@ io.on("connection", (socket) => {
    io.to(chatRooms.roomId).emit("edit private message", newContent, chatID, timestamp);
   });
 
+  socket.on("delete private message", (userID, timestamp, chatID) => {
+    console.log('Delete',userID, timestamp, chatID);
+    io.to(chatRooms.roomId).emit("delete private message", userID, timestamp, chatID);
+  });
+
 
   // joining
   socket.on("join group chat", (roomObject) => {
@@ -199,6 +204,7 @@ io.on("connection", (socket) => {
       io.to(chatRooms.roomId).emit("edit group message", newContent, chatID, timestamp);
      });
    
+    
    
     socket.on("disconnect", (request) => {
       //console.log('User disconnected');

@@ -118,25 +118,35 @@ privateMessageRouter.get("/getByChat/:id", verifyToken, async (req, res) => {
   }
 });
 
-privateMessageRouter.delete("/deleteMsg/:id", async (req, res) => {
-  const privateMessageID = req.params.id;
-  if (!privateMessageID) {
-    return res.status(400).json({ message: "Private message ID is required" });
+privateMessageRouter.delete("/deleteMsg/:userID/:timestamp/:chatID", async (req, res) => {
+  const userID = req.params.userID;
+  const timestamp = req.params.timestamp;
+  const chatID = req.params.chatID;
+
+  if (!userID || !timestamp || !chatID) {
+    return res.status(400).json({ message: "All fields are required" });
   }
+
   try {
-    const result = await PrivateMessage.findByIdAndUpdate(privateMessageID, { is_deleted: true });
+    const message = await PrivateMessage.findOne({ user_id: userID, timestamp: timestamp, chat_id: chatID });
 
-    // cloud deletion
-    const message = await PrivateMessage.findById(privateMessageID);
-    if(message.fileName){
-      axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.fileName}`)
-      await PrivateMessage.findByIdAndUpdate(privateMessageID, { fileName: "" });
-    }
-    if(message.imageName){
-      axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.imageName}`)
-      await PrivateMessage.findByIdAndUpdate(privateMessageID, { imageName: "" });
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
     }
 
+    // Cloud deletion
+    if (message.fileName) {
+      await axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.fileName}`);
+      await PrivateMessage.findByIdAndUpdate(message._id, { fileName: "" });
+    }
+
+    if (message.imageName) {
+      await axios.delete(`http://localhost:7979/photos/deleteMessageAttachment/${message.imageName}`);
+      await PrivateMessage.findByIdAndUpdate(message._id, { imageName: "" });
+    }
+
+    // change is_deleted to true 
+    const result = await PrivateMessage.findOneAndUpdate({ user_id: userID, timestamp: timestamp, chat_id: chatID }, { is_deleted: true });
 
     res.status(200).json(result);
   } catch (error) {
