@@ -128,14 +128,15 @@ groupMessageRouter.delete('/deleteByUser/:id', async (req, res) => {
     }
   });
 
-  groupMessageRouter.put('/editMsg/:id', async (req, res) => {
-    const msgId = req.params.id;
-    const { content } = req.body;
-    if (!msgId || !content) {
-      return res.status(400).json({ message: "Message ID and content are required" });
+  groupMessageRouter.put('/editMsg/:chatID/:timestamp', async (req, res) => {
+    const chatID = req.params.chatID;
+    const timestamp = req.params.timestamp;
+    const newContent = req.body.content;
+    if (!chatID || !timestamp || !newContent) {
+      return res.status(400).json({ message: "Chat ID, timestamp and new content are required" });
     }
     try {
-      const result = await GroupMessage.findByIdAndUpdate(msgId, { content, is_edited: true });
+      const result = await GroupMessage.findOneAndUpdate({ group_id: chatID, timestamp }, { content: newContent, is_edited: true });
       res.status(200).json(result);
     } catch (error) {
       console.error("Error editing group message:", error);

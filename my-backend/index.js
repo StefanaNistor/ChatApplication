@@ -194,6 +194,12 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("edit group message", ( newContent, chatID, timestamp) => {
+      console.log('Edit',newContent, chatID, timestamp);
+      io.to(chatRooms.roomId).emit("edit group message", newContent, chatID, timestamp);
+     });
+   
+   
     socket.on("disconnect", (request) => {
       //console.log('User disconnected');
     });

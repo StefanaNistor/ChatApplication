@@ -126,20 +126,7 @@ function PrivateChat({ chatID }) {
     }
   }
 
-  //listen for the emitting of the edited message from the server and update the messages array
 
-  useEffect(() => {
-    // socket.on("edit private message", (message) => {
-    //   // find the message in the messages array and update it, making sure to keep the rest of the messages the same
-    //   const updatedMessages = messages.map((msg) => {
-    //     if (msg._id === message._id) {
-    //       return message;
-    //     }
-    //     return msg;
-    //   });
-    //   setMessages(updatedMessages);
-    // });
-  },);
 
 
   async function getOtherUserDetails(userId) {

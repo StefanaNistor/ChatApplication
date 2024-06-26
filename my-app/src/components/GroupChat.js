@@ -47,6 +47,25 @@ function GroupChat({ groupID }) {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
+     socket.on("edit group message", (newContent, chatID, timestamp) => {
+      console.log('Edit sent from server', newContent, chatID, timestamp);
+    
+      // Update messages state
+      setMessages(prevMessages => {
+        return prevMessages.map((message) => {
+          if (message.timestamp === timestamp) {
+            return {
+              ...message,
+              content: newContent,
+              is_edited: true,
+            };
+          }
+          return message;
+        });
+      });
+      console.log('Messages after edit:', messages);
+    });
+
     return () => {
       if (groupID) {
         socket.emit("leave group chat", { roomId: groupID });
@@ -322,9 +341,10 @@ function GroupChat({ groupID }) {
     toggleToDoPopup();
   };
 
-  const editMessage = (messageID) => {
-    const editedMessage = messages.find((msg) => msg.id === messageID);
-    const contentText = document.getElementById(`contentText-${messageID}`);
+  const editMessage = (messageContent, messageChatID, messageTimestamp) => {
+    console.log("Edit", messageContent, messageChatID, messageTimestamp);
+    const editedMessage = messages.find( (message) => message.content === messageContent && message.chat_id === messageChatID && message.timestamp === messageTimestamp);
+    const contentText = document.getElementById(`contentText-${messageTimestamp} - ${messageChatID}`);
     contentText.contentEditable = true;
     contentText.focus();
 
@@ -336,7 +356,7 @@ function GroupChat({ groupID }) {
 
         axios
           .put(
-            `http://localhost:7979/groupMessages/editMsg/${messageID}`,
+            `http://localhost:7979/groupMessages/editMsg/${messageChatID}/${messageTimestamp}`,
             {
               content: newContent,
             },
@@ -350,6 +370,7 @@ function GroupChat({ groupID }) {
             if (res.status === 200) {
               const prompt = document.querySelector(".variousPromptsText");
               prompt.innerText = "Message edited successfully!";
+              socket.emit("edit group message", newContent, messageChatID, messageTimestamp);
               setTimeout(() => {
                 prompt.innerText = "";
               }, 3000);
@@ -564,7 +585,7 @@ function GroupChat({ groupID }) {
                       </span>
                     </p>
 
-                    <p id={`contentText-${message._id}`}>
+                    <p id={`contentText-${message.timestamp} - ${message.group_id}`}>
                       {message.is_deleted
                         ? "Message has been deleted"
                         : message.content}
@@ -649,7 +670,7 @@ function GroupChat({ groupID }) {
                     {message.user_id === userId && !message.is_deleted && (
                       <button
                         className="editButton"
-                        onClick={() => editMessage(message._id)}
+                        onClick={() => editMessage(message.content, message.group_id, message.timestamp)}
                       >
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
