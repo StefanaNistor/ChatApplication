@@ -20,6 +20,10 @@ const privateMsgSchema = mongoose.Schema({
   },
   fileName: String,
   imageName: String,
+  is_seen: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const PrivateMessage = mongoose.model("PrivateMessages", privateMsgSchema);
@@ -183,8 +187,37 @@ privateMessageRouter.put("/edit/:chatID/:timestamp", async (req, res) => {
     console.error("Error editing private message:", error);
     res.status(500).json({ error: "EROARE BACKEND" });
   }
-  
+});
 
+privateMessageRouter.put("/markAsSeen/:userID/:timestamp/:chatID", async (req, res) => {
+  const userID = req.params.userID;
+  const timestamp = req.params.timestamp;
+  const chatID = req.params.chatID;
+  if (!userID || !timestamp || !chatID) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  try {
+    const result = await PrivateMessage.findOneAndUpdate({ user_id: userID, timestamp: timestamp, chat_id: chatID }, { is_seen: true });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error marking message as seen:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+privateMessageRouter.put("/markAsSeenByChatandUser/:chatid/:userid", async (req, res) => {
+  const chatID = req.params.chatid;
+  const userID = req.params.userid;
+  if (!chatID || !userID) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  try {
+    const result = await PrivateMessage.updateMany({ chat_id: chatID, user_id: userID }, { is_seen: true });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error marking message as seen:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = privateMessageRouter;

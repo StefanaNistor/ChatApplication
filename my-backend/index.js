@@ -108,8 +108,6 @@ io.on("connection", (socket) => {
     if (chatRooms.roomId) {
       socket.emit('chat private server', messageObj);
       io.to(chatRooms.roomId).emit('chat private client', messageObj);
-
-
       const goodObj = {
         content: request.content,
         timestamp: request.timestamp,
@@ -144,6 +142,24 @@ io.on("connection", (socket) => {
     io.to(chatRooms.roomId).emit("delete private message", userID, timestamp, chatID);
   });
 
+  socket.on('mark message as seen', (userID, timestamp, chatID) => {
+    axios.put(`http://localhost:7979/privateMessages/markAsSeen/${userID}/${timestamp}/${chatID}`)
+      .then((res) => {
+        console.log('Message marked as seen:', res.data);
+        io.to(chatRooms.roomId).emit('message seen', userID, timestamp, chatID);
+      })
+      .catch((error) => {
+        console.error('Error marking message as seen:', error);
+      });
+  });
+
+  socket.on('leave chat', (roomObj) => {
+    if (roomObj.roomId) {
+      socket.leave(roomObj.roomId);
+      console.log('Left room:', roomObj.roomId);
+    }
+  });
+
 
   // joining
   socket.on("join group chat", (roomObject) => {
@@ -157,6 +173,7 @@ io.on("connection", (socket) => {
     socket.join(roomObject.roomId);
     console.log(chatRooms);
   });
+
 
   // sending the message
   socket.on("chat group server", (request) => {
@@ -210,9 +227,13 @@ io.on("connection", (socket) => {
       });
     
    
-    socket.on("disconnect", (request) => {
-      //console.log('User disconnected');
-    });
+      socket.on("disconnect", () => {
+        if (chatRooms.roomId) {
+          socket.leave(chatRooms.roomId);
+        }
+        console.log("User disconnected");
+        
+      });
 
   });
   

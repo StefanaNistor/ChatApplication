@@ -12,6 +12,7 @@ import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
 
+
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
   const [usernames, setUsernames] = useState({});
@@ -39,9 +40,117 @@ function PrivateChat({ chatID }) {
       setLoadingImages(true);
     }
     getOtherUser(chatID);
-    //getUserProfilePhoto();
   }, [chatID]);
-
+  
+  useEffect(() => {
+    if (chatID) {
+      socket.emit("leave chat", { roomId: chatID });
+      socket.emit("join private chat", { roomId: chatID });
+      console.log(`Joined room: ${chatID}`);
+  
+      socket.on("chat private client", (message) => {
+        console.log("Message received:", message);
+  
+        // Check if the message chat_id matches the current chatID
+        if (chatID === message.chat_id) {
+          setMessages((prevMessages) => {
+            // Check if the message already exists in the state
+            const messageExists = prevMessages.some(
+              (msg) =>
+                msg.timestamp === message.timestamp &&
+                msg.user_id === message.user_id &&
+                msg.chat_id === message.chat_id &&
+                msg.content === message.content
+            );
+  
+            if (messageExists) {
+              return prevMessages; // No update needed if message already exists
+            }
+  
+            const newMessages = [...prevMessages, message];
+            console.log("Updated messages:", newMessages); // Logging the updated state
+            return newMessages;
+          });
+        }
+  
+        // Mark message as seen if it is from another user and belongs to the current chat
+        if (message.user_id !== userId && message.chat_id === chatID) {
+          console.log("Aici ajunge?");
+          socket.emit("mark message as seen", userId, message.timestamp, message.chat_id);
+        }
+      });
+  
+  
+      socket.on("message seen", (userID, timestamp, chatid) => {
+        console.log("Message seen:", userID, timestamp, chatid);
+        console.log("ChatID:", chatID);
+        console.log("Chat ID from server:", chatid);
+        if (chatid === chatID) {
+          setMessages((prevMessages) => {
+            return prevMessages.map((message) => {
+              if (message.user_id === userID && message.timestamp === timestamp && message.chat_id === chatID) {
+                return {
+                  ...message,
+                  is_seen: true,
+                };
+              }
+              return message;
+            });
+          });
+        }
+      });
+  
+      socket.on("delete private message", (messageUserID, messageTimestamp, messageChatID) => {
+        setMessages((prevMessages) => {
+          return prevMessages.map((message) => {
+            if (message.user_id === messageUserID && message.timestamp === messageTimestamp && message.chat_id === messageChatID) {
+              return {
+                ...message,
+                is_deleted: true,
+              };
+            }
+            return message;
+          });
+        });
+      });
+  
+      socket.on("edit private message", (newContent, chatID, timestamp) => {
+        setMessages((prevMessages) => {
+          return prevMessages.map((message) => {
+            if (message.timestamp === timestamp) {
+              return {
+                ...message,
+                content: newContent,
+                is_edited: true,
+              };
+            }
+            return message;
+          });
+        });
+      });
+  
+      return () => {
+        console.log(`Left room: ${chatID}`);
+        socket.emit("leave chat", { roomId: chatID });
+        socket.off("chat private client");
+        socket.off("message seen");
+        socket.off("delete private message");
+        socket.off("edit private message");
+      };
+    }
+  }, [chatID]);
+  
+  useEffect(() => {
+    if (messages.length > 0) {
+      const unseenMessages = messages.filter((msg) => !msg.is_seen && msg.user_id !== userId);
+      if (unseenMessages.length > 0) {
+        unseenMessages.forEach((message) => {
+          socket.emit("mark message as seen", message.user_id, message.timestamp, message.chat_id);
+        });
+      }
+    }
+  }, [messages]);
+  
   function getMessages(chatID) {
     axios
       .get(`http://localhost:7979/privateMessages/getByChat/${chatID}`, {
@@ -58,63 +167,26 @@ function PrivateChat({ chatID }) {
         console.log("An error occurred while getting messages:", err);
       });
   }
+  
+  function markMessagesAsSeen(chatID, otherID) {
+    axios.put(`http://localhost:7979/privateMessages/markAsSeenByChatandUser/${chatID}/${otherID}`, {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    })
+      .then((res) => {
+        console.log("Messages marked as seen:", res.data);
+      })
+      .catch((err) => {
+        console.log("An error occurred while marking messages as seen:", err);
+      });
+  }
 
   useEffect(() => {
     fetchUsernames();
   }, [messages]);
 
-  useEffect(() => {
-    if (chatID) {
-      socket.emit("join private chat", { roomId: chatID });
-    }
-
-    socket.on("chat private client", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-      console.log("Message received:", message);
-    });
-
-    socket.on("delete private message", (messageUserID, messageTimestamp, messageChatID) => {
-      console.log("Message deleted:", messageUserID, messageTimestamp, messageChatID);
-      setMessages((prevMessages) => {
-        return prevMessages.map((message) => {
-          if (message.user_id === messageUserID && message.timestamp === messageTimestamp && message.chat_id === messageChatID) {
-            return {
-              ...message,
-              is_deleted: true,
-            };
-          }
-          return message;
-        });
-      });
-      console.log("Messages after delete:", messages);
-    });
-
-    socket.on("edit private message", (newContent, chatID, timestamp) => {
-      console.log('Edit sent from server', newContent, chatID, timestamp);
-    
-      // Update messages state
-      setMessages(prevMessages => {
-        return prevMessages.map((message) => {
-          if (message.timestamp === timestamp) {
-            return {
-              ...message,
-              content: newContent,
-              is_edited: true,
-            };
-          }
-          return message;
-        });
-      });
-      console.log('Messages after edit:', messages);
-    });
-
-    return () => {
-      if (chatID) {
-        socket.emit("leave chat", { roomId: chatID });
-      }
-      socket.off("chat private client");
-    };
-  }, [chatID]);
+  
 
   async function getUserProfilePhoto(otherID) {
     if (typeof otherID !== "number") {
@@ -193,6 +265,8 @@ function PrivateChat({ chatID }) {
       } else {
         otherUserId = chat.user1_id;
       }
+
+      markMessagesAsSeen(chatID, otherUserId);
 
       setOtherUser(otherUserId);
       getUserProfilePhoto(otherUserId);
@@ -311,6 +385,26 @@ function PrivateChat({ chatID }) {
     setMessageInput("");
     //setMessages((prevMessages) => [...prevMessages, messageObj]);
 
+    setMessages((prevMessages) => {
+      // Check if the message already exists in the state
+      const messageExists = prevMessages.some(
+        (msg) =>
+          msg.timestamp === messageObj.timestamp &&
+          msg.user_id === messageObj.user_id &&
+          msg.chat_id === messageObj.chat_id &&
+          msg.content === messageObj.content
+      );
+  
+      if (messageExists) {
+        return prevMessages; // No update needed if message already exists
+      }
+  
+      const newMessages = [...prevMessages, messageObj];
+      console.log("Updated messages for sender:", newMessages);
+      return newMessages;
+    });
+
+
     const message = document.getElementById("messageInput");
     message.value = "";
     setAttachedFile(null);
@@ -339,8 +433,6 @@ function PrivateChat({ chatID }) {
         console.log("An error occurred while deleting message:", err);
       });
   };
-
- 
 
   const editMessage = (messageContent, messageChatID, messageTimestamp) => {
   
@@ -573,6 +665,15 @@ function PrivateChat({ chatID }) {
                           : ""}
                       </span>
                     </p>
+
+                    <div>
+                      {message.is_seen ? (
+                        <p style={{ color: "green" }}>Seen</p>
+                      ) : (
+                        <p style={{ color: "red" }}>Delivered</p>
+                      )}
+                    </div>
+
                     <p id={`contentText-${message.timestamp} - ${message.chat_id}`}>
                       {message.is_deleted
                         ? "Message has been deleted"
