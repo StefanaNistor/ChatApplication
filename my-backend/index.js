@@ -103,6 +103,7 @@ io.on("connection", (socket) => {
       fileName: request.fileName,
       imageName: request.imageName,
       imageObject: request.imageObject,
+      imageURL: request.imageURL,
     }
 
     if (chatRooms.roomId) {

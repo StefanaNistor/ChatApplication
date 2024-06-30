@@ -319,6 +319,9 @@ function PrivateChat({ chatID }) {
     const user_id = JSON.parse(localStorage.getItem("user")).id;
     const messageInput = document.getElementById("messageInput").value;
 
+    const imgBlob = new Blob([attachedImage], { type: attachedImage.type });
+    const imgURL = URL.createObjectURL(imgBlob);
+
     if (!messageInput) {
       alert("Please type a message");
       return;
@@ -335,6 +338,7 @@ function PrivateChat({ chatID }) {
         ? user_id + timestamp + attachedImage.name
         : null,
       imageObject: attachedImage,
+      imageURL: imgURL,
     };
 
     console.log("Message:", messageObj);
@@ -707,24 +711,35 @@ function PrivateChat({ chatID }) {
                           )}{" "}
                         </p>
                       )}
-                      {message.imageObject && (
-                        <img
-                          src={arrayBufferToDataURL(
-                            message.imageObject,
-                            message.imageObject.contentType
-                          )}
-                          alt="attachedImage"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            maxWidth: "300px",
-                            maxHeight: "300px",
-                            borderRadius: "10px",
-                            cursor: "pointer",
-                          }}
-                          onClick={handlePhotoClick}
-                        />
-                      )}
+                      {message.imageObject instanceof ArrayBuffer ? (
+        <img
+          src={arrayBufferToDataURL(message.imageObject, message.imageObject.contentType)}
+          alt=""
+          style={{
+            width: "100px",
+            height: "100px",
+            maxWidth: "300px",
+            maxHeight: "300px",
+            borderRadius: "10px",
+            cursor: "pointer",
+          }}
+          onClick={handlePhotoClick}
+        />
+      ) : message.imageObject instanceof File ? (
+        <img
+          src={URL.createObjectURL(message.imageObject)}
+          alt=""
+          style={{
+            width: "100px",
+            height: "100px",
+            maxWidth: "300px",
+            maxHeight: "300px",
+            borderRadius: "10px",
+            cursor: "pointer",
+          }}
+          onClick={handlePhotoClick}
+        />
+      ) : null}
 
                       {!message.imageObject && message.imageName && (
                         <img
