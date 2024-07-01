@@ -51,10 +51,10 @@ function PrivateChat({ chatID }) {
       socket.on("chat private client", (message) => {
         console.log("Message received:", message);
   
-        // Check if the message chat_id matches the current chatID
+      
         if (chatID === message.chat_id) {
           setMessages((prevMessages) => {
-            // Check if the message already exists in the state
+           
             const messageExists = prevMessages.some(
               (msg) =>
                 msg.timestamp === message.timestamp &&
@@ -64,16 +64,16 @@ function PrivateChat({ chatID }) {
             );
   
             if (messageExists) {
-              return prevMessages; // No update needed if message already exists
+              return prevMessages; 
             }
   
             const newMessages = [...prevMessages, message];
-            console.log("Updated messages:", newMessages); // Logging the updated state
+            console.log("Updated messages:", newMessages); 
             return newMessages;
           });
         }
   
-        // Mark message as seen if it is from another user and belongs to the current chat
+       
         if (message.user_id !== userId && message.chat_id === chatID) {
           console.log("Aici ajunge?");
           socket.emit("mark message as seen", userId, message.timestamp, message.chat_id);
@@ -194,7 +194,7 @@ function PrivateChat({ chatID }) {
   async function getUserProfilePhoto(otherID) {
     if (typeof otherID !== "number") {
       console.error("Invalid otherUserID:", otherID);
-      setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
+      setPhotoURL("https://via.placeholder.com/70"); 
       return;
     }
 
@@ -213,7 +213,7 @@ function PrivateChat({ chatID }) {
       setPhotoURL(url);
     } catch (error) {
       console.log("Error fetching user profile photo:", error);
-      setPhotoURL("https://via.placeholder.com/70"); // Placeholder URL
+      setPhotoURL("https://via.placeholder.com/70"); 
     }
   }
 
@@ -397,7 +397,7 @@ function PrivateChat({ chatID }) {
     //setMessages((prevMessages) => [...prevMessages, messageObj]);
 
     setMessages((prevMessages) => {
-      // Check if the message already exists in the state
+      
       const messageExists = prevMessages.some(
         (msg) =>
           msg.timestamp === messageObj.timestamp &&
@@ -407,7 +407,7 @@ function PrivateChat({ chatID }) {
       );
   
       if (messageExists) {
-        return prevMessages; // No update needed if message already exists
+        return prevMessages; 
       }
   
       const newMessages = [...prevMessages, messageObj];
@@ -474,7 +474,7 @@ function PrivateChat({ chatID }) {
           )
           .then((res) => {
             console.log("Message updated:", res.data);
-            // emit the edited message to the server
+           //emit to server!
             socket.emit("edit private message", newContent, chatID, timestamp);
             const prompt = document.querySelector(".variousPromptsText");
             prompt.innerText = "Message updated successfully!";
@@ -537,11 +537,11 @@ function PrivateChat({ chatID }) {
         const fileName = target.innerText;
         const newFileName = userID + timestamp + fileName;
 
-        console.log("New Filename:", newFileName); // Check newFileName value
+        console.log("New Filename:", newFileName); 
 
         const fileURL = `http://localhost:7979/photos/getMessageAttachment/${newFileName}`;
 
-        console.log("File URL:", fileURL); // Check fileURL value
+        console.log("File URL:", fileURL); 
 
         window.open(fileURL, "_blank");
       }
@@ -583,11 +583,6 @@ function PrivateChat({ chatID }) {
   }
 
   const parseFileName = (fileName, userID, timestamp) => {
-    //  userid + timestamp of the message + filename
-
-    // console.log('FILENAME:', fileName);
-    // console.log('USERID:', userID);
-    // console.log('TIMESTAMP:', timestamp);
     const split = fileName.split(userID + timestamp);
     return split[1];
   };

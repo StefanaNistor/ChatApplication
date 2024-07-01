@@ -69,7 +69,7 @@ function GroupChat({ groupID }) {
      socket.on("edit group message", (newContent, chatID, timestamp) => {
       console.log('Edit sent from server', newContent, chatID, timestamp);
     
-      // Update messages state
+   
       setMessages(prevMessages => {
         return prevMessages.map((message) => {
           if (message.timestamp === timestamp) {
@@ -450,12 +450,11 @@ function GroupChat({ groupID }) {
         const fileName = target.innerText;
         const newFileName = userID + timestamp + fileName;
 
-        console.log("New Filename:", newFileName); // Check newFileName value
+        console.log("New Filename:", newFileName); 
 
         const fileURL = `http://localhost:7979/photos/getMessageAttachment/${newFileName}`;
 
-        console.log("File URL:", fileURL); // Check fileURL value
-
+        console.log("File URL:", fileURL); 
         window.open(fileURL, "_blank");
       }
     };
@@ -470,11 +469,6 @@ function GroupChat({ groupID }) {
   };
 
   const parseFileName = (fileName, userID, timestamp) => {
-    //  userid + timestamp of the message + filename
-
-    // console.log('FILENAME:', fileName);
-    // console.log('USERID:', userID);
-    // console.log('TIMESTAMP:', timestamp);
     const split = fileName.split(userID + timestamp);
     return split[1];
   };
