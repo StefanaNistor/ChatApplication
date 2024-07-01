@@ -107,6 +107,9 @@ function PrivateChat({ chatID }) {
               return {
                 ...message,
                 is_deleted: true,
+                fileName: null,
+              imageName: null,
+              imageObject: message.imageObject ? null : message.imageObject,
               };
             }
             return message;
@@ -319,8 +322,12 @@ function PrivateChat({ chatID }) {
     const user_id = JSON.parse(localStorage.getItem("user")).id;
     const messageInput = document.getElementById("messageInput").value;
 
-    const imgBlob = new Blob([attachedImage], { type: attachedImage.type });
-    const imgURL = URL.createObjectURL(imgBlob);
+    //if the attached image is not null
+    
+    // if(attachedImage){
+    //   const imgBlob = new Blob([attachedImage], { type: attachedImage.type });
+    // const imgURL = URL.createObjectURL(imgBlob);
+    // }
 
     if (!messageInput) {
       alert("Please type a message");
@@ -338,7 +345,7 @@ function PrivateChat({ chatID }) {
         ? user_id + timestamp + attachedImage.name
         : null,
       imageObject: attachedImage,
-      imageURL: imgURL,
+      // imageURL: imgURL,
     };
 
     console.log("Message:", messageObj);
@@ -519,13 +526,9 @@ function PrivateChat({ chatID }) {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file.type.split("/")[0] === "image") {
-      alert("Image files are not allowed. Please select a different type of file.");
-      return;
-    }
     setAttachedFile(file);
-    console.log("Selected file:", file);
-  };
+    console.log("FISIEEER :", file);
+  }; 
 
   const handleAttachmentClick = (userID, timestamp) => {
     return (event) => {

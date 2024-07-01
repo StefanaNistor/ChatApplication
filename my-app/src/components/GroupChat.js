@@ -55,6 +55,9 @@ function GroupChat({ groupID }) {
             return {
               ...message,
               is_deleted: true,
+              fileName: null,
+              imageName: null,
+              imageObject: message.imageObject ? null : message.imageObject,
             };
           }
           return message;
@@ -418,13 +421,9 @@ function GroupChat({ groupID }) {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file.type.split("/")[0] === "image") {
-      alert("Image files are not allowed. Please select a different type of file.");
-      return;
-    }
     setAttachedFile(file);
-    console.log("Selected file:", file);
-  };
+    console.log("FISIEEER :", file);
+  }; 
 
   const handleAttachedFileImage = (e) => {
     e.preventDefault();
