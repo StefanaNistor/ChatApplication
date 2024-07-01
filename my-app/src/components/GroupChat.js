@@ -418,8 +418,12 @@ function GroupChat({ groupID }) {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+    if (file.type.split("/")[0] === "image") {
+      alert("Image files are not allowed. Please select a different type of file.");
+      return;
+    }
     setAttachedFile(file);
-    console.log("FISIEEER :", file);
+    console.log("Selected file:", file);
   };
 
   const handleAttachedFileImage = (e) => {
@@ -754,6 +758,7 @@ function GroupChat({ groupID }) {
                   </button>
                   <input
                     type="file"
+                    accept = "image/*"
                     ref={imageInputRef}
                     id="imageInput"
                     style={{ display: "none" }}
