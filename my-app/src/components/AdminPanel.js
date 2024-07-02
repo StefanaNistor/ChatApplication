@@ -4,9 +4,6 @@ import "../components-style/AdminPanel.css";
 import NavBar from "./NavBar";
 import StatisticsActivity from "./StatisticsActivity";
 
-
-
-
 function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
@@ -195,6 +192,19 @@ function AdminPanel() {
 }
 
 const fillUserDetails = async () => {
+
+    if(document.getElementById("change-user-dropdown").value === ""){
+        // clear the input fields if no user is selected
+        document.getElementById("new-username").value = "";
+        document.getElementById("new-first-name").value = "";
+        document.getElementById("new-last-name").value = "";
+        document.getElementById("new-email").value = "";
+        document.getElementById("new-password").value = "";
+        document.getElementById("new-position").value = "";
+        document.getElementById("new-birthday").value = "";
+        setIsCheckedUpdate(false);
+        return;
+    }
     setIsCheckedUpdate(false);
     const userID = document.getElementById("change-user-dropdown").value;
 
@@ -246,8 +256,10 @@ const fillUserDetails = async () => {
     }
 };
 
-
 const handleChangeUserDetails = () => {
+    if(document.getElementById("change-user-dropdown").value === ""){
+        return;
+    }
   const editedUserID = document.getElementById("change-user-dropdown").value;
   console.log('Edited user ID:', editedUserID);
   const newUsername = document.getElementById("new-username").value;
@@ -266,7 +278,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('Username updated:', res.data);
-          displayMessage('new-username-message', 'Username updated');
+          //displayMessage('new-username-message', 'Username updated');
       }).catch((err) => {
           console.log('Error updating username:', err);
       });
@@ -279,7 +291,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('First Name updated:', res.data);
-          displayMessage('new-first-name-message', 'First Name updated');
+          //displayMessage('new-first-name-message', 'First Name updated');
       }).catch((err) => {
           console.log('Error updating first name:', err);
       });
@@ -292,7 +304,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('Last Name updated:', res.data);
-          displayMessage('new-last-name-message', 'Last Name updated');
+          //displayMessage('new-last-name-message', 'Last Name updated');
       }).catch((err) => {
           console.log('Error updating last name:', err);
       });
@@ -305,7 +317,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('Email updated:', res.data);
-          displayMessage('new-email-message', 'Email updated');
+          //displayMessage('new-email-message', 'Email updated');
       }).catch((err) => {
           console.log('Error updating email:', err);
       });
@@ -318,7 +330,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('Password updated:', res.data);
-          displayMessage('new-password-message', 'Password updated');
+          //displayMessage('new-password-message', 'Password updated');
       }).catch((err) => {
           console.log('Error updating password:', err);
       });
@@ -331,7 +343,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('Position updated:', res.data);
-          displayMessage('new-position-message', 'Position updated');
+          //displayMessage('new-position-message', 'Position updated');
       }).catch((err) => {
           console.log('Error updating position:', err);
       });
@@ -345,7 +357,7 @@ const handleChangeUserDetails = () => {
           },
       }).then((res) => {
           console.log('IsAdmin updated:', res.data);
-          displayMessage('new-isAdmin-message', 'IsAdmin updated');
+          //displayMessage('new-isAdmin-message', 'IsAdmin updated');
       }).catch((err) => {
           console.log('Error updating isAdmin:', err);
       });
@@ -361,14 +373,20 @@ const handleChangeUserDetails = () => {
             },
         }).then((res) => {
             console.log('Date of Birth updated:', res.data);
-            displayMessage('new-birthday-message', 'Date of Birth updated');
+            //displayMessage('new-birthday-message', 'Date of Birth updated');
         }).catch((err) => {
             console.log('Error updating date of birth:', err);
         });
 
     }
-
-  window.location.reload();
+    const editFinalMsg = document.getElementById("change-user-details-message");
+    editFinalMsg.style.display = "block";
+    editFinalMsg.textContent = "User details have been updated!";
+    //reload the page after 3 seconds and remove the message
+    setTimeout(() => {
+        editFinalMsg.style.display = "none";
+        window.location.reload();
+    }, 3000);
 };
 
     // --------------------------------------- delete user --------------------------------------- E OK
@@ -705,6 +723,7 @@ const handleChangeUserDetails = () => {
           <div className="change-user-details-section">
     <h2>Change User Details</h2>
     <select id="change-user-dropdown" onChange={fillUserDetails}>
+        <option value="" id='default'>Select a User</option>
         {allUsers.map((user) => (
             <option value={user.id}>{user.username}</option>
         ))}
@@ -739,6 +758,7 @@ const handleChangeUserDetails = () => {
     <p id="new-birthday-message"></p> 
 
     <button id="change-user-details-btn" onClick= {handleChangeUserDetails}>Change User Details</button>
+    <p id="change-user-details-message" style={{display:'none'}}></p>
 </div>
 
           <div className="delete-user-create-group-section"
