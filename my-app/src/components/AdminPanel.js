@@ -11,7 +11,8 @@ function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
     const [allGroups, setAllGroups] = useState([]);
-    const fileInputRef = useRef(null);
+    const createGroupFileInputRef = useRef(null);
+    const changeGroupFileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileNew, setSelectedFileNew] = useState(null);
     const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/50");
@@ -175,7 +176,7 @@ function AdminPanel() {
             });
     };
     
-  // --------------------------------------- change user details --------------------------------------- E OK- Msj de succes mai
+  // --------------------------------------- change user details --------------------------------------- E OK
   
 
   function displayMessage(elementId, message) {
@@ -407,7 +408,7 @@ const handleChangeUserDetails = () => {
 
 
     }
-    // ------------------------------------------create group-------------------------------------------------- 
+    // ------------------------------------------create group-------------------------------------------------- E OK
 
     const handleCreateGroup = () => {
         const newGroup = {
@@ -482,7 +483,7 @@ const handleChangeUserDetails = () => {
 
     }
 
-    // ------------------------------------------add and remove user from group--------------------------------------------------
+    // ------------------------------------------add and remove user from group-------------------------------------------------- E OK
 
     const handleAddUserGroup = () => {
         const userID = document.getElementById("add-user-dropdown").value;
@@ -595,7 +596,7 @@ const handleChangeUserDetails = () => {
         }
     }
     
-    // ------------------------------------------add photo--------------------------------------------------
+    // ------------------------------------------add photo-------------------------------------------------- E OK
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
@@ -604,7 +605,7 @@ const handleChangeUserDetails = () => {
     const handleFileUpload = (groupID) => {
         const formData = new FormData();
         formData.append('file', selectedFile);
-    
+
         axios.post(`http://localhost:7979/photos/uploadGroupPhoto/${groupID}`, formData, {
             headers: {
                 "x-access-token": localStorage.getItem('token'),
@@ -632,12 +633,10 @@ const handleChangeUserDetails = () => {
 
     const handleUpdatePhoto = (e) => {
         e.preventDefault();
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
+        if (createGroupFileInputRef.current) {
+            createGroupFileInputRef.current.click();
         }
     };
-
-    // ------------------------------------------edit photo--------------------------------------------------
 
     const handleFileChangeNew = (e) => {
         setSelectedFileNew(e.target.files[0]);
@@ -674,8 +673,8 @@ const handleChangeUserDetails = () => {
 
     const handleUpdatePhotoNew = (e) => {
         e.preventDefault();
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
+        if (changeGroupFileInputRef.current) {
+            changeGroupFileInputRef.current.click();
         }
     };
     
@@ -767,7 +766,7 @@ const handleChangeUserDetails = () => {
                 placeholder="Group Description"
               />
               <button id="addPhoto" onClick={handleUpdatePhoto}>Add Photo</button>
-              <input type="file"  ref={fileInputRef} id="group-photo"  onChange= {handleFileChange} style={{ display: "none" }} />
+              <input type="file"  ref={createGroupFileInputRef} id="group-photo"  onChange= {handleFileChange} style={{ display: "none" }} />
               <div className='pic'>
               {selectedFile ? (
                 <img
@@ -860,7 +859,7 @@ const handleChangeUserDetails = () => {
               placeholder="New Group Description"
             />
             <button id="change-group-photo" onClick={handleUpdatePhotoNew}> Change Group Photo </button>
-            <input type="file" id="group-photo" ref={fileInputRef} style={{ display: "none" }} onChange= {handleFileChangeNew} />
+            <input type="file" id="group-photo" ref={changeGroupFileInputRef} style={{ display: "none" }} onChange= {handleFileChangeNew} />
             {selectedFileNew ? (
                 <img
                   src={URL.createObjectURL(selectedFileNew)}
@@ -876,6 +875,7 @@ const handleChangeUserDetails = () => {
               )}
             <button id="change-group-details-btn" onClick={handleChangeGroupDetails}>Change Group Details</button>
           </div>
+
         </div>
 
       </div>
