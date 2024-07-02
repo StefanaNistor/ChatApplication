@@ -18,6 +18,7 @@ import {
 
 import NavBar from "./NavBar";
 import UserActivityLineChart from "./statistics_users/UserActivityLineChart";
+import UserActivityTypeOfUser from "./statistics_users/UserActivityTypeOfUser";
 
 
 ChartJS.register(
@@ -65,6 +66,21 @@ function StatisticsUsers({onClose }) {
                     </div>
                 </div>
             </div>
+
+            <div className = "pie-chart-staistic">
+            <h2>Types of users</h2>
+            <div className="container-for-charts">
+                <UserActivityTypeOfUser />
+                <div className="label-statistic-text">
+                    <p>
+                        The pie chart above shows the types of users in the system. The chart is divided into two categories: administrators and simple users.
+                        The chart is used to determine the distribution of users in the system, and to see the proportion of administrators to simple users.
+                        The chart is colored differently for easy identification of each category.
+                    </p>
+                    </div>
+                </div>
+            </div>
+
 
        
 
