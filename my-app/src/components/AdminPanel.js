@@ -513,15 +513,17 @@ const handleChangeUserDetails = () => {
             },
         }).then((res) => {
             //console.log('User added to group:', res.data);
-            const message = document.createElement('p');
-            message.textContent = 'User has been added to group!';
-            document.querySelector('.add-remove-user-section').appendChild(message);
+           const message ="User has been added to group!";
+            const messageElement = document.getElementById("add-user-group-message");
+              messageElement.style.display = "block";
+                messageElement.textContent = message;
 
             setTimeout(() => {
-                message.remove();
-            }, 3000);
+                messageElement.style.display = "none";
+                window.location.reload();
+            }, 1000);
 
-            window.location.reload();
+           
 
         }).catch((err) => {
             console.log('An error occurred while adding user to group!');
@@ -530,7 +532,7 @@ const handleChangeUserDetails = () => {
             document.querySelector('.add-remove-user-section').appendChild(errorMessage);
             setTimeout(() => {
                 errorMessage.remove();
-            }, 3000);
+            }, 1000);
         });
     }
 
@@ -548,16 +550,19 @@ const handleChangeUserDetails = () => {
             }
         }).then((res) => {
            
-            const message = document.createElement('p');
-            message.textContent = 'User has been removed from group!';
-            document.querySelector('.add-remove-user-section').appendChild(message);
+            const message = "User has been removed from group!";
+            const messageElement = document.getElementById("remove-user-group-message");
+            messageElement.style.display = "block";
+            messageElement.textContent = message;
+
             
             setTimeout(() => {
-                message.remove();
-            }, 3000);
+                messageElement.style.display = "none";
+                window.location.reload();
+            }, 1000);
 
 
-            window.location.reload();
+           
 
         }).catch((err) => {
             console.log('An error occurred while removing user from group!');
@@ -566,7 +571,7 @@ const handleChangeUserDetails = () => {
             document.querySelector('.add-remove-user-section').appendChild(errorMessage);
             setTimeout(() => {
                 errorMessage.remove();
-            }, 3000);
+            }, 1000);
         });
     }
 
@@ -837,6 +842,7 @@ const handleChangeUserDetails = () => {
             </div>
 
             <button id="add-user-group-btn" onClick={handleAddUserGroup}>Add User to Group</button>
+            <p id="add-user-group-message" style={{display:'none'}}></p>
         
             <h2>Remove User from Group</h2>
             <select id="remove-group-dropdown" onChange={handleGroupChange}>
@@ -858,6 +864,7 @@ const handleChangeUserDetails = () => {
 
            
             <button id="remove-user-group-btn" onClick={handleRemoveUserGroup}>Remove User from Group</button>
+            <p id="remove-user-group-message" style={{display:'none'}}></p>
         </div>
 
           <div className="change-group-details-section">
