@@ -4,6 +4,9 @@ import "../components-style/AdminPanel.css";
 import NavBar from "./NavBar";
 import StatisticsActivity from "./StatisticsActivity";
 
+
+
+
 function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
     const [otherUsers, setOtherUsers] = useState([]);
@@ -106,56 +109,74 @@ function AdminPanel() {
     }
 
 
-    // --------------------------------------- create user ---------------------------------------
+    // --------------------------------------- create user ---------------------------------------E OK
 
     const handleCreateUser = () => {
-
-      if (document.getElementById("username").value === "" || document.getElementById("password").value === "" || document.getElementById("e-mail").value === "") {
-          alert("Please fill in all fields!");
-          return;
-      }
-
-      const newUser = {
-          username: document.getElementById("username").value,
-          password: document.getElementById("password").value,
-          email: document.getElementById("e-mail").value,
-          isAdmin: isChecked
-      };
+        if (document.getElementById("username").value === "" || document.getElementById("password").value === "" || document.getElementById("e-mail").value === "" || document.getElementById("first_name").value === "" || document.getElementById("last_name").value === "" || document.getElementById("birthday").value === "" || document.getElementById("position").value === "") {
+            alert("Please fill in all fields!");
+            return;
+        }
+    
+        //birthday validations
+        let birthday = new Date(document.getElementById("birthday").value);
+        let today = new Date();
+        let age = today.getFullYear() - birthday.getFullYear();
+        let monthDifference = today.getMonth() - birthday.getMonth();
+    
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthday.getDate())) {
+            age--;
+        }
+    
+        if (age < 18 || age > 70) {
+            alert("User must be at least 18 years old and no older than 70 years old!");
+            return;
+        }
+    
+        const newUser = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            email: document.getElementById("e-mail").value,
+            isAdmin: isChecked
+        };
+    
+        const userDetail = {
+            userID: null,
+            firstname: document.getElementById("first_name").value,
+            lastname: document.getElementById("last_name").value,
+            date_of_birth: document.getElementById("birthday").value,
+            position: document.getElementById("position").value
+        };
+    
+        console.log("User details:", userDetail);
+    
+        const token = localStorage.getItem('token');
+        const headers = { "x-access-token": token };
+    
+        axios.post('http://localhost:7979/users/create', newUser, { headers })
+            .then(res => {
+                const newUserId = res.data.id;
+                console.log('Created user ID:', newUserId);
+                userDetail.userID = newUserId;
+    
+                return axios.post('http://localhost:7979/userDetails/create', userDetail, { headers });
+            })
+            .then(res => {
+                console.log('User details created:', res.data);
+                const message = document.createElement('p');
+                message.textContent = 'User has been created!';
+                document.querySelector('.create-user-section').appendChild(message);
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+                window.location.reload();
+            })
+            .catch(err => {
+                console.error('Error creating user:', err);
+            });
+    };
+    
+  // --------------------------------------- change user details --------------------------------------- E OK- Msj de succes mai
   
-      const userDetail = {
-          userID: null,
-          firstname: document.getElementById("first_name").value,
-          lastname: document.getElementById("last_name").value,
-          date_of_birth: document.getElementById("birthday").value,
-          position: document.getElementById("position").value
-      };
-  
-      const token = localStorage.getItem('token');
-      const headers = { "x-access-token": token };
-  
-      axios.post('http://localhost:7979/users/create', newUser, { headers })
-          .then(res => {
-              const newUserId = res.data.id;
-              userDetail.userID = newUserId;
-  
-              return axios.post('http://localhost:7979/userDetails/create', userDetail, { headers });
-          })
-          .then(res => {
-              console.log('User details created:', res.data);
-              const message = document.createElement('p');
-              message.textContent = 'User has been created!';
-              document.querySelector('.create-user-section').appendChild(message);
-              setTimeout(() => {
-                  message.remove();
-              }, 3000);
-              window.location.reload();
-          })
-          .catch(err => {
-              console.error('Error creating user:', err);
-          });
-  };
-
-  // --------------------------------------- change user details ---------------------------------------
 
   function displayMessage(elementId, message) {
     const parent = document.getElementById(elementId);
@@ -172,8 +193,62 @@ function AdminPanel() {
     }, 3000);
 }
 
+const fillUserDetails = async () => {
+    setIsCheckedUpdate(false);
+    const userID = document.getElementById("change-user-dropdown").value;
+
+    // Find the user in allUsers array by userID
+    const user = allUsers.find((user) => user.id === parseInt(userID));
+
+    let UserDetails = {
+        username: user.username,
+        firstname: null,
+        lastname: null,
+        email: user.email,
+        password: null,
+        position: null,
+        isAdmin: new Boolean(user.isadmin),
+        dateOfBirth: null,
+    };
+
+    console.log('User details from user table:', UserDetails)
+    try {
+        const res = await axios.get(`http://localhost:7979/userDetails/${userID}`, {
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+        });
+
+        UserDetails.firstname = res.data[0].firstname;
+        UserDetails.lastname = res.data[0].lastname;
+        UserDetails.position = res.data[0].position;
+        UserDetails.dateOfBirth = res.data[0].date_of_birth;
+
+        console.log('User details:', UserDetails)
+
+        // Fill the input fields with the user details after fetching the data
+        document.getElementById("new-username").value = UserDetails.username;
+        document.getElementById("new-first-name").value = UserDetails.firstname;
+        document.getElementById("new-last-name").value = UserDetails.lastname;
+        document.getElementById("new-email").value = UserDetails.email;
+        document.getElementById("new-password").value = UserDetails.password;
+        document.getElementById("new-position").value = UserDetails.position;
+        document.getElementById("new-birthday").value = UserDetails.dateOfBirth;
+
+        if (UserDetails.isAdmin == true) {
+            setIsCheckedUpdate(true);
+        }
+        console.log('User details:', UserDetails);
+
+    } catch (err) {
+        console.log('Error getting user details:', err);
+    }
+};
+
+
 const handleChangeUserDetails = () => {
   const editedUserID = document.getElementById("change-user-dropdown").value;
+  console.log('Edited user ID:', editedUserID);
   const newUsername = document.getElementById("new-username").value;
   const newFirstName = document.getElementById("new-first-name").value;
   const newLastName = document.getElementById("new-last-name").value;
@@ -181,6 +256,7 @@ const handleChangeUserDetails = () => {
   const newPassword = document.getElementById("new-password").value;
   const newPosition = document.getElementById("new-position").value;
   const newBirthday = document.getElementById("new-birthday").value;
+
 
   if (newUsername) {
       axios.put(`http://localhost:7979/users/updateUsername/${editedUserID}`, { username: newUsername }, {
@@ -274,7 +350,6 @@ const handleChangeUserDetails = () => {
       });
   }
   // add validation for date of birth to not be in the future, under 18 years old or over 100 years old
-
   if(newBirthday && new Date(newBirthday) > new Date() || new Date().getFullYear() - new Date(newBirthday).getFullYear() < 18 || new Date().getFullYear() - new Date(newBirthday).getFullYear() > 100){
         displayMessage('new-birthday-message', 'Invalid Date of Birth');
         return;
@@ -292,24 +367,10 @@ const handleChangeUserDetails = () => {
 
     }
 
-
-//   if (newBirthday) {
-//       axios.put(`http://localhost:7979/userDetails/updateDateOfBirth/${editedUserID}`, { dateOfBirth: newBirthday }, {
-//           headers: {
-//               "x-access-token": localStorage.getItem('token'),
-//           },
-//       }).then((res) => {
-//           console.log('Date of Birth updated:', res.data);
-//           displayMessage('new-birthday-message', 'Date of Birth updated');
-//       }).catch((err) => {
-//           console.log('Error updating date of birth:', err);
-//       });
-//   }
-
   window.location.reload();
 };
 
-    // --------------------------------------- delete user ---------------------------------------
+    // --------------------------------------- delete user --------------------------------------- E OK
 
     const handleDelete = () => {
         document.getElementById("delete-user-confirm-btn").style.display = "block";
@@ -346,7 +407,7 @@ const handleChangeUserDetails = () => {
 
 
     }
-    // ------------------------------------------create group--------------------------------------------------
+    // ------------------------------------------create group-------------------------------------------------- 
 
     const handleCreateGroup = () => {
         const newGroup = {
@@ -382,7 +443,7 @@ const handleChangeUserDetails = () => {
         });
     };
     
-    // ------------------------------------------delete group--------------------------------------------------
+    // ------------------------------------------delete group--------------------------------------------------E OK
 
     const handleDeleteClick = () => {
         document.getElementById("delete-group-confirm-btn").style.display = "block";
@@ -490,7 +551,7 @@ const handleChangeUserDetails = () => {
         });
     }
 
-    // ------------------------------------------change group details--------------------------------------------------
+    // ------------------------------------------change group details--------------------------------------------------E OK
   
     const handleChangeGroupDetails = () => {
         const editedGroupID = document.getElementById("change-group-dropdown").value;
@@ -644,7 +705,7 @@ const handleChangeUserDetails = () => {
 
           <div className="change-user-details-section">
     <h2>Change User Details</h2>
-    <select id="change-user-dropdown">
+    <select id="change-user-dropdown" onChange={fillUserDetails}>
         {allUsers.map((user) => (
             <option value={user.id}>{user.username}</option>
         ))}
@@ -678,7 +739,7 @@ const handleChangeUserDetails = () => {
     <input type="date" id="new-birthday" />
     <p id="new-birthday-message"></p> 
 
-    <button id="change-user-details-btn" onClick={handleChangeUserDetails}>Change User Details</button>
+    <button id="change-user-details-btn" onClick= {handleChangeUserDetails}>Change User Details</button>
 </div>
 
           <div className="delete-user-create-group-section"
