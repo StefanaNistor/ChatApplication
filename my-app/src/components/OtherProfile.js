@@ -15,7 +15,7 @@ function OtherProfile() {
     useEffect(() => {
         getUserDetails(id);
         getUserEmail(id);
-    }, [userAbout]);
+    }, []);
 
     useEffect(() => {
         getUserProfilePhoto();

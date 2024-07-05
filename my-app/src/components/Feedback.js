@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import "../components-style/Feedback.css";
 import NavBar from './NavBar';
 
@@ -85,10 +85,44 @@ const Feedback = () => {
     }
   };
 
+  const calculateAverageRating = () => {
+    if (feedbacks.length === 0) return 0;
+    const totalRating = feedbacks.reduce((acc, feedback) => acc + feedback.rating, 0);
+    return totalRating / feedbacks.length;
+  };
+
+  const averageRating = calculateAverageRating();
+
   return (
     <div className="feedback-container">
       <NavBar />
       <div className="feedback-content">
+        <div
+        style={{
+          width:'50%'
+        }}
+        >
+        <div className="overall-score">
+          <h3>Overall Rating Score:</h3>
+          <div className="rating">
+            {[...Array(5)].map((_, index) => {
+              const fullStarThreshold = index + 1;
+              const halfStarThreshold = index + 0.5;
+              return (
+                <span key={index}>
+                  {averageRating >= fullStarThreshold ? (
+                    <FaStar className="star-icon active" />
+                  ) : averageRating >= halfStarThreshold ? (
+                    <FaStarHalfAlt className="star-icon active" />
+                  ) : (
+                    <FaStar className="star-icon" />
+                  )}
+                </span>
+              );
+            })}
+            <span>({averageRating.toFixed(1)})</span>
+          </div>
+        </div>
         <div className="feedback-list">
           <p>Feedback from the last 6 months:</p>
           {feedbacks.map(feedback => (
@@ -105,7 +139,8 @@ const Feedback = () => {
             </div>
           ))}
         </div>
-        <p style ={{width: '200px'}}> Add your feedback here: </p>
+        </div>
+        <p style={{ width: '200px' }}> Add your feedback here: </p>
         <div className="feedback-form">
           <input
             type="text"
@@ -116,7 +151,7 @@ const Feedback = () => {
           />
           <textarea
             name="content"
-            id= "feedback-content"
+            id="feedback-content"
             placeholder="Content"
             value={newFeedback.content}
             onChange={handleInputChange}

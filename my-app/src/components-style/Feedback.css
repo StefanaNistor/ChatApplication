@@ -49,7 +49,7 @@
 .feedback-list {
     display: flex;
     flex-direction: column;
-    width: 55%;
+    width: 95%;
 }
 
 .timespan-select {

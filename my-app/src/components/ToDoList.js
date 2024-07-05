@@ -4,8 +4,6 @@ import "../components-style/ToDoList.css";
 import axios from "axios";
 
 function ToDoList() {
-
-  //BETTER DATE VALIDATION
   const [toDoListItems, setToDoListItems] = useState([]);
   const [initialToDoList, setInitialToDoList] = useState([]);
   const [flags, setFlags] = useState([]);
@@ -44,18 +42,20 @@ function ToDoList() {
         },
       })
       .then((res) => {
-        //atentie aici
         const items = res.data.map((item) => ({
           id: item.id,
           title: item.title,
           content: item.content,
           flagID: item.flag_id,
-          start_date: new Date(item.start_date).getTime() + 24 * 60 * 60 * 1000,
-          end_date: new Date(item.end_date).getTime() + 24 * 60 * 60 * 1000,
+          //add a day to the end and start date to display correctly
+          start_date: new Date(new Date(item.start_date).getTime() + 86400000).toISOString().split('T')[0],
+          end_date: new Date(new Date(item.end_date).getTime() + 86400000).toISOString().split('T')[0],
         }));
 
         setToDoListItems(items);
-        setInitialToDoList(items); 
+        setInitialToDoList(items);
+        console.log("To Do List Items:", items);
+        
       })
       .catch((err) => {
         console.log("ERROR TODO FRONTEND!");
@@ -80,7 +80,7 @@ function ToDoList() {
     e.preventDefault();
     const { title, content, flagID, endDate } = getToDoDataInputs();
     const userID = user.id;
-  
+
     if (!title || !content || !endDate) {
       alert("Title, content, and end date are required!");
       return;
@@ -90,8 +90,8 @@ function ToDoList() {
       alert("End date must be in the future!");
       return;
     }
-  
-    const stardDate = new Date();
+
+    const startDate = new Date().toISOString().split('T')[0];
     axios
       .post(
         "http://localhost:7979/toDoList/addToDo",
@@ -100,7 +100,7 @@ function ToDoList() {
           content: content,
           flag_id: flagID,
           user_id: userID,
-          start_date: stardDate,
+          start_date: startDate,
           end_date: endDate,
         },
         {
@@ -116,7 +116,7 @@ function ToDoList() {
       .catch((err) => {
         console.log("ERROR ADD TODO FRONTEND!");
       });
-  
+
     const addBtn = document.getElementById("addBtn");
     addBtn.style.display = "block";
     setAreAddingToDo(false);
@@ -124,7 +124,7 @@ function ToDoList() {
 
   const handleToDoEdit = (toDoId) => {
     const todoItem = toDoListItems.find((item) => item.id === toDoId);
-  
+
     setUpdatedToDo({
       id: toDoId,
       title: todoItem.title,
@@ -151,11 +151,10 @@ function ToDoList() {
   const handleSaveToDo = () => {
     const { id, title, content, flagID, start_date, end_date } = updatedToDo;
     const userID = user.id;
-  
-    // need to do this!!
+
     const formattedStartDate = new Date(start_date).toISOString().split('T')[0];
     const formattedEndDate = new Date(end_date).toISOString().split('T')[0];
-  
+
     axios
       .put(
         "http://localhost:7979/toDoList/updateToDo",
@@ -246,18 +245,14 @@ function ToDoList() {
 
     let sortedItems = [];
 
-    //console.log(toDoListItems);
-    //console.log(new Date(startDate));
-    //console.log('END',new Date(toDoListItems[1].end_date));
-
     for (let i = 0; i < initialToDoList.length; i++) {
       let item = initialToDoList[i];
 
       if (
         (!title ||
           includesInOrder(item.title.toLowerCase(), title.toLowerCase())) &&
-        (!startDate || item.start_date.slice(0, 10) === startDate) &&
-        (!endDate || item.end_date.slice(0, 10) === endDate) &&
+        (!startDate || item.start_date === startDate) &&
+        (!endDate || item.end_date === endDate) &&
         (!content ||
           includesInOrder(item.content.toLowerCase(), content.toLowerCase())) &&
         (!flag || item.flagID === parseInt(flag))
@@ -273,13 +268,18 @@ function ToDoList() {
     } else {
       setToDoListItems(sortedItems);
     }
-
   };
 
   const handleReset = (e) => {
     e.preventDefault();
     getToDoListItems();
-  }
+
+    document.getElementById("sortByTitle").value = "";
+    document.getElementById("sortByStartDate").value = "";
+    document.getElementById("sortByEndDate").value = "";
+    document.getElementById("sortByContent").value = "";
+    document.getElementById("sortByFlag").value = "";
+  };
 
   return (
     <div>
@@ -359,7 +359,7 @@ function ToDoList() {
             <div className="sortByStartDate">
               Start Date:
               <input type="date" id="sortByStartDate" />
-              </div>
+            </div>
             <div className="sortByEndDate">
               End Date:
               <input type="date" id="sortByEndDate" placeholder="END DATE" />
@@ -393,9 +393,9 @@ function ToDoList() {
                 Sort list
               </button>
               <button
-              id="resetBtn"
-              onClick={handleReset}
-              style={{ width: "12vw" }}
+                id="resetBtn"
+                onClick={handleReset}
+                style={{ width: "12vw" }}
               >
                 Reset List
               </button>
@@ -487,13 +487,10 @@ function ToDoList() {
                         <p>{item.content}</p>
                       </div>
                       <div className="to-do-item-dates">
-                      <div className="to-do-item-dates">
-                      <p>Start date: {item.start_date ? new Date(new Date(item.start_date).getTime()).toISOString().split('T')[0] : 'N/A'}</p>
-                      <p>End date: {item.end_date ? new Date(new Date(item.end_date).getTime()).toISOString().split('T')[0] : 'N/A'}</p>
-                    </div>
+                        <p>Start date: {item.start_date}</p>
+                        <p>End date: {item.end_date}</p>
                       </div>
                       <div className="flag-container">
-                        {" "}
                         <span id={`id${item.flagID - 1}`}>
                           {flags[item.flagID - 1]?.name}
                         </span>
@@ -519,4 +516,3 @@ function ToDoList() {
 }
 
 export default ToDoList;
-
