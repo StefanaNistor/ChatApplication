@@ -589,6 +589,7 @@ function GroupChat({ groupID }) {
                       message.user_id === userId ? "myMessageContent" : ""
                     }`}
                   >
+                    <div className="messageHeader">
                     <p>
                       <span id="usernameStyling">
                         {usernames[message.user_id]
@@ -598,6 +599,9 @@ function GroupChat({ groupID }) {
                           : ""}
                       </span>
                     </p>
+                    <p id="messageTimestamp">{new Date(message.timestamp).toLocaleTimeString()}</p>
+                    </div>
+                    
 
                     <p id={`contentText-${message.timestamp} - ${message.group_id}`}>
                       {message.is_deleted
@@ -609,7 +613,7 @@ function GroupChat({ groupID }) {
                         </span>
                       )}
                     </p>
-                    <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
+                   
                     <div
                       className="attachments"
                       onClick={handleAttachmentClick(
@@ -641,11 +645,12 @@ function GroupChat({ groupID }) {
                           )}
                           alt="attachedImage"
                           style={{
-                            width: "100px",
-                            height: "100px",
+                            width: "90%",
+                            height: "90%",
                             maxWidth: "300px",
                             maxHeight: "300px",
                             borderRadius: "10px",
+                           
                             cursor: "pointer",
                           }}
                           onClick={handlePhotoClick}
@@ -657,8 +662,8 @@ function GroupChat({ groupID }) {
                           src={`http://localhost:7979/photos/getMessageAttachment/${message.imageName}`}
                           alt="attachedImage"
                           style={{
-                            width: "100px",
-                            height: "100px",
+                            width: "90%",
+                            height: "90%",
                             maxWidth: "300px",
                             maxHeight: "300px",
                             borderRadius: "10px",

@@ -11,8 +11,6 @@ import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
-
-
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
   const [usernames, setUsernames] = useState({});
@@ -41,20 +39,18 @@ function PrivateChat({ chatID }) {
     }
     getOtherUser(chatID);
   }, [chatID]);
-  
+
   useEffect(() => {
     if (chatID) {
       socket.emit("leave chat", { roomId: chatID });
       socket.emit("join private chat", { roomId: chatID });
       console.log(`Joined room: ${chatID}`);
-  
+
       socket.on("chat private client", (message) => {
         console.log("Message received:", message);
-  
-      
+
         if (chatID === message.chat_id) {
           setMessages((prevMessages) => {
-           
             const messageExists = prevMessages.some(
               (msg) =>
                 msg.timestamp === message.timestamp &&
@@ -62,25 +58,28 @@ function PrivateChat({ chatID }) {
                 msg.chat_id === message.chat_id &&
                 msg.content === message.content
             );
-  
+
             if (messageExists) {
-              return prevMessages; 
+              return prevMessages;
             }
-  
+
             const newMessages = [...prevMessages, message];
-            console.log("Updated messages:", newMessages); 
+            console.log("Updated messages:", newMessages);
             return newMessages;
           });
         }
-  
-       
+
         if (message.user_id !== userId && message.chat_id === chatID) {
           console.log("Aici ajunge?");
-          socket.emit("mark message as seen", userId, message.timestamp, message.chat_id);
+          socket.emit(
+            "mark message as seen",
+            userId,
+            message.timestamp,
+            message.chat_id
+          );
         }
       });
-  
-  
+
       socket.on("message seen", (userID, timestamp, chatid) => {
         console.log("Message seen:", userID, timestamp, chatid);
         console.log("ChatID:", chatID);
@@ -88,7 +87,11 @@ function PrivateChat({ chatID }) {
         if (chatid === chatID) {
           setMessages((prevMessages) => {
             return prevMessages.map((message) => {
-              if (message.user_id === userID && message.timestamp === timestamp && message.chat_id === chatID) {
+              if (
+                message.user_id === userID &&
+                message.timestamp === timestamp &&
+                message.chat_id === chatID
+              ) {
                 return {
                   ...message,
                   is_seen: true,
@@ -99,24 +102,31 @@ function PrivateChat({ chatID }) {
           });
         }
       });
-  
-      socket.on("delete private message", (messageUserID, messageTimestamp, messageChatID) => {
-        setMessages((prevMessages) => {
-          return prevMessages.map((message) => {
-            if (message.user_id === messageUserID && message.timestamp === messageTimestamp && message.chat_id === messageChatID) {
-              return {
-                ...message,
-                is_deleted: true,
-                fileName: null,
-              imageName: null,
-              imageObject: message.imageObject ? null : message.imageObject,
-              };
-            }
-            return message;
+
+      socket.on(
+        "delete private message",
+        (messageUserID, messageTimestamp, messageChatID) => {
+          setMessages((prevMessages) => {
+            return prevMessages.map((message) => {
+              if (
+                message.user_id === messageUserID &&
+                message.timestamp === messageTimestamp &&
+                message.chat_id === messageChatID
+              ) {
+                return {
+                  ...message,
+                  is_deleted: true,
+                  fileName: null,
+                  imageName: null,
+                  imageObject: message.imageObject ? null : message.imageObject,
+                };
+              }
+              return message;
+            });
           });
-        });
-      });
-  
+        }
+      );
+
       socket.on("edit private message", (newContent, chatID, timestamp) => {
         setMessages((prevMessages) => {
           return prevMessages.map((message) => {
@@ -131,7 +141,7 @@ function PrivateChat({ chatID }) {
           });
         });
       });
-  
+
       return () => {
         console.log(`Left room: ${chatID}`);
         socket.emit("leave chat", { roomId: chatID });
@@ -142,18 +152,25 @@ function PrivateChat({ chatID }) {
       };
     }
   }, [chatID]);
-  
+
   useEffect(() => {
     if (messages.length > 0) {
-      const unseenMessages = messages.filter((msg) => !msg.is_seen && msg.user_id !== userId);
+      const unseenMessages = messages.filter(
+        (msg) => !msg.is_seen && msg.user_id !== userId
+      );
       if (unseenMessages.length > 0) {
         unseenMessages.forEach((message) => {
-          socket.emit("mark message as seen", message.user_id, message.timestamp, message.chat_id);
+          socket.emit(
+            "mark message as seen",
+            message.user_id,
+            message.timestamp,
+            message.chat_id
+          );
         });
       }
     }
   }, [messages]);
-  
+
   function getMessages(chatID) {
     axios
       .get(`http://localhost:7979/privateMessages/getByChat/${chatID}`, {
@@ -170,13 +187,17 @@ function PrivateChat({ chatID }) {
         console.log("An error occurred while getting messages:", err);
       });
   }
-  
+
   function markMessagesAsSeen(chatID, otherID) {
-    axios.put(`http://localhost:7979/privateMessages/markAsSeenByChatandUser/${chatID}/${otherID}`, {
-      headers: {
-        "x-access-token": localStorage.getItem("token"),
-      },
-    })
+    axios
+      .put(
+        `http://localhost:7979/privateMessages/markAsSeenByChatandUser/${chatID}/${otherID}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      )
       .then((res) => {
         console.log("Messages marked as seen:", res.data);
       })
@@ -189,12 +210,10 @@ function PrivateChat({ chatID }) {
     fetchUsernames();
   }, [messages]);
 
-  
-
   async function getUserProfilePhoto(otherID) {
     if (typeof otherID !== "number") {
       console.error("Invalid otherUserID:", otherID);
-      setPhotoURL("https://via.placeholder.com/70"); 
+      setPhotoURL("https://via.placeholder.com/70");
       return;
     }
 
@@ -213,10 +232,9 @@ function PrivateChat({ chatID }) {
       setPhotoURL(url);
     } catch (error) {
       console.log("Error fetching user profile photo:", error);
-      setPhotoURL("https://via.placeholder.com/70"); 
+      setPhotoURL("https://via.placeholder.com/70");
     }
   }
-
 
   async function getOtherUserDetails(userId) {
     try {
@@ -323,7 +341,7 @@ function PrivateChat({ chatID }) {
     const messageInput = document.getElementById("messageInput").value;
 
     //if the attached image is not null
-    
+
     // if(attachedImage){
     //   const imgBlob = new Blob([attachedImage], { type: attachedImage.type });
     // const imgURL = URL.createObjectURL(imgBlob);
@@ -397,7 +415,6 @@ function PrivateChat({ chatID }) {
     //setMessages((prevMessages) => [...prevMessages, messageObj]);
 
     setMessages((prevMessages) => {
-      
       const messageExists = prevMessages.some(
         (msg) =>
           msg.timestamp === messageObj.timestamp &&
@@ -405,16 +422,15 @@ function PrivateChat({ chatID }) {
           msg.chat_id === messageObj.chat_id &&
           msg.content === messageObj.content
       );
-  
+
       if (messageExists) {
-        return prevMessages; 
+        return prevMessages;
       }
-  
+
       const newMessages = [...prevMessages, messageObj];
       console.log("Updated messages for sender:", newMessages);
       return newMessages;
     });
-
 
     const message = document.getElementById("messageInput");
     message.value = "";
@@ -424,15 +440,23 @@ function PrivateChat({ chatID }) {
 
   const deleteMessage = (messageUserID, messageTimestamp, messageChatID) => {
     axios
-      .delete(`http://localhost:7979/privateMessages/deleteMsg/${messageUserID}/${messageTimestamp}/${messageChatID}`, {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-      })
+      .delete(
+        `http://localhost:7979/privateMessages/deleteMsg/${messageUserID}/${messageTimestamp}/${messageChatID}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      )
       .then((res) => {
         console.log("Message deleted:", res.data);
         getMessages(chatID);
-        socket.emit("delete private message", messageUserID, messageTimestamp, messageChatID);
+        socket.emit(
+          "delete private message",
+          messageUserID,
+          messageTimestamp,
+          messageChatID
+        );
 
         const prompt = document.querySelector(".variousPromptsText");
         prompt.innerText = "Message deleted successfully!";
@@ -446,9 +470,15 @@ function PrivateChat({ chatID }) {
   };
 
   const editMessage = (messageContent, messageChatID, messageTimestamp) => {
-  
-    const editedMessage = messages.find( (message) => message.content === messageContent && message.chat_id === messageChatID && message.timestamp === messageTimestamp);
-    const contentText = document.getElementById(`contentText-${messageTimestamp} - ${messageChatID}`);
+    const editedMessage = messages.find(
+      (message) =>
+        message.content === messageContent &&
+        message.chat_id === messageChatID &&
+        message.timestamp === messageTimestamp
+    );
+    const contentText = document.getElementById(
+      `contentText-${messageTimestamp} - ${messageChatID}`
+    );
     contentText.contentEditable = true;
     contentText.focus();
 
@@ -474,7 +504,7 @@ function PrivateChat({ chatID }) {
           )
           .then((res) => {
             console.log("Message updated:", res.data);
-           //emit to server!
+            //emit to server!
             socket.emit("edit private message", newContent, chatID, timestamp);
             const prompt = document.querySelector(".variousPromptsText");
             prompt.innerText = "Message updated successfully!";
@@ -528,7 +558,7 @@ function PrivateChat({ chatID }) {
     const file = event.target.files[0];
     setAttachedFile(file);
     console.log("FISIEEER :", file);
-  }; 
+  };
 
   const handleAttachmentClick = (userID, timestamp) => {
     return (event) => {
@@ -537,11 +567,11 @@ function PrivateChat({ chatID }) {
         const fileName = target.innerText;
         const newFileName = userID + timestamp + fileName;
 
-        console.log("New Filename:", newFileName); 
+        console.log("New Filename:", newFileName);
 
         const fileURL = `http://localhost:7979/photos/getMessageAttachment/${newFileName}`;
 
-        console.log("File URL:", fileURL); 
+        console.log("File URL:", fileURL);
 
         window.open(fileURL, "_blank");
       }
@@ -595,7 +625,9 @@ function PrivateChat({ chatID }) {
     recognition.interimResults = false;
 
     recognition.onstart = () => {
-      alert("Speak now! :) Click on ok to view the message in the input field.");
+      alert(
+        "Speak now! :) Click on ok to view the message in the input field."
+      );
     };
 
     recognition.start();
@@ -655,147 +687,163 @@ function PrivateChat({ chatID }) {
           </div>
 
           <div className="privateChatBody">
-            <div className="chatMessages">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`message ${
-                    message.user_id === userId ? "myMessage" : ""
-                  }`}
-                >
-                  <div className="messageContent">
-                    <p>
-                      <span id="usernameStyling">
-                        {usernames[message.user_id]
-                          ? usernames[message.user_id].username + ": "
-                          : ""}
-                      </span>
-                    </p>
 
-                    <div>
-                      {message.is_seen ? (
-                        <p style={{ color: "green" }}>Seen</p>
-                      ) : (
-                        <p style={{ color: "red" }}>Delivered</p>
-                      )}
-                    </div>
+            {//messages ----------------------------------------------------
+            }
+           <div className="chatMessages">
+  {messages.map((message, index) => (
+    <div
+      key={index}
+      className={`message ${message.user_id === userId ? "myMessage" : ""}`}
+    >
+      
 
-                    <p id={`contentText-${message.timestamp} - ${message.chat_id}`}>
-                      {message.is_deleted
-                        ? "Message has been deleted"
-                        : message.content}
-                      {message.is_edited && (
-                        <span className="edited-indicator">
-                          <FontAwesomeIcon icon={faPencilAlt} />
-                        </span>
-                      )}
-                    </p>
-                    <p>{new Date(message.timestamp).toLocaleTimeString()}</p>
-                    <div
-                      className="attachments"
-                      onClick={handleAttachmentClick(
-                        message.user_id,
-                        message.timestamp
-                      )}
-                      style={{
-                        margin: "5px 0",
-                        fontWeight: "bold",
-                        color: "#333",
-                      }}
-                    >
-                      {message.fileName && (
-                        <p style={{ cursor: "pointer" }}>
-                          {" "}
-                          {parseFileName(
-                            message.fileName,
-                            message.user_id,
-                            message.timestamp
-                          )}{" "}
-                        </p>
-                      )}
-                      {message.imageObject instanceof ArrayBuffer ? (
-        <img
-          src={arrayBufferToDataURL(message.imageObject, message.imageObject.contentType)}
-          alt=""
-          style={{
-            width: "100px",
-            height: "100px",
-            maxWidth: "300px",
-            maxHeight: "300px",
-            borderRadius: "10px",
-            cursor: "pointer",
-          }}
-          onClick={handlePhotoClick}
-        />
-      ) : message.imageObject instanceof File ? (
-        <img
-          src={URL.createObjectURL(message.imageObject)}
-          alt=""
-          style={{
-            width: "100px",
-            height: "100px",
-            maxWidth: "300px",
-            maxHeight: "300px",
-            borderRadius: "10px",
-            cursor: "pointer",
-          }}
-          onClick={handlePhotoClick}
-        />
-      ) : null}
+      <div className="messageContent">
+      <div className="messageHeader">
+        <span id="usernameStyling">
+          {usernames[message.user_id]
+            ? usernames[message.user_id].username + ": "
+            : ""}
+        </span>
+        <p id="messageTimestamp">
+          {new Date(message.timestamp).toLocaleTimeString()}
+        </p>
+      </div>
+        <p>
+          {message.is_seen ? (
+            <span style={{ color: "green" }}>Seen</span>
+          ) : (
+            <span style={{ color: "red" }}>Delivered</span>
+          )}
+        </p>
 
-                      {!message.imageObject && message.imageName && (
-                        <img
-                          src={
-                            imageAttachments[message._id]
-                              ? imageAttachments[message._id]
-                              : "https://via.placeholder.com/70"
-                          }
-                          alt="attachedImage"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            maxWidth: "300px",
-                            maxHeight: "300px",
-                            borderRadius: "10px",
-                            cursor: "pointer",
-                          }}
-                          onClick={handlePhotoClick}
-                        />
-                      )}
-                    </div>
-                  </div>
+        <p id={`contentText-${message.timestamp} - ${message.chat_id}`}>
+          {message.is_deleted
+            ? "Message has been deleted"
+            : message.content}
+          {message.is_edited && (
+            <span className="edited-indicator">
+              <FontAwesomeIcon icon={faPencilAlt} />
+            </span>
+          )}
+        </p>
 
-                  <div className="messageButtons">
-                    {((message.user_id === userId && !message.is_deleted) ||
-                      isCurrentUserAdmin) &&
-                      !message.is_deleted && (
-                        <button
-                          className="deleteButton"
-                          onClick={() => deleteMessage(message.user_id, message.timestamp, message.chat_id)}
-                        >
-                          <FontAwesomeIcon icon={faTrashAlt} />
-                        </button>
-                      )}
-                    {message.user_id === userId && !message.is_deleted && (
-                      <button
-                        className="editButton"
-                        onClick={() => editMessage(message.content, message.chat_id, message.timestamp)}
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                    )}
-                    {message.user_id !== userId && !message.is_deleted && (
-                      <button
-                        className="sendToToDoButton"
-                        onClick={() => sendToToDo(message.content)}
-                      >
-                        <FontAwesomeIcon icon={faTasks} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div
+          className="attachments"
+          onClick={handleAttachmentClick(
+            message.user_id,
+            message.timestamp
+          )}
+        >
+          {message.fileName && (
+            <p style={{ cursor: "pointer" }}>
+              {parseFileName(
+                message.fileName,
+                message.user_id,
+                message.timestamp
+              )}
+            </p>
+          )}
+          {message.imageObject instanceof ArrayBuffer ? (
+            <img
+              src={arrayBufferToDataURL(
+                message.imageObject,
+                message.imageObject.contentType
+              )}
+              alt=""
+              style={{
+                width: "90%",
+                height: "90%",
+                maxWidth: "300px",
+                maxHeight: "300px",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+              onClick={handlePhotoClick}
+            />
+          ) : message.imageObject instanceof File ? (
+            <img
+              src={URL.createObjectURL(message.imageObject)}
+              alt=""
+              style={{
+                width: "90%",
+                height: "90%",
+                maxWidth: "300px",
+                maxHeight: "300px",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+              onClick={handlePhotoClick}
+            />
+          ) : null}
+
+          {!message.imageObject && message.imageName && (
+            <img
+              src={
+                imageAttachments[message._id]
+                  ? imageAttachments[message._id]
+                  : "https://via.placeholder.com/70"
+              }
+              alt="attachedImage"
+              style={{
+                width: "100px",
+                height: "100px",
+                maxWidth: "300px",
+                maxHeight: "300px",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+              onClick={handlePhotoClick}
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="messageButtons">
+        {((message.user_id === userId && !message.is_deleted) ||
+          isCurrentUserAdmin) &&
+          !message.is_deleted && (
+            <button
+              className="deleteButton"
+              onClick={() =>
+                deleteMessage(
+                  message.user_id,
+                  message.timestamp,
+                  message.chat_id
+                )
+              }
+            >
+              <FontAwesomeIcon icon={faTrashAlt} />
+            </button>
+          )}
+        {message.user_id === userId && !message.is_deleted && (
+          <button
+            className="editButton"
+            onClick={() =>
+              editMessage(
+                message.content,
+                message.chat_id,
+                message.timestamp
+              )
+            }
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+        )}
+        {message.user_id !== userId && !message.is_deleted && (
+          <button
+            className="sendToToDoButton"
+            onClick={() => sendToToDo(message.content)}
+          >
+            <FontAwesomeIcon icon={faTasks} />
+          </button>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+                {//messages ----------------------------------------------------
+            }
           </div>
 
           <div className="chatFooterPrivate">
@@ -818,17 +866,21 @@ function PrivateChat({ chatID }) {
                 height: "5vh",
               }}
             >
-              <button id="speechToText"
-              style={{
-                borderRadius: "50",
-                padding: "5px",
-                backgroundColor: "#b5e7a0",
-                marginLeft: "3px",
-                marginRight: "1vh",
-              }}
-              onClick={handleSpeechToText}
+              <button
+                id="speechToText"
+                style={{
+                  borderRadius: "50",
+                  padding: "5px",
+                  backgroundColor: "#b5e7a0",
+                  marginLeft: "3px",
+                  marginRight: "1vh",
+                }}
+                onClick={handleSpeechToText}
               >
-                <FontAwesomeIcon icon={faMicrophone} style={{ fontSize: "2.2vh" }} />
+                <FontAwesomeIcon
+                  icon={faMicrophone}
+                  style={{ fontSize: "2.2vh" }}
+                />
               </button>
               <button
                 id="attachImage"
