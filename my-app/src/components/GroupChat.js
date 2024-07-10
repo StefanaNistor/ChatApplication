@@ -5,13 +5,7 @@ import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import ToDoPopUp from "./ToDoPopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { faTasks } from "@fortawesome/free-solid-svg-icons";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { faImage } from "@fortawesome/free-solid-svg-icons";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faTasks, faEdit, faPencilAlt, faImage, faPaperclip, faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
 function GroupChat({ groupID }) {
   const [selectedGroupChat, setSelectedGroupChat] = useState("");
@@ -35,6 +29,8 @@ function GroupChat({ groupID }) {
   const [attachedFile, setAttachedFile] = useState(null);
   const imageInputRef = React.createRef();
   const [attachedImage, setAttachedImage] = useState(null);
+
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     getGroupProfilePhoto();
@@ -66,10 +62,9 @@ function GroupChat({ groupID }) {
       console.log("Messages after delete:", messages);
     });
 
-     socket.on("edit group message", (newContent, chatID, timestamp) => {
+    socket.on("edit group message", (newContent, chatID, timestamp) => {
       console.log('Edit sent from server', newContent, chatID, timestamp);
     
-   
       setMessages(prevMessages => {
         return prevMessages.map((message) => {
           if (message.timestamp === timestamp) {
@@ -92,6 +87,10 @@ function GroupChat({ groupID }) {
       socket.off("chat group client");
     };
   }, [groupID]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const showMemberList = () => {
     setShowMembers(!showMembers);
@@ -407,8 +406,6 @@ function GroupChat({ groupID }) {
   };
 
   const getUserProfilePhotoById = (userID) => {
-    // console.log("Profileuri", userProfiles);
-    // console.log("Linkul cel bun", userProfiles[userID]);
     return userProfiles[userID] ? userProfiles[userID] : placeholderAvatar;
   };
 
@@ -423,7 +420,7 @@ function GroupChat({ groupID }) {
     const file = event.target.files[0];
     setAttachedFile(file);
     console.log("FISIEEER :", file);
-  }; 
+  };
 
   const handleAttachedFileImage = (e) => {
     e.preventDefault();
@@ -450,11 +447,11 @@ function GroupChat({ groupID }) {
         const fileName = target.innerText;
         const newFileName = userID + timestamp + fileName;
 
-        console.log("New Filename:", newFileName); 
+        console.log("New Filename:", newFileName);
 
         const fileURL = `http://localhost:7979/photos/getMessageAttachment/${newFileName}`;
 
-        console.log("File URL:", fileURL); 
+        console.log("File URL:", fileURL);
         window.open(fileURL, "_blank");
       }
     };
@@ -499,6 +496,10 @@ function GroupChat({ groupID }) {
       console.log("Message:", message);
       setMessageInput(message);
     };
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -705,97 +706,98 @@ function GroupChat({ groupID }) {
                   </div>
                 </div>
               ))}
-              <div className="chatFooter">
-                <div className="messageInput">
-                  {groupID && (
-                    <input
-                      type="text"
-                      value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
-                      placeholder="Type your message here..."
-                    />
-                  )}
-                  {groupID && <button onClick={handleSendMessage}>Send</button>}
-                </div>
-                <div
-                  className="attachButtons"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "5px",
-                    height: "5vh",
-                  }}
-                >
-                  <button id="speechToText"
-              style={{
-                borderRadius: "50",
-                padding: "5px",
-                backgroundColor: "#b5e7a0",
-                marginLeft: "3px",
-                marginRight: "1vh",
-              }}
-              onClick={handleSpeechToText}
-              >
-                <FontAwesomeIcon icon={faMicrophone} style={{ fontSize: "2.2vh" }} />
-              </button>
-                  <button
-                    id="attachImage"
-                    style={{
-                      borderRadius: "50",
-                      padding: "5px",
-                      backgroundColor: "#dbcdf0",
-                      marginLeft: "3px",
-                      marginRight: "1vh",
-                    }}
-                    onClick={handleAttachedFileImage}
-                  >
-                    <FontAwesomeIcon
-                      icon={faImage}
-                      style={{ fontSize: "2.2vh" }}
-                    />
-                  </button>
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="chatFooter">
+              <div className="messageInput">
+                {groupID && (
                   <input
-                    type="file"
-                    accept = "image/*"
-                    ref={imageInputRef}
-                    id="imageInput"
-                    style={{ display: "none" }}
-                    onChange={handleFileImageChange}
+                    type="text"
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    placeholder="Type your message here..."
                   />
-
-                  <button
-                    id="attachFile"
-                    style={{
-                      borderRadius: "50",
-                      padding: "5px",
-                      backgroundColor: "#f7d9c4",
-                    }}
-                    onClick={handleAttachedFile}
-                  >
-                    <FontAwesomeIcon
-                      icon={faPaperclip}
-                      style={{ fontSize: "2.2vh" }}
-                    />
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    id="fileInput"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
-                </div>
-                {(attachedFile || attachedImage) && (
-                  <div id="attachedFile">
-                    {attachedFile && <p>Attached file: {attachedFile.name}</p>}
-                    {attachedImage && (
-                      <p>Attached image: {attachedImage.name}</p>
-                    )}
-                  </div>
                 )}
-
-                <div className="variousPromptsText"></div>
+                {groupID && <button onClick={handleSendMessage}>Send</button>}
               </div>
+              <div
+                className="attachButtons"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "5px",
+                  height: "5vh",
+                }}
+              >
+                <button id="speechToText"
+                  style={{
+                    borderRadius: "50",
+                    padding: "5px",
+                    backgroundColor: "#b5e7a0",
+                    marginLeft: "3px",
+                    marginRight: "1vh",
+                  }}
+                  onClick={handleSpeechToText}
+                >
+                  <FontAwesomeIcon icon={faMicrophone} style={{ fontSize: "2.2vh" }} />
+                </button>
+                <button
+                  id="attachImage"
+                  style={{
+                    borderRadius: "50",
+                    padding: "5px",
+                    backgroundColor: "#dbcdf0",
+                    marginLeft: "3px",
+                    marginRight: "1vh",
+                  }}
+                  onClick={handleAttachedFileImage}
+                >
+                  <FontAwesomeIcon
+                    icon={faImage}
+                    style={{ fontSize: "2.2vh" }}
+                  />
+                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={imageInputRef}
+                  id="imageInput"
+                  style={{ display: "none" }}
+                  onChange={handleFileImageChange}
+                />
+
+                <button
+                  id="attachFile"
+                  style={{
+                    borderRadius: "50",
+                    padding: "5px",
+                    backgroundColor: "#f7d9c4",
+                  }}
+                  onClick={handleAttachedFile}
+                >
+                  <FontAwesomeIcon
+                    icon={faPaperclip}
+                    style={{ fontSize: "2.2vh" }}
+                  />
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  id="fileInput"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+              </div>
+              {(attachedFile || attachedImage) && (
+                <div id="attachedFile">
+                  {attachedFile && <p>Attached file: {attachedFile.name}</p>}
+                  {attachedImage && (
+                    <p>Attached image: {attachedImage.name}</p>
+                  )}
+                </div>
+              )}
+
+              <div className="variousPromptsText"></div>
             </div>
           </div>
         </div>
