@@ -76,7 +76,8 @@ body {
 #phone,
 #address,
 #hobby,
-#email_profile {
+#email_profile,
+#position {
   height: 7vh;
   font-family: "DM Sans", sans-serif;
   font-weight: 600;
@@ -97,7 +98,7 @@ body {
   margin-right: 3vw;
   border-top: 2px solid #eac3c5ff;
   box-shadow: 0px 4px 9px hsla(336, 10%, 70%, 0.44);
-  height: 20vh;
+  height: 15vh;
 }
 
 #firstname_value,
@@ -107,7 +108,8 @@ body {
 #address_value,
 #hobby_value,
 #about_value,
-#email_value {
+#email_value,
+#position_value {
   margin: auto;
   color: #422020;
   font-size: 1em;
@@ -115,7 +117,7 @@ body {
 
 #about_value {
   overflow-y: scroll;
-  max-height: 15vh;
+  max-height: 13vh;
   margin-top: 10px;
   /* margin-right: 10px; */
 }

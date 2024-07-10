@@ -766,12 +766,13 @@ function PrivateChat({ chatID }) {
               src={URL.createObjectURL(message.imageObject)}
               alt=""
               style={{
-                width: "90%",
-                height: "90%",
+                width: "100px",
+                height: "100px",
                 maxWidth: "300px",
                 maxHeight: "300px",
                 borderRadius: "10px",
                 cursor: "pointer",
+                fontWeight: "bold",
               }}
               onClick={handlePhotoClick}
             />
@@ -786,8 +787,8 @@ function PrivateChat({ chatID }) {
               }
               alt="attachedImage"
               style={{
-                width: "100px",
-                height: "100px",
+                width: "90%",
+                height: "90%",
                 maxWidth: "300px",
                 maxHeight: "300px",
                 borderRadius: "10px",

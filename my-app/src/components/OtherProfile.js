@@ -84,13 +84,19 @@ function OtherProfile() {
                  </div>
                  </div>
 
-                 <div className='profile-abour'>
+                 <div className='profile-about'
+                 style={{
+                  marginTop: '2vw',
+                 }}>
                  <div className='profile-about-header'>
                <h1>{userAbout.firstname}'s Information</h1>
                </div>
 
                <div className='profile-about-details'>
                      <div className='profile-about-details-container'>
+                     <div id='position'>
+                        <p>Position:</p> <div id="position_value">{userAbout.position}</div>
+                      </div>
                      <div id='firstname'>
                  <p>First Name:</p> <div id="firstname_value">{userAbout.firstname}</div>
                  </div>
