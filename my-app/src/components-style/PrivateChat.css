@@ -1,31 +1,33 @@
 .private-container {
-    background-color: #fcf0f1;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
-    width: 78vw;
-    height: 100vh;
-    margin-top: 8vh;
+  background-color: #fcf0f1;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+  width: 78vw;
+  height: calc(100vh - 16vh); /* Adjust height */
+  margin-top: 8vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 900px) {
-    .private-container {
-      margin-left: 22vw;
-    }
+  .private-container {
+    margin-left: 22vw;
+  }
 }
 
 .privateChatHeader {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 2vh;
-    height: 18vh;
-    padding: 2vh 20px 0px 0px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 2vh;
+  height: 10vh;
+  padding: 2vh 20px 0px 0px;
 }
 
-.privateTitleRight{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+.privateTitleRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .userDetails {
@@ -39,148 +41,212 @@
 }
 
 .privateTitle h1 {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .privateChatBody {
-    overflow-y: scroll;
-    height: 55vh;
-    max-height: 55vh;
-    padding: 10px;
-    border: 2px solid #eac3c5ff;
-    border-radius: 5px;
-    
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #84a5c6;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-button:hover {
-    background-color: #517fad;
-    transition: 0.5s;
-}
-
-.chatFooterPrivate {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    bottom:0;
-    position: fixed;
-    width: 78vw;
-    margin: 1.5vw;
-    margin-left: 6.8vw;
-}
-
-.messageInput input{
-    width: 80%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 10px;
-}
-
-.messageInput  {
-    width: 65%;
-    display: flex;
-    justify-content: space-between;
-   
-}
-
-.messageInput button {
-    width: 7vw;
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border: 2px solid #eac3c5ff;
+  border-radius: 5px;
+  max-height: 60vh;
+  margin-top: 7.22vh;
+  overflow-x: hidden;
 }
 
 @media (max-width: 900px) {
-    .messageInput button {
-      width: 10vw;
-    }
+  .privateChatBody {
+    max-height: 60vh;
+    height: 40vh;
+    margin-top: 8vh;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  display: contents;
+}
+
+.showMembersOverlay {
+  overflow-y: scroll;
+  max-height: 10vh;
+  height: 10vh;
+  width: 11vw;
+  position: absolute;
+  background: #ffffff;
+  padding: 5px;
+  border: 1px solid #ccc;
+  z-index: 99;
+}
+
+ul li {
+  cursor: pointer;
+  color: #517fad;
+}
+
+ul li:hover {
+  text-decoration: underline;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #84a5c6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #517fad;
+  transition: 0.5s;
+}
+
+.chatFooterPrivate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  border-top: 1px solid #ccc;
+  background-color: #fcf0f1;
+}
+
+.messageInput input {
+  width: calc(100% - 80px); /* Adjust the width to fit the button */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.messageInput {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.messageInput button {
+  width: 60px;
+  padding: 10px;
+  margin-left: 10px;
+}
+
+.attachButtons {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0;
+  margin-left:10px;
+}
+
+.attachButtons button {
+  border-radius: 50%;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+#speechToText {
+  background-color: #b5e7a0;
+}
+
+#attachImage {
+  background-color: #dbcdf0;
+}
+
+#attachFile {
+  background-color: #f7d9c4;
+}
+
+#attachedFile {
+  width: 100%;
+  padding: 5px 0;
 }
 
 .message.myMessage {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .message {
-    display: flex;
-    align-items: center;
-    padding: 0; 
-    margin-bottom: 10px;
-  }
-  
-  .message.myMessage .messageContent {
-    background-color: #ffcce0; 
-    max-width: 50%;
-    min-width: 15vw;
-  }
-  
-  .message .messageContent {
-    background-color: #e6f2ff; 
-    max-width: 50%;
-    min-width: 15vw;
-  }
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+}
 
-.messageHeader{
-  display:flex;
+.message {
+  display: flex;
+  align-items: center;
+  padding: 0; 
+  margin-bottom: 10px;
+}
+
+.message.myMessage .messageContent {
+  background-color: #ffcce0; 
+  max-width: 50%;
+  min-width: 15vw;
+}
+
+.message .messageContent {
+  background-color: #e6f2ff; 
+  max-width: 50%;
+  min-width: 15vw;
+}
+
+.messageHeader {
+  display: flex;
   flex-direction: row;
-  width:100%;
+  width: 100%;
   justify-content: space-between;
 }
-  
-  #messageTimestamp{
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .messageButtons {
-    display: flex;
-    flex-direction: column;
-    margin-top: 5px;
-  }
-  
-  .messageButtons button {
-    padding: 5px;
-    margin-right: 5px;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .messageButtons button:hover {
-    background-color: #517fad;
-  }
-  
-  .deleteButton {
-    background-color: #e74c3c;
-  }
-  
-  .editButton {
-    background-color: #2ecc71;
-  }
 
-  .attachButtons button:hover {
-    transform: scale(1.2);
-    transition: transform 0.5s;
-  }
+#messageTimestamp {
+  font-size: 14px;
+  color: #666;
+}
 
-  #attachedFile {
-    width: 15vw;
-    max-width: 15vw;
-    overflow-x: scroll;
-    height: 8vh;
-    margin-left:3px;
-  }
+.messageButtons {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+}
 
-  #attachedFile::-webkit-scrollbar {
-    display: none;
-  }
+.messageButtons button {
+  padding: 5px;
+  margin-right: 5px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.messageButtons button:hover {
+  background-color: #517fad;
+}
+
+.deleteButton {
+  background-color: #e74c3c;
+}
+
+.editButton {
+  background-color: #2ecc71;
+}
+
+.attachButtons button:hover {
+  transform: scale(1.2);
+  transition: transform 0.5s;
+}
+
+#attachedFile {
+  width: 15vw;
+  max-width: 15vw;
+  overflow-x: scroll;
+  height: 8vh;
+  margin-left: 3px;
+}
+
+#attachedFile::-webkit-scrollbar {
+  display: none;
+}

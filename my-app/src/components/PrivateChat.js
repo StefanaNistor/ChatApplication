@@ -4,12 +4,7 @@ import ToDoPopUp from "./ToDoPopUp";
 import axios from "axios";
 import io from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { faTasks } from "@fortawesome/free-solid-svg-icons";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faTrashAlt, faTasks, faEdit, faPencilAlt, faPaperclip, faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
 function PrivateChat({ chatID }) {
   const [messages, setMessages] = useState([]);
@@ -31,6 +26,7 @@ function PrivateChat({ chatID }) {
 
   const [loadingImages, setLoadingImages] = useState(true);
   const [imageAttachments, setImageAttachments] = useState({});
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (chatID) {
@@ -170,6 +166,14 @@ function PrivateChat({ chatID }) {
       }
     }
   }, [messages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   function getMessages(chatID) {
     axios
@@ -338,14 +342,6 @@ function PrivateChat({ chatID }) {
   const handleSendMessage = () => {
     const timestamp = new Date().toISOString();
     const user_id = JSON.parse(localStorage.getItem("user")).id;
-    const messageInput = document.getElementById("messageInput").value;
-
-    //if the attached image is not null
-
-    // if(attachedImage){
-    //   const imgBlob = new Blob([attachedImage], { type: attachedImage.type });
-    // const imgURL = URL.createObjectURL(imgBlob);
-    // }
 
     if (!messageInput) {
       alert("Please type a message");
@@ -357,13 +353,9 @@ function PrivateChat({ chatID }) {
       chat_id: chatID,
       content: messageInput,
       timestamp: timestamp,
-
       fileName: attachedFile ? user_id + timestamp + attachedFile.name : null,
-      imageName: attachedImage
-        ? user_id + timestamp + attachedImage.name
-        : null,
+      imageName: attachedImage ? user_id + timestamp + attachedImage.name : null,
       imageObject: attachedImage,
-      // imageURL: imgURL,
     };
 
     console.log("Message:", messageObj);
@@ -412,8 +404,6 @@ function PrivateChat({ chatID }) {
 
     socket.emit("chat private server", messageObj);
     setMessageInput("");
-    //setMessages((prevMessages) => [...prevMessages, messageObj]);
-
     setMessages((prevMessages) => {
       const messageExists = prevMessages.some(
         (msg) =>
@@ -432,8 +422,6 @@ function PrivateChat({ chatID }) {
       return newMessages;
     });
 
-    const message = document.getElementById("messageInput");
-    message.value = "";
     setAttachedFile(null);
     setAttachedImage(null);
   };
@@ -504,7 +492,6 @@ function PrivateChat({ chatID }) {
           )
           .then((res) => {
             console.log("Message updated:", res.data);
-            //emit to server!
             socket.emit("edit private message", newContent, chatID, timestamp);
             const prompt = document.querySelector(".variousPromptsText");
             prompt.innerText = "Message updated successfully!";
@@ -687,164 +674,157 @@ function PrivateChat({ chatID }) {
           </div>
 
           <div className="privateChatBody">
+            <div className="chatMessages">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`message ${message.user_id === userId ? "myMessage" : ""}`}
+                >
+                  <div className="messageContent">
+                    <div className="messageHeader">
+                      <span id="usernameStyling">
+                        {usernames[message.user_id]
+                          ? usernames[message.user_id].username + ": "
+                          : ""}
+                      </span>
+                      <p id="messageTimestamp">
+                        {new Date(message.timestamp).toLocaleTimeString()}
+                      </p>
+                    </div>
+                    <p>
+                      {message.is_seen ? (
+                        <span style={{ color: "green" }}>Seen</span>
+                      ) : (
+                        <span style={{ color: "red" }}>Delivered</span>
+                      )}
+                    </p>
+                    <p id={`contentText-${message.timestamp} - ${message.chat_id}`}>
+                      {message.is_deleted
+                        ? "Message has been deleted"
+                        : message.content}
+                      {message.is_edited && (
+                        <span className="edited-indicator">
+                          <FontAwesomeIcon icon={faPencilAlt} />
+                        </span>
+                      )}
+                    </p>
+                    <div
+                      className="attachments"
+                      onClick={handleAttachmentClick(
+                        message.user_id,
+                        message.timestamp
+                      )}
+                    >
+                      {message.fileName && (
+                        <p style={{ cursor: "pointer", fontWeight: "bold" }
+                        }>
+                          {parseFileName(
+                            message.fileName,
+                            message.user_id,
+                            message.timestamp
+                          )}
+                        </p>
+                      )}
+                      {message.imageObject instanceof ArrayBuffer ? (
+                        <img
+                          src={arrayBufferToDataURL(
+                            message.imageObject,
+                            message.imageObject.contentType
+                          )}
+                          alt=""
+                          style={{
+                            width: "90%",
+                            height: "90%",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={handlePhotoClick}
+                        />
+                      ) : message.imageObject instanceof File ? (
+                        <img
+                          src={URL.createObjectURL(message.imageObject)}
+                          alt=""
+                          style={{
+                            width: "90%",
+                            height: "90%",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                          }}
+                          onClick={handlePhotoClick}
+                        />
+                      ) : null}
 
-            {//messages ----------------------------------------------------
-            }
-           <div className="chatMessages">
-  {messages.map((message, index) => (
-    <div
-      key={index}
-      className={`message ${message.user_id === userId ? "myMessage" : ""}`}
-    >
-      
+                      {!message.imageObject && message.imageName && (
+                        <img
+                          src={
+                            imageAttachments[message._id]
+                              ? imageAttachments[message._id]
+                              : "https://via.placeholder.com/70"
+                          }
+                          alt="attachedImage"
+                          style={{
+                            width: "90%",
+                            height: "90%",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={handlePhotoClick}
+                        />
+                      )}
+                    </div>
+                  </div>
 
-      <div className="messageContent">
-      <div className="messageHeader">
-        <span id="usernameStyling">
-          {usernames[message.user_id]
-            ? usernames[message.user_id].username + ": "
-            : ""}
-        </span>
-        <p id="messageTimestamp">
-          {new Date(message.timestamp).toLocaleTimeString()}
-        </p>
-      </div>
-        <p>
-          {message.is_seen ? (
-            <span style={{ color: "green" }}>Seen</span>
-          ) : (
-            <span style={{ color: "red" }}>Delivered</span>
-          )}
-        </p>
-
-        <p id={`contentText-${message.timestamp} - ${message.chat_id}`}>
-          {message.is_deleted
-            ? "Message has been deleted"
-            : message.content}
-          {message.is_edited && (
-            <span className="edited-indicator">
-              <FontAwesomeIcon icon={faPencilAlt} />
-            </span>
-          )}
-        </p>
-
-        <div
-          className="attachments"
-          onClick={handleAttachmentClick(
-            message.user_id,
-            message.timestamp
-          )}
-        >
-          {message.fileName && (
-            <p style={{ cursor: "pointer" }}>
-              {parseFileName(
-                message.fileName,
-                message.user_id,
-                message.timestamp
-              )}
-            </p>
-          )}
-          {message.imageObject instanceof ArrayBuffer ? (
-            <img
-              src={arrayBufferToDataURL(
-                message.imageObject,
-                message.imageObject.contentType
-              )}
-              alt=""
-              style={{
-                width: "90%",
-                height: "90%",
-                maxWidth: "300px",
-                maxHeight: "300px",
-                borderRadius: "10px",
-                cursor: "pointer",
-              }}
-              onClick={handlePhotoClick}
-            />
-          ) : message.imageObject instanceof File ? (
-            <img
-              src={URL.createObjectURL(message.imageObject)}
-              alt=""
-              style={{
-                width: "100px",
-                height: "100px",
-                maxWidth: "300px",
-                maxHeight: "300px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-              onClick={handlePhotoClick}
-            />
-          ) : null}
-
-          {!message.imageObject && message.imageName && (
-            <img
-              src={
-                imageAttachments[message._id]
-                  ? imageAttachments[message._id]
-                  : "https://via.placeholder.com/70"
-              }
-              alt="attachedImage"
-              style={{
-                width: "90%",
-                height: "90%",
-                maxWidth: "300px",
-                maxHeight: "300px",
-                borderRadius: "10px",
-                cursor: "pointer",
-              }}
-              onClick={handlePhotoClick}
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="messageButtons">
-        {((message.user_id === userId && !message.is_deleted) ||
-          isCurrentUserAdmin) &&
-          !message.is_deleted && (
-            <button
-              className="deleteButton"
-              onClick={() =>
-                deleteMessage(
-                  message.user_id,
-                  message.timestamp,
-                  message.chat_id
-                )
-              }
-            >
-              <FontAwesomeIcon icon={faTrashAlt} />
-            </button>
-          )}
-        {message.user_id === userId && !message.is_deleted && (
-          <button
-            className="editButton"
-            onClick={() =>
-              editMessage(
-                message.content,
-                message.chat_id,
-                message.timestamp
-              )
-            }
-          >
-            <FontAwesomeIcon icon={faEdit} />
-          </button>
-        )}
-        {message.user_id !== userId && !message.is_deleted && (
-          <button
-            className="sendToToDoButton"
-            onClick={() => sendToToDo(message.content)}
-          >
-            <FontAwesomeIcon icon={faTasks} />
-          </button>
-        )}
-      </div>
-    </div>
-  ))}
-</div>
-                {//messages ----------------------------------------------------
-            }
+                  <div className="messageButtons">
+                    {((message.user_id === userId && !message.is_deleted) ||
+                      isCurrentUserAdmin) &&
+                      !message.is_deleted && (
+                        <button
+                          className="deleteButton"
+                          onClick={() =>
+                            deleteMessage(
+                              message.user_id,
+                              message.timestamp,
+                              message.chat_id
+                            )
+                          }
+                        >
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </button>
+                      )}
+                    {message.user_id === userId && !message.is_deleted && (
+                      <button
+                        className="editButton"
+                        onClick={() =>
+                          editMessage(
+                            message.content,
+                            message.chat_id,
+                            message.timestamp
+                          )
+                        }
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    )}
+                    {message.user_id !== userId && !message.is_deleted && (
+                      <button
+                        className="sendToToDoButton"
+                        onClick={() => sendToToDo(message.content)}
+                      >
+                        <FontAwesomeIcon icon={faTasks} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
 
           <div className="chatFooterPrivate">
@@ -853,29 +833,16 @@ function PrivateChat({ chatID }) {
                 <input
                   type="text"
                   id="messageInput"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Type your message here..."
                 />
               )}
               {chatID && <button onClick={handleSendMessage}>Send</button>}
             </div>
-            <div
-              className="attachButtons"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "5px",
-                height: "5vh",
-              }}
-            >
+            <div className="attachButtons">
               <button
                 id="speechToText"
-                style={{
-                  borderRadius: "50",
-                  padding: "5px",
-                  backgroundColor: "#b5e7a0",
-                  marginLeft: "3px",
-                  marginRight: "1vh",
-                }}
                 onClick={handleSpeechToText}
               >
                 <FontAwesomeIcon
@@ -885,13 +852,6 @@ function PrivateChat({ chatID }) {
               </button>
               <button
                 id="attachImage"
-                style={{
-                  borderRadius: "50",
-                  padding: "5px",
-                  backgroundColor: "#dbcdf0",
-                  marginLeft: "3px",
-                  marginRight: "1vh",
-                }}
                 onClick={handleAttachedFileImage}
               >
                 <FontAwesomeIcon icon={faImage} style={{ fontSize: "2.2vh" }} />
@@ -907,11 +867,6 @@ function PrivateChat({ chatID }) {
 
               <button
                 id="attachFile"
-                style={{
-                  borderRadius: "50",
-                  padding: "5px",
-                  backgroundColor: "#f7d9c4",
-                }}
                 onClick={handleAttachedFile}
               >
                 <FontAwesomeIcon
@@ -930,7 +885,7 @@ function PrivateChat({ chatID }) {
             {(attachedFile || attachedImage) && (
               <div id="attachedFile">
                 <p>
-                  Attachement:{" "}
+                  Attachment:{" "}
                   {attachedFile ? attachedFile.name : attachedImage.name}
                 </p>
               </div>

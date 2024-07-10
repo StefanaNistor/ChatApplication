@@ -708,7 +708,9 @@ function GroupChat({ groupID }) {
               ))}
               <div ref={messagesEndRef} />
             </div>
-            <div className="chatFooter">
+            
+          </div>
+          <div className="chatFooter">
               <div className="messageInput">
                 {groupID && (
                   <input
@@ -724,7 +726,6 @@ function GroupChat({ groupID }) {
                 className="attachButtons"
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
                   padding: "5px",
                   height: "5vh",
                 }}
@@ -799,7 +800,6 @@ function GroupChat({ groupID }) {
 
               <div className="variousPromptsText"></div>
             </div>
-          </div>
         </div>
       )}
     </div>
