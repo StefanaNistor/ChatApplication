@@ -838,8 +838,9 @@ function PrivateChat({ chatID }) {
                   placeholder="Type your message here..."
                 />
               )}
-              {chatID && <button onClick={handleSendMessage}>Send</button>}
+             
             </div>
+            {chatID && <button onClick={handleSendMessage}>Send</button>}
             <div className="attachButtons">
               <button
                 id="speechToText"

@@ -720,8 +720,9 @@ function GroupChat({ groupID }) {
                     placeholder="Type your message here..."
                   />
                 )}
-                {groupID && <button onClick={handleSendMessage}>Send</button>}
+                
               </div>
+              {groupID && <button onClick={handleSendMessage}>Send</button>}
               <div
                 className="attachButtons"
                 style={{
