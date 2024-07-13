@@ -147,6 +147,11 @@ function AdminPanel() {
       return;
     }
 
+    if (!document.getElementById("e-mail").value.includes("@") || !document.getElementById("e-mail").value.includes(".")) {
+      alert("Invalid email address!");
+      return;
+    }
+
     const newUser = {
       username: document.getElementById("username").value,
       password: document.getElementById("password").value,
@@ -353,7 +358,12 @@ function AdminPanel() {
     }
 
     if (newEmail) {
-      axios
+     // add validation for email so that it has an @ and a .
+      if (!newEmail.includes("@") || !newEmail.includes(".")) {
+        displayMessage("new-email-message", "Invalid Email");
+        return;
+      } else {
+        axios
         .put(
           `http://localhost:7979/users/updateEmail/${editedUserID}`,
           { email: newEmail },
@@ -370,6 +380,7 @@ function AdminPanel() {
         .catch((err) => {
           console.log("Error updating email:", err);
         });
+      }
     }
 
     if (newPassword) {
