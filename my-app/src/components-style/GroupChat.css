@@ -121,6 +121,19 @@ button:hover {
   margin-top: 10px;
 }
 
+@media screen and (max-width: 900px) {
+ 
+  .chatFooter{
+    width: 80%;
+  }
+  
+  .messageInput  {
+    width: 70%;
+  }
+  
+}
+
+
 .messageInput {
   width: 65%;
   display: flex;

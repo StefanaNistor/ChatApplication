@@ -115,6 +115,7 @@ button:hover {
   background-color: #fcf0f1;
 }
 
+
 .messageInput input {
   width: calc(100% - 80px); 
   padding: 10px;
@@ -129,6 +130,19 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+}
+
+
+@media screen and (max-width: 900px) {
+ 
+  .chatFooterPrivate{
+    width: 80%;
+  }
+  
+  .messageInput  {
+    width: 70%;
+  }
+  
 }
 
 .messageInput button {

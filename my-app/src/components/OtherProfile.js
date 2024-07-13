@@ -94,7 +94,7 @@ function OtherProfile() {
 
                <div className='profile-about-details'>
                      <div className='profile-about-details-container'>
-                     <div id='position'>
+                     <div id='position-profile'>
                         <p>Position:</p> <div id="position_value">{userAbout.position}</div>
                       </div>
                      <div id='firstname'>

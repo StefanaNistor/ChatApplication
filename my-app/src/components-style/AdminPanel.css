@@ -23,7 +23,7 @@
   .admin-panel-CRUD-section h2 {
     color: #9B4444;
     font-size: 24px;
-    margin-top: 0;
+    margin-top: 15px;
   }
   
   .admin-panel-CRUD-section input[type="text"],

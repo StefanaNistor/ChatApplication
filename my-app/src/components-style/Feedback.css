@@ -10,11 +10,7 @@
     overflow-y: auto;
 }
 
-@media (max-width: 900px) {
-    .feedback-container {
-        margin-left: 22vw;
-    }
-}
+
 
 .feedback-content {
     display: flex;
