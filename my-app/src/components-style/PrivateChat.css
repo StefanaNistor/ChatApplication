@@ -253,7 +253,7 @@ button:hover {
 }
 
 #attachedFile {
-  width: 15vw;
+  width: 30vw;
   max-width: 15vw;
   overflow-x: scroll;
   height: 8vh;

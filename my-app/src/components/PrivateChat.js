@@ -469,13 +469,13 @@ function PrivateChat({ chatID }) {
     );
     contentText.contentEditable = true;
     contentText.focus();
-
+  
     contentText.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         contentText.contentEditable = false;
         const newContent = contentText.innerText;
         console.log("New content:", newContent);
-
+  
         const chatID = editedMessage.chat_id;
         const timestamp = editedMessage.timestamp;
         axios
@@ -492,13 +492,30 @@ function PrivateChat({ chatID }) {
           )
           .then((res) => {
             console.log("Message updated:", res.data);
+  
+            // Update the message with the new content while preserving the image properties
+            setMessages((prevMessages) => {
+              return prevMessages.map((message) => {
+                if (
+                  message.timestamp === timestamp &&
+                  message.chat_id === chatID
+                ) {
+                  return {
+                    ...message,
+                    content: newContent,
+                    is_edited: true,
+                  };
+                }
+                return message;
+              });
+            });
+  
             socket.emit("edit private message", newContent, chatID, timestamp);
             const prompt = document.querySelector(".variousPromptsText");
             prompt.innerText = "Message updated successfully!";
             setTimeout(() => {
               prompt.innerText = "";
             }, 3000);
-            getMessages(chatID);
           })
           .catch((err) => {
             console.log("An error occurred while updating message:", err);
